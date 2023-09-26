@@ -2,6 +2,7 @@ import { FastifyInstance, FastifyPluginOptions } from 'fastify';
 
 import fastifyPlugin from 'fastify-plugin';
 import auth from './auth';
+import item from './item';
 
 const getOptionsWithPrefix = (options: FastifyPluginOptions, prefix: string) => {
 	return {
@@ -15,5 +16,8 @@ export default fastifyPlugin(async (fastify: FastifyInstance, options: FastifyPl
 		return { status: 'OK' };
 	});
 
-	await Promise.all([fastify.register(auth, getOptionsWithPrefix(options, '/auth'))]);
+	await Promise.all([
+		fastify.register(auth, getOptionsWithPrefix(options, '/auth')),
+		fastify.register(item, getOptionsWithPrefix(options, '/item')),
+	]);
 });

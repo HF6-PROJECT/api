@@ -23,5 +23,57 @@
 	"refreshToken": {
 		"expired": "Refresh token has reached absolute expiry",
 		"used": "Refresh token has already been used"
+	},
+	"blob": {
+		"type": {
+			"enum": "Type must be one of the following: 'blob.generate-client-token' or 'blob.upload-completed'",
+			"type": "Type must be a string",
+			"required": "Type is required"
+		},
+		"payload": {
+			"type": "Payload must be an object",
+			"required": "Payload is required",
+			"pathname": {
+				"type": "Pathname must be a string"
+			},
+			"callbackUrl": {
+				"type": "CallbackURL must be a string"
+			},
+			"clientPayload": {
+				"type": "ClientPayload must be a string"
+			},
+			"tokenPayload": {
+				"type": "TokenPayload must be a string"
+			},
+			"blob": {
+				"type": "Blob must be an object",
+				"url": {
+					"type": "URL must be a string",
+					"required": "URL is required"
+				},
+				"pathname": {
+					"type": "Pathname must be a string",
+					"required": "Pathname is required"
+				},
+				"contentType": {
+					"type": "ContentType must be a string",
+					"required": "ContentType is required"
+				},
+				"contentDisposition": {
+					"type": "ContentDisposition must be a string",
+					"required": "ContentDisposition is required"
+				}
+			}
+		}
+	},
+	"item": {
+		"upload": {
+			"clientPayload": {
+				"required": "clientPayload is required",
+				"parentId": {
+					"required": "clientPayload.parentId is required"
+				}
+			}
+		}
 	}
 }

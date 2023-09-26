@@ -23,5 +23,57 @@
 	"refreshToken": {
 		"expired": "Refresh token er udløbet",
 		"used": "Refresh token er allerede blevet brugt"
+	},
+	"blob": {
+		"type": {
+			"enum": "Type skal være en af følgende: 'blob.generate-client-token' eller 'blob.upload-completed'",
+			"type": "Type skal være en tekst",
+			"required": "Type er påkrævet"
+		},
+		"payload": {
+			"type": "Payload skal være et objekt",
+			"required": "Payload er påkrævet",
+			"pathname": {
+				"type": "Pathname skal være en tekst"
+			},
+			"callbackUrl": {
+				"type": "CallbackURL skal være en tekst"
+			},
+			"clientPayload": {
+				"type": "ClientPayload skal være en tekst"
+			},
+			"tokenPayload": {
+				"type": "TokenPayload skal være en tekst"
+			},
+			"blob": {
+				"type": "Blob skal være et objekt",
+				"url": {
+					"type": "URL skal være en tekst",
+					"required": "URL er påkrævet"
+				},
+				"pathname": {
+					"type": "Pathname skal være en tekst",
+					"required": "Pathname er påkrævet"
+				},
+				"contentType": {
+					"type": "ContentType skal være en tekst",
+					"required": "ContentType er påkrævet"
+				},
+				"contentDisposition": {
+					"type": "ContentDisposition skal være en tekst",
+					"required": "ContentDisposition er påkrævet"
+				}
+			}
+		}
+	},
+	"item": {
+		"upload": {
+			"clientPayload": {
+				"required": "clientPayload er påkrævet",
+				"parentId": {
+					"required": "clientPayload.parentId er påkrævet"
+				}
+			}
+		}
 	}
 }

@@ -3,6 +3,7 @@ import { jwt } from '../../../plugins/jwt';
 import TimeUtil from '../../../utils/time';
 import UserService from '../user.service';
 import AuthService from '../auth.service';
+import { v4 } from 'uuid';
 
 describe('GET /api/auth/user', () => {
 	let userService: UserService;
@@ -49,6 +50,7 @@ describe('GET /api/auth/user', () => {
 					jwt.signAccessToken({
 						sub: 542,
 						iat: TimeUtil.getNowUnixTimeStamp(),
+						tokenFamily: v4(),
 					}),
 			},
 		});

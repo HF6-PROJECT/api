@@ -15,6 +15,7 @@ declare module 'fastify' {
 			SECRET: string;
 			PRIVATE: string;
 			PUBLIC: string;
+			BLOB_READ_WRITE_TOKEN: string;
 			HOST: string;
 			PORT: number;
 			DATABASE_URL: string;
@@ -41,6 +42,7 @@ export default fastifyPlugin(
 				'DATABASE_URL',
 				'DATABASE_URL_NON_POOLING',
 				'REDIS_URL',
+				'BLOB_READ_WRITE_TOKEN',
 			],
 			properties: {
 				SECRET: {
@@ -50,6 +52,9 @@ export default fastifyPlugin(
 					type: 'string',
 				},
 				PUBLIC: {
+					type: 'string',
+				},
+				BLOB_READ_WRITE_TOKEN: {
 					type: 'string',
 				},
 				HOST: {

@@ -12,25 +12,54 @@ datasource db {
 }
 
 model User {
-    id        Int           @id @default(autoincrement())
-    name      String        @db.VarChar(50)
-    email     String        @unique @db.VarChar(255)
-    password  String        @db.Text
-    sessions  UserSession[]
-    createdAt DateTime      @default(now())
-    updatedAt DateTime      @updatedAt
+    id       Int    @id @default(autoincrement())
+    name     String @db.VarChar(50)
+    email    String @unique @db.VarChar(255)
+    password String @db.Text
+
+    sessions UserSession[]
+    Item     Item[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model UserSession {
-    id           Int      @id @default(autoincrement())
+    id           Int    @id @default(autoincrement())
     userId       Int
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    refreshToken String   @db.VarChar(1024)
-    tokenFamily  String   @db.VarChar(36)
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
+    refreshToken String @db.VarChar(1024)
+    tokenFamily  String @db.VarChar(36)
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     @@unique([tokenFamily])
     @@index([userId])
     @@index([userId, tokenFamily])
+}
+
+model Item {
+    id       Int    @id @default(autoincrement())
+    name     String @db.VarChar(255)
+    mimeType String @db.VarChar(255)
+    blobUrl  String @db.VarChar(1024)
+    ownerId  Int
+    parentId Int?
+
+    owner User @relation(fields: [ownerId], references: [id])
+
+    parentItem Item?  @relation("ItemToItem", fields: [parentId], references: [id])
+    Items      Item[] @relation("ItemToItem")
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
+
+    @@index([blobUrl])
+    @@index([ownerId])
+    @@index([parentId])
+    @@index([ownerId, parentId])
+    @@index([deletedAt])
 }

@@ -57,7 +57,7 @@ describe('POST /api/auth/login', () => {
 		expect(response.statusCode).toBe(401);
 		expect(response.json()).toMatchObject({
 			error: 'Unauthorized',
-			message: 'email and/or password incorrect',
+			message: 'Email and/or Password incorrect',
 			statusCode: 401,
 		});
 	});
@@ -75,7 +75,7 @@ describe('POST /api/auth/login', () => {
 		expect(response.statusCode).toBe(401);
 		expect(response.json()).toMatchObject({
 			error: 'Unauthorized',
-			message: 'email and/or password incorrect',
+			message: 'Email and/or Password incorrect',
 			statusCode: 401,
 		});
 	});
@@ -89,9 +89,7 @@ describe('POST /api/auth/login', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
-			message: "body must have required property 'email'",
-			statusCode: 400,
+			_: ['Email is required', 'Password is required'],
 		});
 	});
 
@@ -106,9 +104,7 @@ describe('POST /api/auth/login', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
-			message: "body must have required property 'email'",
-			statusCode: 400,
+			_: ['Email is required'],
 		});
 	});
 
@@ -123,9 +119,7 @@ describe('POST /api/auth/login', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
-			message: "body must have required property 'password'",
-			statusCode: 400,
+			_: ['Password is required'],
 		});
 	});
 });

@@ -9,9 +9,10 @@ import swagger from './swagger';
 import cookie from './cookie';
 import cors from './cors';
 import jwt from './jwt';
+import i18n from './i18n';
 
 export default fastifyPlugin(async (fastify: FastifyInstance) => {
-	await Promise.all([fastify.register(config), fastify.register(sensible)]);
+	await Promise.all([fastify.register(config), fastify.register(sensible), fastify.register(i18n)]);
 
 	await Promise.all([
 		fastify.register(prisma),

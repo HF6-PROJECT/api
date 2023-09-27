@@ -26,6 +26,35 @@ const getLoggerConfig = () => {
 export async function build() {
 	const fastify = Fastify({
 		logger: getLoggerConfig(),
+		ajv: {
+			customOptions: {
+				allErrors: true,
+			},
+			plugins: [require('ajv-errors')],
+		},
+	});
+
+	fastify.setErrorHandler(function (error, request, reply) {
+		if (error.validation) {
+			const errors: { [key: string]: Array<string | undefined> } = {};
+			error.validation.forEach((err) => {
+				let pathName = err.instancePath.substring(1).toString();
+
+				if (pathName === '') {
+					pathName = '_';
+				}
+
+				if (!errors[pathName]) {
+					errors[pathName] = [];
+				}
+
+				errors[pathName].push(request.i18n.t(err.message));
+			});
+
+			return reply.status(400).send(errors);
+		}
+
+		return reply.send(error);
 	});
 
 	const startPlugins = performance.now();

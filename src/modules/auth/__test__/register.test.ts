@@ -68,9 +68,7 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
-			message: 'body/email must match format "email"',
-			statusCode: 400,
+			email: ['Email must be of correct format'],
 		});
 	});
 
@@ -86,9 +84,7 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
-			message: "body must have required property 'email'",
-			statusCode: 400,
+			_: ['Email is required'],
 		});
 	});
 
@@ -105,9 +101,7 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
-			message: 'body/email must NOT have fewer than 1 characters',
-			statusCode: 400,
+			email: ['Email must be of correct format'],
 		});
 	});
 
@@ -123,9 +117,7 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
-			message: "body must have required property 'password'",
-			statusCode: 400,
+			_: ['Password is required'],
 		});
 	});
 
@@ -142,9 +134,7 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
-			message: 'body/password must NOT have fewer than 8 characters',
-			statusCode: 400,
+			password: ['Password must be atleast 8 characters'],
 		});
 	});
 
@@ -161,9 +151,7 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
-			message: 'body/password must NOT have fewer than 8 characters',
-			statusCode: 400,
+			password: ['Password must be atleast 8 characters'],
 		});
 	});
 
@@ -179,9 +167,7 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
-			message: "body must have required property 'name'",
-			statusCode: 400,
+			_: ['Name is required'],
 		});
 	});
 
@@ -198,9 +184,20 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
-			message: 'body/name must NOT have fewer than 1 characters',
-			statusCode: 400,
+			name: ['You must choose a name'],
+		});
+	});
+
+	it('should return status 400, when name, email and password is not provided', async () => {
+		const response = await global.fastify.inject({
+			method: 'POST',
+			url: '/api/auth/register',
+			payload: {},
+		});
+
+		expect(response.statusCode).toBe(400);
+		expect(response.json()).toMatchObject({
+			_: ['Email is required', 'Password is required', 'Name is required'],
 		});
 	});
 });

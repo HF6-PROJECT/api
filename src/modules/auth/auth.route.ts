@@ -1,6 +1,5 @@
 import { FastifyInstance } from 'fastify';
 import AuthController from './auth.controller';
-import { $ref } from './auth.schema';
 import AuthService from './auth.service';
 import UserService from './user.service';
 
@@ -12,9 +11,9 @@ export default async (fastify: FastifyInstance) => {
 		{
 			schema: {
 				tags: ['Auth'],
-				body: $ref('createUserSchema'),
+				body: { $ref: 'createUserSchema' },
 				response: {
-					201: $ref('createUserResponseSchema'),
+					201: { $ref: 'createUserResponseSchema' },
 				},
 			},
 		},
@@ -26,9 +25,9 @@ export default async (fastify: FastifyInstance) => {
 		{
 			schema: {
 				tags: ['Auth'],
-				body: $ref('loginSchema'),
+				body: { $ref: 'loginSchema' },
 				response: {
-					200: $ref('loginResponseSchema'),
+					200: { $ref: 'loginResponseSchema' },
 				},
 			},
 		},
@@ -41,7 +40,7 @@ export default async (fastify: FastifyInstance) => {
 			schema: {
 				tags: ['Auth'],
 				response: {
-					200: $ref('refreshResponseSchema'),
+					200: { $ref: 'refreshResponseSchema' },
 				},
 				description: 'The `refreshToken` cookie is required',
 			},
@@ -55,7 +54,7 @@ export default async (fastify: FastifyInstance) => {
 			schema: {
 				tags: ['Auth'],
 				response: {
-					200: $ref('logoutResponseSchema'),
+					200: { $ref: 'logoutResponseSchema' },
 				},
 			},
 			onRequest: [fastify.authenticate],
@@ -72,7 +71,7 @@ export default async (fastify: FastifyInstance) => {
 				},
 				tags: ['Auth'],
 				response: {
-					200: $ref('userResponseSchema'),
+					200: { $ref: 'userResponseSchema' },
 				},
 			},
 			onRequest: [fastify.authenticate],

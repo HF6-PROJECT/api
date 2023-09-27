@@ -6,7 +6,7 @@ import { CreateUserInput } from './auth.schema';
 export default class UserService {
 	public async createUser(input: CreateUserInput): Promise<User> {
 		if (await this.isEmailInUse(input.email)) {
-			throw new Error('Email is already in use');
+			throw new Error('email.inUse');
 		}
 
 		return await prisma.user.create({
@@ -34,7 +34,7 @@ export default class UserService {
 		});
 
 		if (!user) {
-			throw Error('User not found');
+			throw Error('user.notFound');
 		}
 
 		return user;
@@ -46,7 +46,7 @@ export default class UserService {
 		});
 
 		if (!user) {
-			throw Error('User not found');
+			throw Error('user.notFound');
 		}
 
 		return user;

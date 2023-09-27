@@ -28,7 +28,7 @@ export default class AuthController {
 			return reply.code(201).send(user);
 		} catch (e) {
 			if (e instanceof Error) {
-				return reply.badRequest(e.message);
+				return reply.badRequest(request.i18n.t(e.message));
 			}
 
 			/* istanbul ignore next */
@@ -46,7 +46,7 @@ export default class AuthController {
 			const user = await this.userService.getUserByEmail(request.body.email);
 
 			if (!this.authService.verifyPassword(user.password, request.body.password)) {
-				throw new Error('password incorrect');
+				throw new Error(request.i18n.t('password.incorrect'));
 			}
 
 			const { refreshToken, refreshTokenPayload, accessToken } =
@@ -65,7 +65,7 @@ export default class AuthController {
 					accessToken: accessToken,
 				});
 		} catch (e) {
-			return reply.unauthorized('email and/or password incorrect');
+			return reply.unauthorized(request.i18n.t('user.emailOrPasswordIncorrect'));
 		}
 	}
 

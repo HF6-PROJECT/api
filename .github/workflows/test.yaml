@@ -59,28 +59,23 @@ jobs:
       - name: Setup Redis server
         uses: supercharge/redis-github-action@1.4.0
 
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
       - name: Setup Node - ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: pnpm install
+        run: npm install
 
       - name: Run prisma migrations & generate prisma client
-        run: pnpm exec prisma migrate dev
+        run: npx prisma migrate dev
 
       - name: Lint code
-        run: pnpm run lint
+        run: npm run lint
 
       - name: Run tests
-        run: pnpm run test --coverage
+        run: npm run test -- --coverage
 
       - name: Comment coverage report on pull request
         if: ${{ github.event_name == 'pull_request' }}

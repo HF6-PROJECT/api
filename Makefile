@@ -1,19 +1,19 @@
 migrate-dev:
-	pnpm exec prisma migrate dev
+	npx prisma migrate dev
 migrate-deploy:
-	pnpm exec prisma migrate deploy
+	npx prisma migrate deploy
 migrate-reset:
-	pnpm exec prisma migrate reset
+	npx prisma migrate reset
 prisma-generate:
-	pnpm exec prisma generate
+	npx prisma generate
 prod:
-	pnpm run build
-	pnpm run start
+	npm run build
+	npm run start
 dev:
-	pnpm run dev
+	npm run dev
 test:
-	pnpm run test
+	npm run test
 test-coverage:
-	pnpm run test --coverage
+	npm run test -- --coverage
 format:
-	pnpm run format
+	npm run format

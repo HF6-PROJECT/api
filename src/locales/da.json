@@ -18,7 +18,7 @@
 	},
 	"user": {
 		"notFound": "Brugeren blev ikke fundet",
-		"emailOrPasswordIncorrect": "Email og/eller password er forkert"
+		"emailOrPasswordIncorrect": "Email og/eller adgangskode er forkert"
 	},
 	"refreshToken": {
 		"expired": "Refresh token er udløbet",

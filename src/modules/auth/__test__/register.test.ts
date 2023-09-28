@@ -1,5 +1,7 @@
+import { request } from 'http';
 import { prisma } from '../../../plugins/prisma';
 import UserService from '../user.service';
+import i18next from 'i18next';
 
 describe('POST /api/auth/register', () => {
 	let userService: UserService;
@@ -68,7 +70,11 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			email: ['Email must be of correct format'],
+			error: 'Bad Request',
+			errors: {
+				email: ['Email must be of correct format'],
+			},
+			statusCode: 400,
 		});
 	});
 
@@ -84,7 +90,11 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			_: ['Email is required'],
+			error: 'Bad Request',
+			errors: {
+				_: ['Email is required'],
+			},
+			statusCode: 400,
 		});
 	});
 
@@ -101,7 +111,11 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			email: ['Email must be of correct format'],
+			error: 'Bad Request',
+			errors: {
+				email: ['Email must be of correct format'],
+			},
+			statusCode: 400,
 		});
 	});
 
@@ -117,7 +131,11 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			_: ['Password is required'],
+			error: 'Bad Request',
+			errors: {
+				_: ['Password is required'],
+			},
+			statusCode: 400,
 		});
 	});
 
@@ -134,7 +152,11 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			password: ['Password must be atleast 8 characters'],
+			error: 'Bad Request',
+			errors: {
+				password: ['Password must be atleast 8 characters'],
+			},
+			statusCode: 400,
 		});
 	});
 
@@ -151,7 +173,11 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			password: ['Password must be atleast 8 characters'],
+			error: 'Bad Request',
+			errors: {
+				password: ['Password must be atleast 8 characters'],
+			},
+			statusCode: 400,
 		});
 	});
 
@@ -167,7 +193,11 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			_: ['Name is required'],
+			error: 'Bad Request',
+			errors: {
+				_: ['Name is required'],
+			},
+			statusCode: 400,
 		});
 	});
 
@@ -184,7 +214,11 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			name: ['You must choose a name'],
+			error: 'Bad Request',
+			errors: {
+				name: ['You must choose a name'],
+			},
+			statusCode: 400,
 		});
 	});
 
@@ -197,7 +231,31 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			_: ['Email is required', 'Password is required', 'Name is required'],
+			error: 'Bad Request',
+			errors: {
+				_: ['Email is required', 'Password is required', 'Name is required'],
+			},
+			statusCode: 400,
+		});
+	});
+
+	it('should return status 400, when name, email and password is not provided, in danish', async () => {
+		const response = await global.fastify.inject({
+			method: 'POST',
+			url: '/api/auth/register',
+			payload: {},
+			headers: {
+				'accept-language': 'da',
+			},
+		});
+
+		expect(response.statusCode).toBe(400);
+		expect(response.json()).toMatchObject({
+			error: 'Bad Request',
+			errors: {
+				_: ['Email er påkrævet', 'Adgangskode er påkrævet', 'Navn er påkrævet'],
+			},
+			statusCode: 400,
 		});
 	});
 });

@@ -2,9 +2,12 @@ import { FastifyInstance } from 'fastify';
 import AuthController from './auth.controller';
 import AuthService from './auth.service';
 import UserService from './user.service';
+import { JsonSchemaToTsProvider } from '@fastify/type-provider-json-schema-to-ts';
 
-export default async (fastify: FastifyInstance) => {
+export default async (Fastify: FastifyInstance) => {
 	const authController = new AuthController(new AuthService(), new UserService());
+
+	const fastify = Fastify.withTypeProvider<JsonSchemaToTsProvider>();
 
 	fastify.post(
 		'/register',

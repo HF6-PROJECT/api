@@ -29,6 +29,9 @@ dependencies:
   '@fastify/swagger-ui':
     specifier: ^1.9.3
     version: 1.9.3
+  '@fastify/type-provider-json-schema-to-ts':
+    specifier: ^2.2.2
+    version: 2.2.2(fastify@4.23.2)(json-schema-to-ts@2.9.2)
   '@prisma/client':
     specifier: ^5.3.1
     version: 5.3.1(prisma@5.3.1)
@@ -428,7 +431,6 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.14.0
-    dev: true
 
   /@babel/template@7.22.15:
     resolution: {integrity: sha512-QPErUVm4uyJa60rkI73qneDacvdvzxshT3kksGqlGWYdOTIUOwJ7RDUL8sGqslY1uXWSL6xMFKEXDS3ox2uF0w==}
@@ -634,6 +636,16 @@ packages:
       yaml: 2.3.2
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /@fastify/type-provider-json-schema-to-ts@2.2.2(fastify@4.23.2)(json-schema-to-ts@2.9.2):
+    resolution: {integrity: sha512-RMnlf5JxojQt/LqgsQLDyNfQmuO/L+0GwHxsVGRBBSlYC4K45q7e2x1Rh6o8/VgvuwCK+cohQAvbrU0q3ixdbw==}
+    peerDependencies:
+      fastify: ^4.0.0
+      json-schema-to-ts: ^2.0.0
+    dependencies:
+      fastify: 4.23.2
+      json-schema-to-ts: 2.9.2
     dev: false
 
   /@humanwhocodes/config-array@0.11.11:
@@ -1242,7 +1254,6 @@ packages:
 
   /@types/json-schema@7.0.13:
     resolution: {integrity: sha512-RbSSoHliUbnXj3ny0CNFOoxrIDV6SUGyStHsvDqosw6CkdPV8TtWGlfecuK4ToyMEAql6pzNxgCFKanovUzlgQ==}
-    dev: true
 
   /@types/node@20.6.2:
     resolution: {integrity: sha512-Y+/1vGBHV/cYk6OI1Na/LHzwnlNCAfU3ZNGrc1LdRe/LAIbdDPTTv/HU3M7yXN448aTVDq3eKRm2cg7iKLb8gw==}
@@ -3624,7 +3635,6 @@ packages:
       '@babel/runtime': 7.23.1
       '@types/json-schema': 7.0.13
       ts-algebra: 1.2.2
-    dev: true
 
   /json-schema-traverse@0.4.1:
     resolution: {integrity: sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==}
@@ -4287,7 +4297,6 @@ packages:
 
   /regenerator-runtime@0.14.0:
     resolution: {integrity: sha512-srw17NI0TUWHuGa5CFGGmhfNIeja30WMBfbslPNhf6JrqQlLN5gcrvig1oqPxiVaXb0oW0XRKtH6Nngs5lKCIA==}
-    dev: true
 
   /regexp.prototype.flags@1.5.1:
     resolution: {integrity: sha512-sy6TXMN+hnP/wMy+ISxg3krXx7BAtWVO4UouuCN/ziM9UEne0euamVNafDfvC83bRNr95y0V5iijeDQFUNpvrg==}
@@ -4718,7 +4727,6 @@ packages:
 
   /ts-algebra@1.2.2:
     resolution: {integrity: sha512-kloPhf1hq3JbCPOTYoOWDKxebWjNb2o/LKnNfkWhxVVisFFmMJPPdJeGoGmM+iRLyoXAR61e08Pb+vUXINg8aA==}
-    dev: true
 
   /ts-api-utils@1.0.3(typescript@5.2.2):
     resolution: {integrity: sha512-wNMeqtMz5NtwpT/UZGY5alT+VoKdSsOOP/kqHFcUW1P/VRhH2wJ48+DN2WwUliNbQ976ETwDL0Ifd2VVvgonvg==}

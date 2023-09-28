@@ -14,11 +14,11 @@
 		"required": "Password is required",
 		"type": "Password must be a string",
 		"minLength": "Password must be atleast 8 characters",
-		"incorrect": "password incorrect"
+		"incorrect": "Password incorrect"
 	},
 	"user": {
 		"notFound": "User not found",
-		"emailOrPasswordIncorrect": "Email and/or Password incorrect"
+		"emailOrPasswordIncorrect": "Email and/or password incorrect"
 	},
 	"refreshToken": {
 		"expired": "Refresh token has reached absolute expiry",

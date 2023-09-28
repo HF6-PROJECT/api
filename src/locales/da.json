@@ -3,7 +3,7 @@
 		"required": "Email er påkrævet",
 		"format": "Email skal være af korrekt format",
 		"type": "Email skal være en tekst",
-		"inUse": "Email er allerede i brug"
+		"inUse": "Denne email er allerede i brug"
 	},
 	"name": {
 		"required": "Navn er påkrævet",
@@ -11,14 +11,14 @@
 		"minLength": "Du skal vælge et navn"
 	},
 	"password": {
-		"required": "Password er påkrævet",
-		"type": "Password skal være en tekst",
-		"minLength": "Password skal minimum være 8 karakterer",
-		"incorrect": "password er forkert"
+		"required": "Adgangskode er påkrævet",
+		"type": "Adgangskode skal være en tekst",
+		"minLength": "Adgangskode skal minimum være 8 karakterer",
+		"incorrect": "Adgangskode er forkert"
 	},
 	"user": {
 		"notFound": "Brugeren blev ikke fundet",
-		"emailOrPasswordIncorrect": "Email og/eller Password er forkert"
+		"emailOrPasswordIncorrect": "Email og/eller password er forkert"
 	},
 	"refreshToken": {
 		"expired": "Refresh token er udløbet",

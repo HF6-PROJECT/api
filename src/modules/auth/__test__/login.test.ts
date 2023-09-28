@@ -57,7 +57,7 @@ describe('POST /api/auth/login', () => {
 		expect(response.statusCode).toBe(401);
 		expect(response.json()).toMatchObject({
 			error: 'Unauthorized',
-			message: 'email and/or password incorrect',
+			message: 'Email and/or password incorrect',
 			statusCode: 401,
 		});
 	});
@@ -75,7 +75,7 @@ describe('POST /api/auth/login', () => {
 		expect(response.statusCode).toBe(401);
 		expect(response.json()).toMatchObject({
 			error: 'Unauthorized',
-			message: 'email and/or password incorrect',
+			message: 'Email and/or password incorrect',
 			statusCode: 401,
 		});
 	});
@@ -90,7 +90,29 @@ describe('POST /api/auth/login', () => {
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
 			error: 'Bad Request',
-			message: "body must have required property 'email'",
+			errors: {
+				_: ['Email is required', 'Password is required'],
+			},
+			statusCode: 400,
+		});
+	});
+
+	it('should return status 400, when no email or password has been provided, in danish', async () => {
+		const response = await global.fastify.inject({
+			method: 'POST',
+			url: '/api/auth/login',
+			payload: {},
+			headers: {
+				'accept-language': 'da',
+			},
+		});
+
+		expect(response.statusCode).toBe(400);
+		expect(response.json()).toMatchObject({
+			error: 'Bad Request',
+			errors: {
+				_: ['Email er påkrævet', 'Adgangskode er påkrævet'],
+			},
 			statusCode: 400,
 		});
 	});
@@ -107,7 +129,9 @@ describe('POST /api/auth/login', () => {
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
 			error: 'Bad Request',
-			message: "body must have required property 'email'",
+			errors: {
+				_: ['Email is required'],
+			},
 			statusCode: 400,
 		});
 	});
@@ -124,7 +148,9 @@ describe('POST /api/auth/login', () => {
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
 			error: 'Bad Request',
-			message: "body must have required property 'password'",
+			errors: {
+				_: ['Password is required'],
+			},
 			statusCode: 400,
 		});
 	});

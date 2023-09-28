@@ -116,7 +116,7 @@ export default class AuthService {
 				},
 			});
 
-			throw new Error('Refresh token has reached absolute expiry');
+			throw new Error('refreshToken.expired');
 		}
 
 		const userSession = await prisma.userSession.findFirst({
@@ -133,7 +133,7 @@ export default class AuthService {
 				},
 			});
 
-			throw new Error('Refresh token has already been used');
+			throw new Error('refreshToken.used');
 		}
 
 		const { refreshToken, refreshTokenPayload } =

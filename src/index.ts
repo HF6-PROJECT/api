@@ -26,6 +26,12 @@ const getLoggerConfig = () => {
 export async function build() {
 	const fastify = Fastify({
 		logger: getLoggerConfig(),
+		ajv: {
+			customOptions: {
+				allErrors: true,
+			},
+			plugins: [require('ajv-errors')],
+		},
 	});
 
 	const startPlugins = performance.now();

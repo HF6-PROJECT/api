@@ -1,0 +1,27 @@
+{
+	"email": {
+		"required": "Email is required",
+		"format": "Email must be of correct format",
+		"type": "Email must be a string",
+		"inUse": "Email is already in use"
+	},
+	"name": {
+		"required": "Name is required",
+		"type": "Name must be a string",
+		"minLength": "You must choose a name"
+	},
+	"password": {
+		"required": "Password is required",
+		"type": "Password must be a string",
+		"minLength": "Password must be atleast 8 characters",
+		"incorrect": "Password incorrect"
+	},
+	"user": {
+		"notFound": "User not found",
+		"emailOrPasswordIncorrect": "Email and/or password incorrect"
+	},
+	"refreshToken": {
+		"expired": "Refresh token has reached absolute expiry",
+		"used": "Refresh token has already been used"
+	}
+}

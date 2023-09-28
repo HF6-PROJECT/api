@@ -1,7 +1,5 @@
-import { request } from 'http';
 import { prisma } from '../../../plugins/prisma';
 import UserService from '../user.service';
-import i18next from 'i18next';
 
 describe('POST /api/auth/register', () => {
 	let userService: UserService;

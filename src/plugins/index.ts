@@ -11,6 +11,7 @@ import cors from './cors';
 import jwt from './jwt';
 import i18n from './i18n';
 import errorHandler from './error.handler';
+import plainText from './plainText';
 
 export default fastifyPlugin(async (fastify: FastifyInstance) => {
 	await Promise.all([
@@ -18,6 +19,7 @@ export default fastifyPlugin(async (fastify: FastifyInstance) => {
 		fastify.register(sensible),
 		fastify.register(i18n),
 		fastify.register(errorHandler),
+		fastify.register(plainText),
 	]);
 
 	await Promise.all([

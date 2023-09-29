@@ -47,6 +47,35 @@ Deploys the pending migrations to the databases.
 
 To learn Fastify, check out the [Fastify documentation](https://www.fastify.io/docs/latest/).
 
+## Setup blob storage connection locally
+
+### Install & run ngrok
+
+Head to https://ngrok.com/download and download ngrok for your operating system.
+
+**Beware:** If you are using WSL on Windows, you can just follow the linux guide and set it up in your WSL.
+
+Now create a ngrok tunnel to your API:
+
+```sh
+ngrok http 3000
+
+# Example using a static domain. This is highly recommended
+ngrok http --domain=healthy-monkey-dancing.ngrok-free.app 3000
+```
+
+I recommend heading to https://dashboard.ngrok.com/cloud-edge/domains and creating a static domain, so you won't have to update your `.env` file in the web application every time you create a new tunnel.
+
+### Setup .env files
+
+#### API
+
+Set the `BLOB_READ_WRITE_TOKEN` variable to the one from vercel.
+
+#### Web
+
+Set the `PUBLIC_API_URL` variable to the ngrok tunnel url. Example: `PUBLIC_API_URL="https://healthy-monkey-dancing.ngrok-free.app/api/"`
+
 ## Generate Ed25519 key pair
 
 ```bash

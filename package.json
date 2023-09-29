@@ -4,7 +4,8 @@
 	"description": "This project is a fastify template",
 	"main": "src/server.ts",
 	"scripts": {
-		"test": "jest",
+		"test": "jest --runInBand",
+		"test-fast": "jest",
 		"build": "rm -rf build && tsc -p tsconfig.build.json",
 		"vercel-build": "prisma generate && npm run build",
 		"start": "node build/src/server.js",
@@ -27,6 +28,7 @@
 		"@fastify/swagger-ui": "^1.9.3",
 		"@prisma/client": "^5.3.1",
 		"ajv-errors": "^3.0.0",
+		"@vercel/blob": "^0.12.5",
 		"bcrypt": "^5.1.1",
 		"dotenv": "^16.3.1",
 		"fastify": "^4.23.2",

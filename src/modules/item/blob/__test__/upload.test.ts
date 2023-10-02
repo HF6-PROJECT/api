@@ -69,8 +69,10 @@ describe('POST /api/blob', () => {
 
 		expect(response.statusCode).toBe(401);
 		expect(response.json()).toEqual({
-			error: 'Unauthorized',
-			message: 'Unauthorized',
+			error: 'UnauthorizedError',
+			errors: {
+				_: ['Unauthorized'],
+			},
 			statusCode: 401,
 		});
 	});
@@ -96,8 +98,10 @@ describe('POST /api/blob', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toEqual({
-			error: 'Bad Request',
-			message: 'clientPayload is required',
+			error: 'BadRequestError',
+			errors: {
+				_: ['clientPayload is required'],
+			},
 			statusCode: 400,
 		});
 	});
@@ -124,8 +128,10 @@ describe('POST /api/blob', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toEqual({
-			error: 'Bad Request',
-			message: 'clientPayload.parentId is required',
+			error: 'BadRequestError',
+			errors: {
+				_: ['clientPayload.parentId is required'],
+			},
 			statusCode: 400,
 		});
 	});
@@ -145,8 +151,10 @@ describe('POST /api/blob', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toEqual({
-			error: 'Bad Request',
-			message: expect.stringContaining('Unexpected token'),
+			error: 'BadRequestError',
+			errors: {
+				_: [expect.stringContaining('Unexpected token')],
+			},
 			statusCode: 400,
 		});
 	});
@@ -177,8 +185,10 @@ describe('POST /api/blob', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toEqual({
-			error: 'Bad Request',
-			message: 'Vercel Blob: Missing callback signature',
+			error: 'BadRequestError',
+			errors: {
+				_: ['Vercel Blob: Missing callback signature'],
+			},
 			statusCode: 400,
 		});
 	});

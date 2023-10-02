@@ -20,11 +20,17 @@ export default fastifyPlugin(async (fastify: FastifyInstance) => {
 			});
 
 			return reply.status(400).send({
-				error: 'Bad Request',
+				error: 'ValidationError',
 				errors: errors,
 				statusCode: 400,
 			});
 		}
-		return reply.send(error);
+		const statusCode = error.statusCode ?? /* istanbul ignore next */ 500;
+
+		return reply.status(statusCode).send({
+			error: error.name,
+			errors: { _: [error.message] },
+			statusCode: error.statusCode,
+		});
 	});
 });

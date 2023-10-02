@@ -44,7 +44,6 @@ model Item {
     id       Int    @id @default(autoincrement())
     name     String @db.VarChar(255)
     mimeType String @db.VarChar(255)
-    blobUrl  String @db.VarChar(1024)
     ownerId  Int
     parentId Int?
 
@@ -53,13 +52,22 @@ model Item {
     parentItem Item?  @relation("ItemToItem", fields: [parentId], references: [id])
     Items      Item[] @relation("ItemToItem")
 
+    ItemBlob ItemBlob[]
+
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
     deletedAt DateTime?
 
-    @@index([blobUrl])
     @@index([ownerId])
     @@index([parentId])
     @@index([ownerId, parentId])
     @@index([deletedAt])
+}
+
+model ItemBlob {
+    id      Int    @id @default(autoincrement())
+    blobUrl String @db.VarChar(1024)
+    itemId  Int    @unique
+
+    item Item @relation(fields: [itemId], references: [id])
 }

@@ -74,6 +74,14 @@
 					"required": "clientPayload.parentId is required"
 				}
 			}
-		}
+		},
+		"id": {
+			"required": "id is required",
+			"type": "id must be a number"
+		},
+		"blob": {
+			"notFound": "Blob not found"
+		},
+		"notFound": "Item not found"
 	}
 }

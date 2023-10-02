@@ -1,7 +1,9 @@
 import { HeadBlobResult, PutBlobResult, del, head } from '@vercel/blob';
 import { HandleUploadBody, handleUpload } from '@vercel/blob/client';
-import { accessTokenPayload, jwt } from '../../plugins/jwt';
+import { accessTokenPayload, jwt } from '../../../plugins/jwt';
 import { FastifyRequest } from 'fastify';
+import { prisma } from '../../../plugins/prisma';
+import { Blob, CreateBlob, UpdateBlob, ItemBlob } from './blob.schema';
 
 type OnUploadCompletedCallback = (body: {
 	blob: PutBlobResult;
@@ -24,8 +26,87 @@ type BlobUploadedCompletedResponse = {
 };
 
 export default class BlobService {
-	/* istanbul ignore next */
-	public async deleteBlob(url: string | string[]): Promise<void> {
+	private formatItemBlob(itemBlob: ItemBlob): Blob {
+		return {
+			blobUrl: itemBlob.blobUrl,
+			...itemBlob.item,
+		};
+	}
+
+	public async getByItemId(itemId: number): Promise<Blob> {
+		const itemBlob = await prisma.itemBlob.findUnique({
+			where: {
+				itemId,
+			},
+			include: {
+				item: true,
+			},
+		});
+
+		if (!itemBlob) {
+			throw new Error('item.blob.notFound');
+		}
+
+		return this.formatItemBlob(itemBlob);
+	}
+
+	public async createBlob(input: CreateBlob): Promise<Blob> {
+		const itemBlob = await prisma.itemBlob.create({
+			data: {
+				blobUrl: input.blobUrl,
+				item: {
+					create: {
+						name: input.name,
+						mimeType: input.mimeType,
+						ownerId: input.ownerId,
+						parentId: input.parentId,
+					},
+				},
+			},
+			include: {
+				item: true,
+			},
+		});
+
+		return this.formatItemBlob(itemBlob);
+	}
+
+	public async updateBlob(input: UpdateBlob): Promise<Blob> {
+		const itemBlob = await prisma.itemBlob.update({
+			data: {
+				item: {
+					update: {
+						name: input.name,
+						parentId: input.parentId,
+					},
+				},
+			},
+			where: {
+				itemId: input.id,
+			},
+			include: {
+				item: true,
+			},
+		});
+
+		return this.formatItemBlob(itemBlob);
+	}
+
+	public async deleteBlobByItemId(itemId: number): Promise<void> {
+		const blob = await prisma.itemBlob.delete({
+			where: {
+				itemId: itemId,
+			},
+		});
+
+		try {
+			await this.deleteBlobByUrl(blob.blobUrl);
+		} catch (e) {
+			// Do nothing
+		}
+	}
+
+	public async deleteBlobByUrl(url: string | string[]): Promise<void> {
 		await del(url);
 	}
 

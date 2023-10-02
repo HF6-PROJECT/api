@@ -74,6 +74,14 @@
 					"required": "clientPayload.parentId er påkrævet"
 				}
 			}
-		}
+		},
+		"id": {
+			"required": "id er påkrævet",
+			"type": "id skal være et tal"
+		},
+		"blob": {
+			"notFound": "Blob ikke fundet"
+		},
+		"notFound": "Item ikke fundet"
 	}
 }

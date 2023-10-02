@@ -70,8 +70,10 @@ describe('DELETE /api/blob/:id', () => {
 
 		expect(response.statusCode).toBe(401);
 		expect(response.json()).toEqual({
-			error: 'Unauthorized',
-			message: 'Unauthorized',
+			error: 'UnauthorizedError',
+			errors: {
+				_: ['Unauthorized'],
+			},
 			statusCode: 401,
 		});
 	});
@@ -97,8 +99,10 @@ describe('DELETE /api/blob/:id', () => {
 
 		expect(response.statusCode).toBe(401);
 		expect(response.json()).toEqual({
-			error: 'Unauthorized',
-			message: 'Unauthorized',
+			error: 'UnauthorizedError',
+			errors: {
+				_: ['Unauthorized'],
+			},
 			statusCode: 401,
 		});
 	});
@@ -116,7 +120,7 @@ describe('DELETE /api/blob/:id', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toEqual({
-			error: 'Bad Request',
+			error: 'ValidationError',
 			errors: {
 				id: ['id must be a number'],
 			},
@@ -137,8 +141,10 @@ describe('DELETE /api/blob/:id', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toEqual({
-			error: 'Bad Request',
-			message: 'Blob not found',
+			error: 'BadRequestError',
+			errors: {
+				_: ['Blob not found'],
+			},
 			statusCode: 400,
 		});
 	});

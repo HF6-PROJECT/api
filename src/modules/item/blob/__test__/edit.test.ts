@@ -84,13 +84,15 @@ describe('PUT /api/blob', () => {
 
 		expect(response.statusCode).toBe(401);
 		expect(response.json()).toEqual({
-			error: 'Unauthorized',
-			message: 'Unauthorized',
+			error: 'UnauthorizedError',
+			errors: {
+				_: ['Unauthorized'],
+			},
 			statusCode: 401,
 		});
 	});
 
-	it('should return status 400, when blob id is provided but you do not own it', async () => {
+	it('should return status 401, when blob id is provided but you do not own it', async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const blob = await blobService.createBlob({
@@ -115,8 +117,10 @@ describe('PUT /api/blob', () => {
 
 		expect(response.statusCode).toBe(401);
 		expect(response.json()).toEqual({
-			error: 'Unauthorized',
-			message: 'Unauthorized',
+			error: 'UnauthorizedError',
+			errors: {
+				_: ['Unauthorized'],
+			},
 			statusCode: 401,
 		});
 	});
@@ -138,7 +142,7 @@ describe('PUT /api/blob', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toEqual({
-			error: 'Bad Request',
+			error: 'ValidationError',
 			errors: {
 				id: ['id must be a number'],
 			},
@@ -163,8 +167,10 @@ describe('PUT /api/blob', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toEqual({
-			error: 'Bad Request',
-			message: 'Blob not found',
+			error: 'BadRequestError',
+			errors: {
+				_: ['Blob not found'],
+			},
 			statusCode: 400,
 		});
 	});

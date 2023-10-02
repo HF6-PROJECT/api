@@ -20,7 +20,7 @@ export default fastifyPlugin(async (fastify: FastifyInstance) => {
 			});
 
 			return reply.status(400).send({
-				error: 'Bad Request',
+				error: 'ValidationError',
 				errors: errors,
 				statusCode: 400,
 			});

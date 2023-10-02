@@ -93,7 +93,7 @@ describe('POST /api/auth/login', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
+			error: 'ValidationError',
 			errors: {
 				_: ['Email is required', 'Password is required'],
 			},
@@ -113,7 +113,7 @@ describe('POST /api/auth/login', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
+			error: 'ValidationError',
 			errors: {
 				_: ['Email er påkrævet', 'Adgangskode er påkrævet'],
 			},
@@ -132,7 +132,7 @@ describe('POST /api/auth/login', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
+			error: 'ValidationError',
 			errors: {
 				_: ['Email is required'],
 			},
@@ -151,7 +151,7 @@ describe('POST /api/auth/login', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
+			error: 'ValidationError',
 			errors: {
 				_: ['Password is required'],
 			},

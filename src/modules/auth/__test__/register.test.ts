@@ -70,7 +70,7 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
+			error: 'ValidationError',
 			errors: {
 				email: ['Email must be of correct format'],
 			},
@@ -90,7 +90,7 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
+			error: 'ValidationError',
 			errors: {
 				_: ['Email is required'],
 			},
@@ -111,7 +111,7 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
+			error: 'ValidationError',
 			errors: {
 				email: ['Email must be of correct format'],
 			},
@@ -131,7 +131,7 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
+			error: 'ValidationError',
 			errors: {
 				_: ['Password is required'],
 			},
@@ -152,7 +152,7 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
+			error: 'ValidationError',
 			errors: {
 				password: ['Password must be atleast 8 characters'],
 			},
@@ -173,7 +173,7 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
+			error: 'ValidationError',
 			errors: {
 				password: ['Password must be atleast 8 characters'],
 			},
@@ -193,7 +193,7 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
+			error: 'ValidationError',
 			errors: {
 				_: ['Name is required'],
 			},
@@ -214,7 +214,7 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
+			error: 'ValidationError',
 			errors: {
 				name: ['You must choose a name'],
 			},
@@ -231,7 +231,7 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
+			error: 'ValidationError',
 			errors: {
 				_: ['Email is required', 'Password is required', 'Name is required'],
 			},
@@ -251,7 +251,7 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
+			error: 'ValidationError',
 			errors: {
 				_: ['Email er påkrævet', 'Adgangskode er påkrævet', 'Navn er påkrævet'],
 			},

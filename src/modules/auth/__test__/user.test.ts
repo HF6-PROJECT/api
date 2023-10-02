@@ -57,8 +57,10 @@ describe('GET /api/auth/user', () => {
 
 		expect(response.statusCode).toBe(401);
 		expect(response.json()).toMatchObject({
-			error: 'Unauthorized',
-			message: 'Unauthorized',
+			error: 'UnauthorizedError',
+			errors: {
+				_: ['Unauthorized'],
+			},
 			statusCode: 401,
 		});
 	});
@@ -74,8 +76,10 @@ describe('GET /api/auth/user', () => {
 
 		expect(response.statusCode).toBe(401);
 		expect(response.json()).toMatchObject({
-			error: 'Unauthorized',
-			message: 'Unauthorized',
+			error: 'UnauthorizedError',
+			errors: {
+				_: ['Unauthorized'],
+			},
 			statusCode: 401,
 		});
 	});

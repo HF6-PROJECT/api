@@ -25,8 +25,9 @@ export default fastifyPlugin(async (fastify: FastifyInstance) => {
 				statusCode: 400,
 			});
 		}
+		const statusCode = error.statusCode ?? /* istanbul ignore next */ 500;
 
-		return reply.status(error.statusCode ?? 500).send({
+		return reply.status(statusCode).send({
 			error: error.name,
 			errors: { _: [error.message] },
 			statusCode: error.statusCode,

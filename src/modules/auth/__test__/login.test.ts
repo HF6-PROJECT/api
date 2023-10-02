@@ -56,8 +56,10 @@ describe('POST /api/auth/login', () => {
 
 		expect(response.statusCode).toBe(401);
 		expect(response.json()).toMatchObject({
-			error: 'Unauthorized',
-			message: 'Email and/or password incorrect',
+			error: 'UnauthorizedError',
+			errors: {
+				_: ['Email and/or password incorrect'],
+			},
 			statusCode: 401,
 		});
 	});
@@ -74,8 +76,10 @@ describe('POST /api/auth/login', () => {
 
 		expect(response.statusCode).toBe(401);
 		expect(response.json()).toMatchObject({
-			error: 'Unauthorized',
-			message: 'Email and/or password incorrect',
+			error: 'UnauthorizedError',
+			errors: {
+				_: ['Email and/or password incorrect'],
+			},
 			statusCode: 401,
 		});
 	});

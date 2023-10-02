@@ -86,8 +86,10 @@ describe('POST /api/auth/refresh', () => {
 
 		expect(response.statusCode).toBe(401);
 		expect(response.json()).toMatchObject({
-			error: 'Unauthorized',
-			message: 'Unauthorized',
+			error: 'UnauthorizedError',
+			errors: {
+				_: ['Unauthorized'],
+			},
 			statusCode: 401,
 		});
 	});
@@ -111,8 +113,10 @@ describe('POST /api/auth/refresh', () => {
 
 		expect(response.statusCode).toBe(401);
 		expect(response.json()).toMatchObject({
-			error: 'Unauthorized',
-			message: 'Unauthorized',
+			error: 'UnauthorizedError',
+			errors: {
+				_: ['Unauthorized'],
+			},
 			statusCode: 401,
 		});
 	});
@@ -145,8 +149,10 @@ describe('POST /api/auth/refresh', () => {
 
 		expect(response.statusCode).toBe(401);
 		expect(response.json()).toMatchObject({
-			error: 'Unauthorized',
-			message: 'Unauthorized',
+			error: 'UnauthorizedError',
+			errors: {
+				_: ['Unauthorized'],
+			},
 			statusCode: 401,
 		});
 	});
@@ -168,8 +174,10 @@ describe('POST /api/auth/refresh', () => {
 
 		expect(response.statusCode).toBe(401);
 		expect(response.json()).toMatchObject({
-			error: 'Unauthorized',
-			message: 'Unauthorized',
+			error: 'UnauthorizedError',
+			errors: {
+				_: ['Unauthorized'],
+			},
 			statusCode: 401,
 		});
 	});
@@ -185,8 +193,10 @@ describe('POST /api/auth/refresh', () => {
 
 		expect(response.statusCode).toBe(401);
 		expect(response.json()).toMatchObject({
-			error: 'Unauthorized',
-			message: 'Unauthorized',
+			error: 'UnauthorizedError',
+			errors: {
+				_: ['Unauthorized'],
+			},
 			statusCode: 401,
 		});
 	});
@@ -207,8 +217,10 @@ describe('POST /api/auth/refresh', () => {
 
 		expect(response.statusCode).toBe(401);
 		expect(response.json()).toMatchObject({
-			error: 'Unauthorized',
-			message: 'Unauthorized',
+			error: 'UnauthorizedError',
+			errors: {
+				_: ['Unauthorized'],
+			},
 			statusCode: 401,
 		});
 	});

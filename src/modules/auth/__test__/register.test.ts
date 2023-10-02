@@ -49,8 +49,10 @@ describe('POST /api/auth/register', () => {
 
 		expect(response.statusCode).toBe(400);
 		expect(response.json()).toMatchObject({
-			error: 'Bad Request',
-			message: 'Email is already in use',
+			error: 'BadRequestError',
+			errors: {
+				_: ['Email is already in use'],
+			},
 			statusCode: 400,
 		});
 	});

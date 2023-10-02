@@ -25,6 +25,11 @@ export default fastifyPlugin(async (fastify: FastifyInstance) => {
 				statusCode: 400,
 			});
 		}
-		return reply.send(error);
+
+		return reply.status(error.statusCode ?? 500).send({
+			error: error.name,
+			errors: { _: [error.message] },
+			statusCode: error.statusCode,
+		});
 	});
 });

@@ -1,30 +1,21 @@
 import { User } from '@prisma/client';
 import UserService from '../../../auth/user.service';
 import AuthService from '../../../auth/auth.service';
-import FolderService from '../folder.service';
 
 describe('POST /api/folder', () => {
 	let userService: UserService;
 	let authService: AuthService;
-	let folderService: FolderService;
 
 	let user: User;
-	let otherUser: User;
 
 	beforeAll(async () => {
 		authService = new AuthService();
 		userService = new UserService();
-		folderService = new FolderService();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',
 			email: 'joe@biden.com',
 			password: '1234',
-		});
-		otherUser = await userService.createUser({
-			name: 'Joe Biden the 2nd',
-			email: 'joe2@biden.com',
-			password: '4321',
 		});
 	});
 

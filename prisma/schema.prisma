@@ -20,8 +20,9 @@ model User {
     sessions UserSession[]
     Item     Item[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt   DateTime      @default(now())
+    updatedAt   DateTime      @updatedAt
+    ItemSharing ItemSharing[]
 }
 
 model UserSession {
@@ -54,6 +55,8 @@ model Item {
 
     ItemBlob ItemBlob?
 
+    ItemSharing ItemSharing[]
+
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
     deletedAt DateTime?
@@ -69,5 +72,22 @@ model ItemBlob {
     blobUrl String @db.VarChar(1024)
     itemId  Int    @unique
 
-    item Item @relation(fields: [itemId], references: [id])
+    item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+}
+
+model ItemSharing {
+    id     Int @id @default(autoincrement())
+    itemId Int
+    userId Int
+
+    item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([itemId, userId])
+    @@index([itemId])
+    @@index([userId])
 }

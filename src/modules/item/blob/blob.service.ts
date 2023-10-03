@@ -93,14 +93,22 @@ export default class BlobService {
 	}
 
 	public async deleteBlobByItemId(itemId: number): Promise<void> {
-		const blob = await prisma.itemBlob.delete({
+		const itemBlob = await prisma.item.delete({
 			where: {
-				itemId: itemId,
+				id: itemId,
+			},
+			include: {
+				ItemBlob: true,
 			},
 		});
 
+		/* istanbul ignore next */
+		if (!itemBlob.ItemBlob) {
+			return;
+		}
+
 		try {
-			await this.deleteBlobByUrl(blob.blobUrl);
+			await this.deleteBlobByUrl(itemBlob.ItemBlob.blobUrl);
 		} catch (e) {
 			// Do nothing
 		}

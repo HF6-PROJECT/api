@@ -17,12 +17,12 @@ model User {
     email    String @unique @db.VarChar(255)
     password String @db.Text
 
-    sessions UserSession[]
-    Item     Item[]
-
-    createdAt   DateTime      @default(now())
-    updatedAt   DateTime      @updatedAt
+    sessions    UserSession[]
+    Item        Item[]
     ItemSharing ItemSharing[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model UserSession {
@@ -48,13 +48,10 @@ model Item {
     ownerId  Int
     parentId Int?
 
-    owner User @relation(fields: [ownerId], references: [id])
-
-    parentItem Item?  @relation("ItemToItem", fields: [parentId], references: [id])
-    Items      Item[] @relation("ItemToItem")
-
-    ItemBlob ItemBlob?
-
+    owner       User          @relation(fields: [ownerId], references: [id])
+    parentItem  Item?         @relation("ItemToItem", fields: [parentId], references: [id])
+    Items       Item[]        @relation("ItemToItem")
+    ItemBlob    ItemBlob?
     ItemSharing ItemSharing[]
 
     createdAt DateTime  @default(now())
@@ -81,7 +78,6 @@ model ItemSharing {
     userId Int
 
     item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
-
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     createdAt DateTime @default(now())

@@ -51,6 +51,7 @@ model Item {
     owner       User          @relation(fields: [ownerId], references: [id])
     parentItem  Item?         @relation("ItemToItem", fields: [parentId], references: [id])
     Items       Item[]        @relation("ItemToItem")
+    ItemFolder  ItemFolder?
     ItemBlob    ItemBlob?
     ItemSharing ItemSharing[]
 
@@ -62,6 +63,14 @@ model Item {
     @@index([parentId])
     @@index([ownerId, parentId])
     @@index([deletedAt])
+}
+
+model ItemFolder {
+    id       Int    @id @default(autoincrement())
+    color    String @db.VarChar(255)
+    itemId   Int    @unique
+
+    item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
 }
 
 model ItemBlob {

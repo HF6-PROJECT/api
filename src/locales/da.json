@@ -98,6 +98,26 @@
 			"notFound": "Delning ikke fundet",
 			"alreadyExists": "Delning findes allerede"
 		},
+		"folder": {
+			"notFound": "Mappen blev ikke fundet"
+		},
 		"notFound": "Item ikke fundet"
+	},
+	"folder": {
+		"id": {
+			"required": "id er påkrævet",
+			"type": "id skal være et tal"
+		},
+		"name": {
+			"required": "Navn er påkrævet",
+			"type": "Navn skal være en tekst"
+		},
+		"color": {
+			"required": "Farve er påkrævet",
+			"type": "Farve skal være en tekst"
+		},
+		"itemid": {
+			"type": "Item id skal være et tal"
+		}
 	}
 }

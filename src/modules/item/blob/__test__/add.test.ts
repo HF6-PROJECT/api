@@ -1,21 +1,30 @@
 import { User } from '@prisma/client';
 import UserService from '../../../auth/user.service';
 import AuthService from '../../../auth/auth.service';
+import ItemService from '../../item.service';
 
 describe('POST /api/blob', () => {
 	let userService: UserService;
 	let authService: AuthService;
+	let itemService: ItemService;
 
 	let user: User;
+	let otherUser: User;
 
 	beforeAll(async () => {
 		authService = new AuthService();
 		userService = new UserService();
+		itemService = new ItemService();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',
 			email: 'joe@biden.com',
 			password: '1234',
+		});
+		otherUser = await userService.createUser({
+			name: 'Joe Biden the 2nd',
+			email: 'joe2@biden.com',
+			password: '4321',
 		});
 	});
 
@@ -62,6 +71,43 @@ describe('POST /api/blob', () => {
 				payload: {
 					callbackUrl: 'https://example.com/callback',
 					clientPayload: JSON.stringify({ parentId: null }),
+					pathname: 'test.txt',
+				},
+			},
+		});
+
+		expect(response.statusCode).toBe(401);
+		expect(response.json()).toEqual({
+			error: 'UnauthorizedError',
+			errors: {
+				_: ['Unauthorized'],
+			},
+			statusCode: 401,
+		});
+	});
+
+	it('should return status 401, when clientPayload.parentId is not accessible to user', async () => {
+		const { accessToken } = await authService.createTokens(user.id);
+
+		const item = await itemService.createItem({
+			name: 'Test item',
+			ownerId: otherUser.id,
+			mimeType: 'application/vnd.cloudstore.folder',
+			parentId: null,
+		});
+
+		const response = await global.fastify.inject({
+			method: 'POST',
+			url: '/api/blob',
+			headers: {
+				'content-type': 'text/plain',
+				authorization: 'Bearer ' + accessToken,
+			},
+			payload: {
+				type: 'blob.generate-client-token',
+				payload: {
+					callbackUrl: 'https://example.com/callback',
+					clientPayload: JSON.stringify({ parentId: item.id }),
 					pathname: 'test.txt',
 				},
 			},

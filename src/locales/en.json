@@ -82,6 +82,22 @@
 		"blob": {
 			"notFound": "Blob not found"
 		},
+		"sharing": {
+			"id": {
+				"required": "id is required",
+				"type": "id must be a number"
+			},
+			"itemId": {
+				"required": "itemId is required",
+				"type": "itemId must be a number"
+			},
+			"userId": {
+				"required": "userId is required",
+				"type": "userId must be a number"
+			},
+			"notFound": "Sharing not found",
+			"alreadyExists": "Sharing already exists"
+		},
 		"notFound": "Item not found"
 	}
 }

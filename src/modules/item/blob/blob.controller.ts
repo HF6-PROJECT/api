@@ -1,12 +1,15 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { UploadInput, ReadInput, EditInput, DeleteInput } from './blob.schema';
 import BlobService from './blob.service';
+import AccessService from '../sharing/access.service';
 
 export default class BlobController {
 	private blobService: BlobService;
+	private accessService: AccessService;
 
-	constructor(blobService: BlobService) {
+	constructor(blobService: BlobService, accessService: AccessService) {
 		this.blobService = blobService;
+		this.accessService = accessService;
 	}
 
 	public async readHandler(
@@ -18,7 +21,7 @@ export default class BlobController {
 		try {
 			const blob = await this.blobService.getByItemId(request.params.id);
 
-			if (blob.ownerId !== request.user.sub) {
+			if (!(await this.accessService.hasAccessToItem(blob.id, request.user.sub))) {
 				return reply.unauthorized();
 			}
 
@@ -42,7 +45,7 @@ export default class BlobController {
 		try {
 			const blob = await this.blobService.getByItemId(request.body.id);
 
-			if (blob.ownerId !== request.user.sub) {
+			if (!(await this.accessService.hasAccessToItem(blob.id, request.user.sub))) {
 				return reply.unauthorized();
 			}
 
@@ -113,6 +116,16 @@ export default class BlobController {
 						throw new Error(request.i18n.t('item.upload.clientPayload.parentId.required'));
 					}
 
+					if (
+						clientPayloadObject.parentId !== null &&
+						!(await this.accessService.hasAccessToItem(
+							clientPayloadObject.parentId,
+							accessTokenPayload.sub,
+						))
+					) {
+						throw new Error('Unauthorized');
+					}
+
 					return JSON.stringify({
 						parentId: clientPayloadObject.parentId,
 						ownerId: accessTokenPayload.sub,
@@ -144,13 +157,13 @@ export default class BlobController {
 		try {
 			const blob = await this.blobService.getByItemId(request.params.id);
 
-			if (blob.ownerId !== request.user.sub) {
+			if (!(await this.accessService.hasAccessToItem(blob.id, request.user.sub))) {
 				return reply.unauthorized();
 			}
 
-			const updatedBlob = await this.blobService.deleteBlobByItemId(blob.id);
+			await this.blobService.deleteBlobByItemId(blob.id);
 
-			return reply.code(204).send(updatedBlob);
+			return reply.code(204).send();
 		} catch (e) {
 			if (e instanceof Error) {
 				return reply.badRequest(request.i18n.t(e.message));

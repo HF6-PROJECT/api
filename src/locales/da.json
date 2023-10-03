@@ -82,6 +82,22 @@
 		"blob": {
 			"notFound": "Blob ikke fundet"
 		},
+		"sharing": {
+			"id": {
+				"required": "id er påkrævet",
+				"type": "id skal være et tal"
+			},
+			"itemId": {
+				"required": "itemId er påkrævet",
+				"type": "itemId skal være et tal"
+			},
+			"userId": {
+				"required": "userId er påkrævet",
+				"type": "userId skal være et tal"
+			},
+			"notFound": "Delning ikke fundet",
+			"alreadyExists": "Delning findes allerede"
+		},
 		"notFound": "Item ikke fundet"
 	}
 }

@@ -1,8 +1,8 @@
 import { User } from '@prisma/client';
-import UserService from '../../auth/user.service';
-import AuthService from '../../auth/auth.service';
+import UserService from '../../../auth/user.service';
+import AuthService from '../../../auth/auth.service';
 
-describe('POST /api/item', () => {
+describe('POST /api/blob', () => {
 	let userService: UserService;
 	let authService: AuthService;
 
@@ -22,13 +22,12 @@ describe('POST /api/item', () => {
 	/*
 	 * Generate client token tests
 	 */
-
 	it('should return status 200 and return a new clientToken', async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const response = await global.fastify.inject({
 			method: 'POST',
-			url: '/api/item',
+			url: '/api/blob',
 			headers: {
 				'content-type': 'text/plain',
 				authorization: 'Bearer ' + accessToken,
@@ -36,7 +35,7 @@ describe('POST /api/item', () => {
 			payload: {
 				type: 'blob.generate-client-token',
 				payload: {
-					callbackUrl: 'https://example.com/api/item',
+					callbackUrl: 'https://example.com/callback',
 					clientPayload: JSON.stringify({ parentId: null }),
 					pathname: 'test.txt',
 				},
@@ -53,7 +52,7 @@ describe('POST /api/item', () => {
 	it('should return status 401, when unauthorized', async () => {
 		const response = await global.fastify.inject({
 			method: 'POST',
-			url: '/api/item',
+			url: '/api/blob',
 			headers: {
 				'content-type': 'text/plain',
 				authorization: 'invalid_access_token!!!',
@@ -61,7 +60,7 @@ describe('POST /api/item', () => {
 			payload: {
 				type: 'blob.generate-client-token',
 				payload: {
-					callbackUrl: 'https://example.com/api/item',
+					callbackUrl: 'https://example.com/callback',
 					clientPayload: JSON.stringify({ parentId: null }),
 					pathname: 'test.txt',
 				},
@@ -83,7 +82,7 @@ describe('POST /api/item', () => {
 
 		const response = await global.fastify.inject({
 			method: 'POST',
-			url: '/api/item',
+			url: '/api/blob',
 			headers: {
 				'content-type': 'text/plain',
 				authorization: 'Bearer ' + accessToken,
@@ -91,7 +90,7 @@ describe('POST /api/item', () => {
 			payload: {
 				type: 'blob.generate-client-token',
 				payload: {
-					callbackUrl: 'https://example.com/api/item',
+					callbackUrl: 'https://example.com/callback',
 					pathname: 'test.txt',
 				},
 			},
@@ -112,7 +111,7 @@ describe('POST /api/item', () => {
 
 		const response = await global.fastify.inject({
 			method: 'POST',
-			url: '/api/item',
+			url: '/api/blob',
 			headers: {
 				'content-type': 'text/plain',
 				authorization: 'Bearer ' + accessToken,
@@ -120,7 +119,7 @@ describe('POST /api/item', () => {
 			payload: {
 				type: 'blob.generate-client-token',
 				payload: {
-					callbackUrl: 'https://example.com/api/item',
+					callbackUrl: 'https://example.com/callback',
 					clientPayload: JSON.stringify({}),
 					pathname: 'test.txt',
 				},
@@ -142,7 +141,7 @@ describe('POST /api/item', () => {
 
 		const response = await global.fastify.inject({
 			method: 'POST',
-			url: '/api/item',
+			url: '/api/blob',
 			headers: {
 				'content-type': 'text/plain',
 				authorization: 'Bearer ' + accessToken,
@@ -163,11 +162,10 @@ describe('POST /api/item', () => {
 	/*
 	 * Upload completed callback tests
 	 */
-
 	it('should return status 400, when called without valid "x-vercel-signature" header', async () => {
 		const response = await global.fastify.inject({
 			method: 'POST',
-			url: '/api/item',
+			url: '/api/blob',
 			headers: {
 				'content-type': 'text/plain',
 			},

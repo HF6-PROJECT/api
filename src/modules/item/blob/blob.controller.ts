@@ -1,18 +1,65 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { UploadInput } from './item.schema';
+import { UploadInput, ReadInput, EditInput, DeleteInput } from './blob.schema';
 import BlobService from './blob.service';
-import ItemService from './item.service';
 
-export default class ItemController {
-	private itemService: ItemService;
+export default class BlobController {
 	private blobService: BlobService;
 
-	constructor(itemService: ItemService, blobService: BlobService) {
+	constructor(blobService: BlobService) {
 		this.blobService = blobService;
-		this.itemService = itemService;
 	}
 
-	public async uploadHandler(
+	public async readHandler(
+		request: FastifyRequest<{
+			Params: ReadInput;
+		}>,
+		reply: FastifyReply,
+	) {
+		try {
+			const blob = await this.blobService.getByItemId(request.params.id);
+
+			if (blob.ownerId !== request.user.sub) {
+				return reply.unauthorized();
+			}
+
+			return reply.code(200).send(blob);
+		} catch (e) {
+			if (e instanceof Error) {
+				return reply.badRequest(request.i18n.t(e.message));
+			}
+
+			/* istanbul ignore next */
+			return reply.badRequest();
+		}
+	}
+
+	public async editHandler(
+		request: FastifyRequest<{
+			Body: EditInput;
+		}>,
+		reply: FastifyReply,
+	) {
+		try {
+			const blob = await this.blobService.getByItemId(request.body.id);
+
+			if (blob.ownerId !== request.user.sub) {
+				return reply.unauthorized();
+			}
+
+			const updatedBlob = await this.blobService.updateBlob(request.body);
+
+			return reply.code(200).send(updatedBlob);
+		} catch (e) {
+			if (e instanceof Error) {
+				return reply.badRequest(request.i18n.t(e.message));
+			}
+
+			/* istanbul ignore next */
+			return reply.badRequest();
+		}
+	}
+
+	public async addHandler(
 		request: FastifyRequest<{
 			Body: UploadInput;
 		}>,
@@ -44,7 +91,7 @@ export default class ItemController {
 							throw new Error('Unauthorized');
 						}
 
-						await this.itemService.createItem({
+						await this.blobService.createBlob({
 							name: blob.pathname,
 							mimeType: blob.contentType,
 							blobUrl: blob.url,
@@ -53,7 +100,7 @@ export default class ItemController {
 						});
 					} catch (e) {
 						request.log.error(e);
-						await this.blobService.deleteBlob(blob.url);
+						await this.blobService.deleteBlobByUrl(blob.url);
 					}
 				},
 				async (clientPayload, accessTokenPayload) => {
@@ -81,6 +128,32 @@ export default class ItemController {
 				}
 
 				return reply.badRequest(e.message);
+			}
+
+			/* istanbul ignore next */
+			return reply.badRequest();
+		}
+	}
+
+	public async deleteHandler(
+		request: FastifyRequest<{
+			Params: DeleteInput;
+		}>,
+		reply: FastifyReply,
+	) {
+		try {
+			const blob = await this.blobService.getByItemId(request.params.id);
+
+			if (blob.ownerId !== request.user.sub) {
+				return reply.unauthorized();
+			}
+
+			const updatedBlob = await this.blobService.deleteBlobByItemId(blob.id);
+
+			return reply.code(204).send(updatedBlob);
+		} catch (e) {
+			if (e instanceof Error) {
+				return reply.badRequest(request.i18n.t(e.message));
 			}
 
 			/* istanbul ignore next */

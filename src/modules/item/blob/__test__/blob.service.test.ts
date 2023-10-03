@@ -1,8 +1,8 @@
 import { User } from '@prisma/client';
-import UserService from '../../auth/user.service';
-import BlobService from '../blob.service';
+import UserService from '../../../auth/user.service';
+import BlobService from '../../blob/blob.service';
 import { FastifyRequest } from 'fastify';
-import AuthService from '../../auth/auth.service';
+import AuthService from '../../../auth/auth.service';
 import { HandleUploadBody } from '@vercel/blob/client';
 
 describe('BlobService', () => {
@@ -33,7 +33,7 @@ describe('BlobService', () => {
 					body: {
 						type: 'blob.generate-client-token',
 						payload: {
-							callbackUrl: 'https://example.com/api/item',
+							callbackUrl: 'https://example.com/callback',
 							clientPayload: JSON.stringify({ parentId: null }),
 							pathname: 'test.txt',
 						},

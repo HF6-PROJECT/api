@@ -1,9 +1,13 @@
 import { FastifyInstance, FastifyPluginOptions } from 'fastify';
 
 import fastifyPlugin from 'fastify-plugin';
-import blob from './blob';
-import { getOptionsWithPrefix } from '..';
+import { blobSchemas } from './blob.schema';
+import blobRoute from './blob.route';
 
 export default fastifyPlugin(async (fastify: FastifyInstance, options: FastifyPluginOptions) => {
-	await fastify.register(blob, getOptionsWithPrefix(options, '/blob'));
+	for (const schema of blobSchemas) {
+		fastify.addSchema(schema);
+	}
+
+	await fastify.register(blobRoute, options);
 });

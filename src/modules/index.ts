@@ -4,7 +4,7 @@ import fastifyPlugin from 'fastify-plugin';
 import auth from './auth';
 import item from './item';
 
-const getOptionsWithPrefix = (options: FastifyPluginOptions, prefix: string) => {
+export const getOptionsWithPrefix = (options: FastifyPluginOptions, prefix: string) => {
 	return {
 		...options,
 		prefix: options.prefix + prefix,
@@ -18,6 +18,6 @@ export default fastifyPlugin(async (fastify: FastifyInstance, options: FastifyPl
 
 	await Promise.all([
 		fastify.register(auth, getOptionsWithPrefix(options, '/auth')),
-		fastify.register(item, getOptionsWithPrefix(options, '/item')),
+		fastify.register(item, options),
 	]);
 });

@@ -52,7 +52,7 @@ model Item {
     parentItem Item?  @relation("ItemToItem", fields: [parentId], references: [id])
     Items      Item[] @relation("ItemToItem")
 
-    ItemBlob ItemBlob[]
+    ItemBlob ItemBlob?
 
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt

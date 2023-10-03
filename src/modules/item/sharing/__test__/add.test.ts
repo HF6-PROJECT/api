@@ -31,7 +31,7 @@ describe('POST /api/sharing', () => {
 		});
 	});
 
-	it('should return status 200 and return a new clientToken', async () => {
+	it('should return status 200 and return the created sharing', async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const item = await itemService.createItem({

@@ -49,7 +49,8 @@ describe('DELETE /api/folder/:id', () => {
 			},
 		});
 
-		expect(response.body).toEqual('');
+		expect(response.statusCode).toBe(204);
+		expect(response.body).toBe('');
 
 		await expect(folderService.getByItemId(folder.id)).rejects.toThrowError();
 		await expect(itemService.getById(folder.id)).rejects.toThrowError();

@@ -105,6 +105,7 @@ export default class FolderController {
 			}
 
 			await this.folderService.deleteFolderByItemId(request.params.id);
+			return reply.code(204).send();
 		} catch (e) {
 			if (e instanceof Error) {
 				return reply.badRequest(request.i18n.t(e.message));

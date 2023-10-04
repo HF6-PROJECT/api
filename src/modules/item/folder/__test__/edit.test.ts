@@ -1,14 +1,12 @@
 import { User } from '@prisma/client';
 import UserService from '../../../auth/user.service';
 import AuthService from '../../../auth/auth.service';
-import BlobService from '../blob.service';
-import ItemService from '../../item.service';
+import FolderService from '../folder.service';
 
-describe('DELETE /api/blob/:id', () => {
+describe('PUT /api/folder', () => {
 	let userService: UserService;
 	let authService: AuthService;
-	let blobService: BlobService;
-	let itemService: ItemService;
+	let folderService: FolderService;
 
 	let user: User;
 	let otherUser: User;
@@ -16,8 +14,7 @@ describe('DELETE /api/blob/:id', () => {
 	beforeAll(async () => {
 		authService = new AuthService();
 		userService = new UserService();
-		blobService = new BlobService();
-		itemService = new ItemService();
+		folderService = new FolderService();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',
@@ -31,47 +28,59 @@ describe('DELETE /api/blob/:id', () => {
 		});
 	});
 
-	it('should return status 204', async () => {
+	it('should return status 200 and folder', async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
-		const blob = await blobService.createBlob({
-			mimeType: 'text/plain',
-			name: 'test1.txt',
+		const folder = await folderService.createFolder({
+			name: 'Folder1',
 			ownerId: user.id,
 			parentId: null,
-			blobUrl: 'https://example.com/test1.txt',
+			color: '#78BC61',
 		});
 
 		const response = await global.fastify.inject({
-			method: 'DELETE',
-			url: '/api/blob/' + blob.id,
+			method: 'PUT',
+			url: '/api/folder',
 			headers: {
 				authorization: 'Bearer ' + accessToken,
 			},
+			payload: {
+				id: folder.id,
+				name: folder.name + ' updated',
+				color: '#79BC61',
+			},
 		});
 
-		expect(response.statusCode).toBe(204);
-		expect(response.body).toEqual('');
-
-		await expect(blobService.getByItemId(blob.id)).rejects.toThrowError();
-		await expect(itemService.getById(blob.id)).rejects.toThrowError();
+		expect(response.statusCode).toBe(200);
+		expect(response.json()).toEqual({
+			...folder,
+			name: folder.name + ' updated',
+			color: '#79BC61',
+			createdAt: folder.createdAt.toISOString(),
+			updatedAt: expect.any(String),
+			deletedAt: folder.deletedAt?.toISOString() ?? null,
+		});
 	});
 
 	it('should return status 401, when unauthorized', async () => {
-		const blob = await blobService.createBlob({
-			mimeType: 'text/plain',
-			name: 'test1.txt',
+		const folder = await folderService.createFolder({
+			name: 'Folder1',
 			ownerId: user.id,
 			parentId: null,
-			blobUrl: 'https://example.com/test1.txt',
+			color: '#78BC61',
 		});
 
 		const response = await global.fastify.inject({
-			method: 'DELETE',
-			url: '/api/blob/' + blob.id,
+			method: 'PUT',
+			url: '/api/folder',
 			headers: {
 				authorization: 'invalid_access_token!!!',
 			},
+			payload: {
+				id: folder.id,
+				name: folder.name + ' updated',
+				color: '#79BC61',
+			},
 		});
 
 		expect(response.statusCode).toBe(401);
@@ -84,22 +93,26 @@ describe('DELETE /api/blob/:id', () => {
 		});
 	});
 
-	it('should return status 401, when blob id is provided but you do not own it', async () => {
+	it('should return status 401, when folder id is not accessible to you', async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
-		const blob = await blobService.createBlob({
-			mimeType: 'text/plain',
-			name: 'test.txt',
+		const folder = await folderService.createFolder({
+			name: 'Folder1',
 			ownerId: otherUser.id,
 			parentId: null,
-			blobUrl: 'https://example.com/test.txt',
+			color: '#78BC61',
 		});
 
 		const response = await global.fastify.inject({
-			method: 'DELETE',
-			url: '/api/blob/' + blob.id,
+			method: 'PUT',
+			url: '/api/folder',
 			headers: {
 				authorization: 'Bearer ' + accessToken,
+			},
+			payload: {
+				id: folder.id,
+				name: folder.name + ' updated',
+				color: '#79BC61',
 			},
 		});
 
@@ -113,14 +126,19 @@ describe('DELETE /api/blob/:id', () => {
 		});
 	});
 
-	it("should return status 400, when blob id isn't a number", async () => {
+	it("should return status 400, when folder id isn't a number", async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const response = await global.fastify.inject({
-			method: 'DELETE',
-			url: '/api/blob/invalid_id',
+			method: 'PUT',
+			url: '/api/folder',
 			headers: {
 				authorization: 'Bearer ' + accessToken,
+			},
+			payload: {
+				id: 'invalid_id',
+				name: 'updated',
+				color: '#79BC61',
 			},
 		});
 
@@ -134,14 +152,44 @@ describe('DELETE /api/blob/:id', () => {
 		});
 	});
 
-	it("should return status 400, when blob with id doesn't exist", async () => {
+	it("should return status 400, when folder id isn't given", async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const response = await global.fastify.inject({
-			method: 'DELETE',
-			url: '/api/blob/1234',
+			method: 'PUT',
+			url: '/api/folder',
 			headers: {
 				authorization: 'Bearer ' + accessToken,
+			},
+			payload: {
+				name: 'updated',
+				color: '#79BC61',
+			},
+		});
+
+		expect(response.statusCode).toBe(400);
+		expect(response.json()).toEqual({
+			error: 'ValidationError',
+			errors: {
+				_: ['id is required'],
+			},
+			statusCode: 400,
+		});
+	});
+
+	it("should return status 400, when folder with id doesn't exist", async () => {
+		const { accessToken } = await authService.createTokens(user.id);
+
+		const response = await global.fastify.inject({
+			method: 'PUT',
+			url: '/api/folder',
+			headers: {
+				authorization: 'Bearer ' + accessToken,
+			},
+			payload: {
+				id: 1234,
+				name: 'updated',
+				color: '#79BC61',
 			},
 		});
 
@@ -149,7 +197,7 @@ describe('DELETE /api/blob/:id', () => {
 		expect(response.json()).toEqual({
 			error: 'BadRequestError',
 			errors: {
-				_: ['Blob not found'],
+				_: ['Folder not found'],
 			},
 			statusCode: 400,
 		});

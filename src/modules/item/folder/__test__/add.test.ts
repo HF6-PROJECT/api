@@ -1,21 +1,30 @@
 import { User } from '@prisma/client';
 import UserService from '../../../auth/user.service';
 import AuthService from '../../../auth/auth.service';
+import FolderService from '../folder.service';
 
 describe('POST /api/folder', () => {
 	let userService: UserService;
 	let authService: AuthService;
+	let folderService: FolderService;
 
 	let user: User;
+	let otherUser: User;
 
 	beforeAll(async () => {
 		authService = new AuthService();
 		userService = new UserService();
+		folderService = new FolderService();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',
 			email: 'joe@biden.com',
 			password: '1234',
+		});
+		otherUser = await userService.createUser({
+			name: 'Joe Biden the 2nd',
+			email: 'joe2@biden.com',
+			password: '4321',
 		});
 	});
 
@@ -59,6 +68,39 @@ describe('POST /api/folder', () => {
 				name: 'Folder Name',
 				color: '#78BC61',
 				parentId: null,
+			},
+		});
+
+		expect(response.statusCode).toBe(401);
+		expect(response.json()).toEqual({
+			error: 'UnauthorizedError',
+			errors: {
+				_: ['Unauthorized'],
+			},
+			statusCode: 401,
+		});
+	});
+
+	it('should return status 401, when parent id is provided, but no access to parent', async () => {
+		const { accessToken } = await authService.createTokens(user.id);
+
+		const folder = await folderService.createFolder({
+			name: 'Folder1',
+			ownerId: otherUser.id,
+			parentId: null,
+			color: '#78BC61',
+		});
+
+		const response = await global.fastify.inject({
+			method: 'POST',
+			url: '/api/folder',
+			headers: {
+				authorization: 'Bearer ' + accessToken,
+			},
+			payload: {
+				name: 'Folder Name',
+				color: '#78BC61',
+				parentId: folder.id,
 			},
 		});
 
@@ -142,7 +184,7 @@ describe('POST /api/folder', () => {
 		expect(response.json()).toEqual({
 			error: 'ValidationError',
 			errors: {
-				parentId: ['Item id must be a number'],
+				parentId: ['Parent id must be a number'],
 			},
 			statusCode: 400,
 		});

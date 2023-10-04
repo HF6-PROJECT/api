@@ -116,8 +116,8 @@
 			"required": "Color is required",
 			"type": "Color must be a string"
 		},
-		"itemid": {
-			"type": "Item id must be a number"
+		"parentId": {
+			"type": "Parent id must be a number"
 		}
 	}
 }

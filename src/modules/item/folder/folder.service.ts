@@ -9,7 +9,7 @@ export default class FolderService {
 				item: {
 					create: {
 						name: input.name,
-						mimeType: input.mimeType,
+						mimeType: 'application/vnd.cloudstore.folder',
 						ownerId: input.ownerId,
 						parentId: input.parentId,
 					},

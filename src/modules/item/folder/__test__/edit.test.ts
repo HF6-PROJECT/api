@@ -32,7 +32,6 @@ describe('PUT /api/folder', () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const folder = await folderService.createFolder({
-			mimeType: 'application/vnd.cloudstore.folder',
 			name: 'Folder1',
 			ownerId: user.id,
 			parentId: null,
@@ -65,7 +64,6 @@ describe('PUT /api/folder', () => {
 
 	it('should return status 401, when unauthorized', async () => {
 		const folder = await folderService.createFolder({
-			mimeType: 'application/vnd.cloudstore.folder',
 			name: 'Folder1',
 			ownerId: user.id,
 			parentId: null,
@@ -95,11 +93,10 @@ describe('PUT /api/folder', () => {
 		});
 	});
 
-	it('should return status 401, when folder id is provided but you do not own it', async () => {
+	it('should return status 401, when folder id is not accessible to you', async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const folder = await folderService.createFolder({
-			mimeType: 'application/vnd.cloudstore.folder',
 			name: 'Folder1',
 			ownerId: otherUser.id,
 			parentId: null,

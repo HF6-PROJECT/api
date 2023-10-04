@@ -1,12 +1,15 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { ReadInput, EditInput, AddInput, DeleteInput } from './folder.schema';
 import FolderService from './folder.service';
+import AccessService from '../sharing/access.service';
 
-export default class ItemController {
+export default class FolderController {
 	private folderService: FolderService;
+	private accessService: AccessService;
 
-	constructor(folderService: FolderService) {
+	constructor(folderService: FolderService, accessService: AccessService) {
 		this.folderService = folderService;
+		this.accessService = accessService;
 	}
 
 	public async readHandler(
@@ -18,7 +21,7 @@ export default class ItemController {
 		try {
 			const folder = await this.folderService.getByItemId(request.params.id);
 
-			if (folder.ownerId !== request.user.sub) {
+			if (!(await this.accessService.hasAccessToItem(folder.id, request.user.sub))) {
 				return reply.unauthorized();
 			}
 
@@ -42,7 +45,7 @@ export default class ItemController {
 		try {
 			const folder = await this.folderService.getByItemId(request.body.id);
 
-			if (folder.ownerId !== request.user.sub) {
+			if (!(await this.accessService.hasAccessToItem(folder.id, request.user.sub))) {
 				return reply.unauthorized();
 			}
 
@@ -66,9 +69,16 @@ export default class ItemController {
 		reply: FastifyReply,
 	) {
 		try {
+			if (
+				request.body.parentId !== null &&
+				request.body.parentId !== undefined &&
+				!(await this.accessService.hasAccessToItem(request.body.parentId, request.user.sub))
+			) {
+				return reply.unauthorized();
+			}
+
 			const folder = await this.folderService.createFolder({
 				name: request.body.name,
-				mimeType: 'application/vnd.cloudstore.folder',
 				color: request.body.color,
 				ownerId: request.user.sub,
 				parentId: request.body.parentId ?? null,
@@ -90,7 +100,7 @@ export default class ItemController {
 		try {
 			const folder = await this.folderService.getByItemId(request.params.id);
 
-			if (folder.ownerId !== request.user.sub) {
+			if (!(await this.accessService.hasAccessToItem(folder.id, request.user.sub))) {
 				return reply.unauthorized();
 			}
 

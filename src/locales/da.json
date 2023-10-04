@@ -116,8 +116,8 @@
 			"required": "Farve er påkrævet",
 			"type": "Farve skal være en tekst"
 		},
-		"itemid": {
-			"type": "Item id skal være et tal"
+		"parentId": {
+			"type": "Parent id skal være et tal"
 		}
 	}
 }

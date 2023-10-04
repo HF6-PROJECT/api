@@ -80,7 +80,7 @@ const editFolderSchema = {
 		parentId: {
 			type: ['number', 'null'],
 			errorMessage: {
-				type: 'folder.itemid.type',
+				type: 'folder.parentId.type',
 			},
 		},
 	},
@@ -144,7 +144,7 @@ const addFolderSchema = {
 		parentId: {
 			type: ['number', 'null'],
 			errorMessage: {
-				type: 'folder.itemid.type',
+				type: 'folder.parentId.type',
 			},
 		},
 	},
@@ -218,14 +218,13 @@ export type DeleteInput = FromSchema<typeof deleteFolderSchema>;
 export type AddFolder = {
 	name: string;
 	color: string;
-	mimeType: string;
 	ownerId: number;
 	parentId: number | null;
 };
 
 export type ItemFolder = prismaItemFolderType & { item: Item };
 export type Folder = Omit<prismaItemFolderType, 'id' | 'itemId'> & Item;
-export type UpdateFolder = { id: number } & Partial<AddFolder> & UpdateItem;
+export type UpdateFolder = { id: number } & Partial<AddFolder> & Omit<UpdateItem, 'mimeType'>;
 
 export const folderSchemas = [
 	addFolderSchema,

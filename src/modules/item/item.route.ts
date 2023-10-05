@@ -15,7 +15,7 @@ export default async (fastify: FastifyInstance) => {
 		'/',
 		{
 			schema: {
-				tags: ['Items'],
+				tags: ['Item'],
 				response: {
 					200: { $ref: 'itemsResponseSchema' },
 				},
@@ -27,14 +27,14 @@ export default async (fastify: FastifyInstance) => {
 			},
 			onRequest: [fastify.authenticate],
 		},
-		itemController.browseHandler.bind(itemController),
+		itemController.itemRootHandler.bind(itemController),
 	);
 
 	fastify.get(
 		'/:parentId',
 		{
 			schema: {
-				tags: ['Items'],
+				tags: ['Item'],
 				params: { $ref: 'readItemsSchema' },
 				response: {
 					200: { $ref: 'itemsResponseSchema' },
@@ -47,6 +47,6 @@ export default async (fastify: FastifyInstance) => {
 			},
 			onRequest: [fastify.authenticate],
 		},
-		itemController.readHandler.bind(itemController),
+		itemController.itemHandler.bind(itemController),
 	);
 };

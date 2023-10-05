@@ -11,10 +11,9 @@ export default fastifyPlugin(async (fastify: FastifyInstance, options: FastifyPl
 	await fastify.register(blob, getOptionsWithPrefix(options, '/blob'));
 	await fastify.register(folder, getOptionsWithPrefix(options, '/folder'));
 	await fastify.register(sharing, getOptionsWithPrefix(options, '/sharing'));
+	await fastify.register(itemRoute, getOptionsWithPrefix(options, '/item'));
 
 	for (const schema of itemSchemas) {
 		fastify.addSchema(schema);
 	}
-
-	await fastify.register(itemRoute, options);
 });

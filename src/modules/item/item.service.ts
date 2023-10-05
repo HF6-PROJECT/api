@@ -47,7 +47,7 @@ export default class ItemService {
 		return this.formatItems(items);
 	}
 
-	public async getByOwnerIdAndParentIdAndSharred(
+	public async getAllOwnedAndSharredItemsByParentIdAndUserId(
 		userId: number,
 		parentId: number | null,
 	): Promise<ItemWithProperties[]> {
@@ -61,7 +61,7 @@ export default class ItemService {
 					{
 						ItemSharing: {
 							some: {
-								userId,
+								userId: userId,
 							},
 						},
 					},

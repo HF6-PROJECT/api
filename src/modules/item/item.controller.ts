@@ -12,22 +12,18 @@ export default class ItemController {
 		this.accessService = accessService;
 	}
 
-	public async browseHandler(request: FastifyRequest, reply: FastifyReply) {
+	public async itemRootHandler(request: FastifyRequest, reply: FastifyReply) {
 		try {
 			const items = await this.itemService.getByOwnerIdAndParentId(request.user.sub, null);
 
 			return reply.code(200).send(items);
 		} catch (e) {
-			if (e instanceof Error) {
-				return reply.badRequest(request.i18n.t(e.message));
-			}
-
 			/* istanbul ignore next */
 			return reply.badRequest();
 		}
 	}
 
-	public async readHandler(
+	public async itemHandler(
 		request: FastifyRequest<{
 			Params: ReadInput;
 		}>,
@@ -38,17 +34,13 @@ export default class ItemController {
 				return reply.unauthorized();
 			}
 
-			const items = await this.itemService.getByOwnerIdAndParentIdAndSharred(
+			const items = await this.itemService.getAllOwnedAndSharredItemsByParentIdAndUserId(
 				request.user.sub,
 				request.params.parentId,
 			);
 
 			return reply.code(200).send(items);
 		} catch (e) {
-			if (e instanceof Error) {
-				return reply.badRequest(request.i18n.t(e.message));
-			}
-
 			/* istanbul ignore next */
 			return reply.badRequest();
 		}

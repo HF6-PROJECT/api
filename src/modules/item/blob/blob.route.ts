@@ -15,9 +15,6 @@ export default async (fastify: FastifyInstance) => {
 		'/:id',
 		{
 			schema: {
-				headers: {
-					Authorization: true,
-				},
 				tags: ['Blob'],
 				params: { $ref: 'readBlobSchema' },
 				response: {
@@ -25,6 +22,11 @@ export default async (fastify: FastifyInstance) => {
 						$ref: 'readBlobResponseSchema',
 					},
 				},
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
 			},
 			onRequest: [fastify.authenticate],
 		},
@@ -35,9 +37,6 @@ export default async (fastify: FastifyInstance) => {
 		'/',
 		{
 			schema: {
-				headers: {
-					Authorization: true,
-				},
 				tags: ['Blob'],
 				body: { $ref: 'editBlobSchema' },
 				response: {
@@ -45,6 +44,11 @@ export default async (fastify: FastifyInstance) => {
 						$ref: 'editBlobResponseSchema',
 					},
 				},
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
 			},
 			onRequest: [fastify.authenticate],
 		},
@@ -55,14 +59,16 @@ export default async (fastify: FastifyInstance) => {
 		'/',
 		{
 			schema: {
-				headers: {
-					Authorization: true,
-				},
 				tags: ['Blob'],
 				body: { $ref: 'uploadBlobSchema' },
 				response: {
 					200: { $ref: 'uploadBlobResponseSchema' },
 				},
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
 			},
 		},
 		blobController.addHandler.bind(blobController),
@@ -72,11 +78,13 @@ export default async (fastify: FastifyInstance) => {
 		'/:id',
 		{
 			schema: {
-				headers: {
-					Authorization: true,
-				},
 				tags: ['Blob'],
 				params: { $ref: 'deleteBlobSchema' },
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
 			},
 			onRequest: [fastify.authenticate],
 		},

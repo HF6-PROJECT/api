@@ -104,7 +104,7 @@ export default class FolderController {
 				return reply.unauthorized();
 			}
 
-			await this.folderService.deleteFolderByItemId(request.params.id);
+			await this.folderService.deleteFolderByItemId(folder.id);
 			return reply.code(204).send();
 		} catch (e) {
 			if (e instanceof Error) {

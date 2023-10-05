@@ -19,6 +19,14 @@ export default fastifyPlugin(
 					title: 'API',
 					version: '1.0.0',
 				},
+				components: {
+					securitySchemes: {
+						bearerAuth: {
+							type: 'http',
+							scheme: 'bearer',
+						},
+					},
+				},
 			},
 		});
 

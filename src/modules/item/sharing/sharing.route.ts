@@ -15,9 +15,6 @@ export default async (fastify: FastifyInstance) => {
 		'/:id',
 		{
 			schema: {
-				headers: {
-					Authorization: true,
-				},
 				tags: ['Sharing'],
 				params: { $ref: 'readSharingSchema' },
 				response: {
@@ -25,6 +22,11 @@ export default async (fastify: FastifyInstance) => {
 						$ref: 'readSharingResponseSchema',
 					},
 				},
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
 			},
 			onRequest: [fastify.authenticate],
 		},
@@ -35,9 +37,6 @@ export default async (fastify: FastifyInstance) => {
 		'/',
 		{
 			schema: {
-				headers: {
-					Authorization: true,
-				},
 				tags: ['Sharing'],
 				body: { $ref: 'editSharingSchema' },
 				response: {
@@ -45,6 +44,11 @@ export default async (fastify: FastifyInstance) => {
 						$ref: 'editSharingResponseSchema',
 					},
 				},
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
 			},
 			onRequest: [fastify.authenticate],
 		},
@@ -55,14 +59,16 @@ export default async (fastify: FastifyInstance) => {
 		'/',
 		{
 			schema: {
-				headers: {
-					Authorization: true,
-				},
 				tags: ['Sharing'],
 				body: { $ref: 'uploadSharingSchema' },
 				response: {
 					200: { $ref: 'uploadSharingResponseSchema' },
 				},
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
 			},
 			onRequest: [fastify.authenticate],
 		},
@@ -73,11 +79,13 @@ export default async (fastify: FastifyInstance) => {
 		'/:id',
 		{
 			schema: {
-				headers: {
-					Authorization: true,
-				},
 				tags: ['Sharing'],
 				params: { $ref: 'deleteSharingSchema' },
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
 			},
 			onRequest: [fastify.authenticate],
 		},

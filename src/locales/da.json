@@ -79,6 +79,10 @@
 			"required": "id er påkrævet",
 			"type": "id skal være et tal"
 		},
+		"parentId": {
+			"required": "Parent id er påkrævet",
+			"type": "Parent id skal være et tal"
+		},
 		"blob": {
 			"notFound": "Blob ikke fundet"
 		},

@@ -16,14 +16,16 @@ export default async (fastify: FastifyInstance) => {
 		'/:id',
 		{
 			schema: {
-				headers: {
-					Authorization: true,
-				},
 				tags: ['Folder'],
 				params: { $ref: 'readFolderSchema' },
 				response: {
 					200: { $ref: 'readFolderResponseSchema' },
 				},
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
 			},
 			onRequest: [fastify.authenticate],
 		},
@@ -34,14 +36,16 @@ export default async (fastify: FastifyInstance) => {
 		'/',
 		{
 			schema: {
-				headers: {
-					Authorization: true,
-				},
 				tags: ['Folder'],
 				body: { $ref: 'editFolderSchema' },
 				response: {
 					200: { $ref: 'editFolderResponseSchema' },
 				},
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
 			},
 			onRequest: [fastify.authenticate],
 		},
@@ -52,14 +56,16 @@ export default async (fastify: FastifyInstance) => {
 		'/',
 		{
 			schema: {
-				headers: {
-					Authorization: true,
-				},
 				tags: ['Folder'],
 				body: { $ref: 'addFolderSchema' },
 				response: {
 					200: { $ref: 'addFolderResponseSchema' },
 				},
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
 			},
 			onRequest: [fastify.authenticate],
 		},
@@ -70,11 +76,13 @@ export default async (fastify: FastifyInstance) => {
 		'/:id',
 		{
 			schema: {
-				headers: {
-					Authorization: true,
-				},
 				tags: ['Folder'],
 				params: { $ref: 'deleteFolderSchema' },
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
 			},
 			onRequest: [fastify.authenticate],
 		},

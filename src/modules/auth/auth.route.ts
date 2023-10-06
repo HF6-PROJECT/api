@@ -66,13 +66,15 @@ export default async (fastify: FastifyInstance) => {
 		'/user',
 		{
 			schema: {
-				headers: {
-					Authorization: true,
-				},
 				tags: ['Auth'],
 				response: {
 					200: { $ref: 'userResponseSchema' },
 				},
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
 			},
 			onRequest: [fastify.authenticate],
 		},

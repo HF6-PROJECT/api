@@ -79,6 +79,10 @@
 			"required": "id is required",
 			"type": "id must be a number"
 		},
+		"parentId": {
+			"required": "Parent id is required",
+			"type": "Parent id must be a number"
+		},
 		"blob": {
 			"notFound": "Blob not found"
 		},

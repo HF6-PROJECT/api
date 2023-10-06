@@ -1,5 +1,5 @@
 import { prisma } from '../../plugins/prisma';
-import { CreateItem, Item } from './item.schema';
+import { CreateItem, Item, ItemPrismaProperties, ItemWithProperties } from './item.schema';
 
 export default class ItemService {
 	public async getById(id: number): Promise<Item> {
@@ -27,5 +27,64 @@ export default class ItemService {
 		});
 
 		return item;
+	}
+
+	public async getByOwnerIdAndParentId(
+		ownerId: number,
+		parentId: number | null,
+	): Promise<ItemWithProperties[]> {
+		const items = await prisma.item.findMany({
+			where: {
+				parentId: parentId,
+				ownerId: ownerId,
+			},
+			include: {
+				ItemBlob: true,
+				ItemFolder: true,
+			},
+		});
+
+		return this.formatItems(items);
+	}
+
+	public async getAllOwnedAndSharredItemsByParentIdAndUserId(
+		userId: number,
+		parentId: number | null,
+	): Promise<ItemWithProperties[]> {
+		const items = await prisma.item.findMany({
+			where: {
+				parentId: parentId,
+				OR: [
+					{
+						ownerId: userId,
+					},
+					{
+						ItemSharing: {
+							some: {
+								userId: userId,
+							},
+						},
+					},
+				],
+			},
+			include: {
+				ItemBlob: true,
+				ItemFolder: true,
+			},
+		});
+
+		return this.formatItems(items);
+	}
+
+	private formatItems(items: ItemPrismaProperties[]): ItemWithProperties[] {
+		return items.map((element) => {
+			const { ItemFolder, ItemBlob, ...strippedElement } = element;
+
+			return {
+				...ItemBlob,
+				...ItemFolder,
+				...strippedElement,
+			};
+		});
 	}
 }

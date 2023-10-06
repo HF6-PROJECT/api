@@ -3,13 +3,14 @@ import UserService from '../../auth/user.service';
 import ItemService from '../item.service';
 import FolderService from '../folder/folder.service';
 import SharingService from '../sharing/sharing.service';
+import BlobService from '../blob/blob.service';
 
-// The tests can only be run with folder - Since the blob service has istanbul ignore next
 describe('ItemService', () => {
 	let itemService: ItemService;
 	let userService: UserService;
 	let folderService: FolderService;
 	let sharingService: SharingService;
+	let blobService: BlobService;
 
 	let user: User;
 	let otherUser: User;
@@ -19,6 +20,7 @@ describe('ItemService', () => {
 		userService = new UserService();
 		folderService = new FolderService();
 		sharingService = new SharingService();
+		blobService = new BlobService();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',
@@ -34,12 +36,21 @@ describe('ItemService', () => {
 
 	describe('getByOwnerIdAndParentId()', () => {
 		it('should return all items in users root folder', async () => {
+			await blobService.createBlob({
+				mimeType: 'text/plain',
+				name: 'test1.txt',
+				ownerId: user.id,
+				parentId: null,
+				blobUrl: 'https://example.com/test1.txt',
+			});
+
 			await folderService.createFolder({
 				name: 'Folder1',
 				color: '#123456',
 				ownerId: user.id,
 				parentId: null,
 			});
+
 			await folderService.createFolder({
 				name: 'Folder2',
 				color: '#987654',
@@ -50,6 +61,18 @@ describe('ItemService', () => {
 			const items = await itemService.getByOwnerIdAndParentId(user.id, null);
 
 			expect(items).toEqual([
+				{
+					id: expect.any(Number),
+					name: 'test1.txt',
+					blobUrl: 'https://example.com/test1.txt',
+					parentId: null,
+					ownerId: user.id,
+					mimeType: 'text/plain',
+					itemId: expect.any(Number),
+					createdAt: expect.any(Date),
+					deletedAt: null,
+					updatedAt: expect.any(Date),
+				},
 				{
 					id: expect.any(Number),
 					name: 'Folder1',
@@ -77,7 +100,7 @@ describe('ItemService', () => {
 			]);
 		});
 
-		it('should return empty array', async () => {
+		it('should return empty array, when no items are found', async () => {
 			expect(await itemService.getByOwnerIdAndParentId(1234, null)).toStrictEqual([]);
 			expect(await itemService.getByOwnerIdAndParentId(1234, 1234)).toStrictEqual([]);
 		});
@@ -95,6 +118,22 @@ describe('ItemService', () => {
 			await sharingService.createSharing({
 				itemId: folder.id,
 				userId: otherUser.id,
+			});
+
+			const blob1 = await blobService.createBlob({
+				mimeType: 'text/plain',
+				name: 'test1.txt',
+				ownerId: user.id,
+				parentId: folder.id,
+				blobUrl: 'https://example.com/test1.txt',
+			});
+
+			await blobService.createBlob({
+				mimeType: 'text/plain',
+				name: 'test2.txt',
+				ownerId: user.id,
+				parentId: folder.id,
+				blobUrl: 'https://example.com/test2.txt',
 			});
 
 			const folder1 = await folderService.createFolder({
@@ -117,6 +156,11 @@ describe('ItemService', () => {
 			});
 
 			await sharingService.createSharing({
+				itemId: blob1.id,
+				userId: otherUser.id,
+			});
+
+			await sharingService.createSharing({
 				itemId: folder1.id,
 				userId: otherUser.id,
 			});
@@ -136,6 +180,30 @@ describe('ItemService', () => {
 			);
 
 			const expectedOwner = [
+				{
+					id: expect.any(Number),
+					name: 'test1.txt',
+					blobUrl: 'https://example.com/test1.txt',
+					parentId: folder.id,
+					ownerId: user.id,
+					mimeType: 'text/plain',
+					itemId: expect.any(Number),
+					createdAt: expect.any(Date),
+					deletedAt: null,
+					updatedAt: expect.any(Date),
+				},
+				{
+					id: expect.any(Number),
+					name: 'test2.txt',
+					blobUrl: 'https://example.com/test2.txt',
+					parentId: folder.id,
+					ownerId: user.id,
+					mimeType: 'text/plain',
+					itemId: expect.any(Number),
+					createdAt: expect.any(Date),
+					deletedAt: null,
+					updatedAt: expect.any(Date),
+				},
 				{
 					id: expect.any(Number),
 					name: 'Folder1',
@@ -176,6 +244,18 @@ describe('ItemService', () => {
 			const expectedSharredUser = [
 				{
 					id: expect.any(Number),
+					name: 'test1.txt',
+					blobUrl: 'https://example.com/test1.txt',
+					parentId: folder.id,
+					ownerId: user.id,
+					mimeType: 'text/plain',
+					itemId: expect.any(Number),
+					createdAt: expect.any(Date),
+					deletedAt: null,
+					updatedAt: expect.any(Date),
+				},
+				{
+					id: expect.any(Number),
 					name: 'Folder1',
 					color: '#123456',
 					parentId: folder.id,
@@ -204,7 +284,7 @@ describe('ItemService', () => {
 			expect(itemsSharredUser).toEqual(expectedSharredUser);
 		});
 
-		it('should return empty array', async () => {
+		it('should return empty array, when no items are found', async () => {
 			expect(
 				await itemService.getAllOwnedAndSharredItemsByParentIdAndUserId(1234, null),
 			).toStrictEqual([]);

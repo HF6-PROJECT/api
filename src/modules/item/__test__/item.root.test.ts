@@ -2,12 +2,13 @@ import { User } from '@prisma/client';
 import UserService from '../../auth/user.service';
 import FolderService from '../folder/folder.service';
 import AuthService from '../../auth/auth.service';
+import BlobService from '../blob/blob.service';
 
-// The tests can only be run with folder - Since the blob service has istanbul ignore next
 describe('GET /api/item', () => {
 	let userService: UserService;
 	let folderService: FolderService;
 	let authService: AuthService;
+	let blobService: BlobService;
 
 	let user: User;
 
@@ -15,6 +16,7 @@ describe('GET /api/item', () => {
 		userService = new UserService();
 		folderService = new FolderService();
 		authService = new AuthService();
+		blobService = new BlobService();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',
@@ -23,8 +25,16 @@ describe('GET /api/item', () => {
 		});
 	});
 
-	it('All items should be returned from the users root "folder"', async () => {
+	it('Should return status 200 and all items from root folder', async () => {
 		const { accessToken } = await authService.createTokens(user.id);
+
+		await blobService.createBlob({
+			mimeType: 'text/plain',
+			name: 'test1.txt',
+			ownerId: user.id,
+			parentId: null,
+			blobUrl: 'https://example.com/test1.txt',
+		});
 
 		await folderService.createFolder({
 			name: 'Folder1',
@@ -51,6 +61,17 @@ describe('GET /api/item', () => {
 		expect(response.json()).toEqual([
 			{
 				id: expect.any(Number),
+				name: 'test1.txt',
+				blobUrl: 'https://example.com/test1.txt',
+				parentId: null,
+				ownerId: user.id,
+				mimeType: 'text/plain',
+				createdAt: expect.any(String),
+				deletedAt: null,
+				updatedAt: expect.any(String),
+			},
+			{
+				id: expect.any(Number),
 				name: 'Folder1',
 				color: '#123456',
 				parentId: null,
@@ -74,7 +95,15 @@ describe('GET /api/item', () => {
 		]);
 	});
 
-	it('Getting root items should return error, if auth is not set', async () => {
+	it('Should return status 401, when unauthorized', async () => {
+		await blobService.createBlob({
+			mimeType: 'text/plain',
+			name: 'test1.txt',
+			ownerId: user.id,
+			parentId: null,
+			blobUrl: 'https://example.com/test1.txt',
+		});
+
 		await folderService.createFolder({
 			name: 'Folder1',
 			color: '#123456',

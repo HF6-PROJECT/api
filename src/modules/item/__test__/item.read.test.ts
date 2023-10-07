@@ -3,12 +3,14 @@ import UserService from '../../auth/user.service';
 import FolderService from '../folder/folder.service';
 import AuthService from '../../auth/auth.service';
 import BlobService from '../blob/blob.service';
+import DocsService from '../docs/docs.service';
 
 describe('GET /api/item/:parentId', () => {
 	let userService: UserService;
 	let folderService: FolderService;
 	let authService: AuthService;
 	let blobService: BlobService;
+	let docsService: DocsService;
 
 	let user: User;
 	let otherUser: User;
@@ -18,6 +20,7 @@ describe('GET /api/item/:parentId', () => {
 		folderService = new FolderService();
 		authService = new AuthService();
 		blobService = new BlobService();
+		docsService = new DocsService();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',
@@ -56,6 +59,13 @@ describe('GET /api/item/:parentId', () => {
 			parentId: parentFolder.id,
 		});
 
+		await docsService.createDocs({
+			name: 'Docs1',
+			text: 'Docs1 text',
+			ownerId: user.id,
+			parentId: parentFolder.id,
+		});
+
 		const response = await global.fastify.inject({
 			method: 'GET',
 			url: '/api/item/' + parentFolder.id,
@@ -84,6 +94,17 @@ describe('GET /api/item/:parentId', () => {
 				parentId: parentFolder.id,
 				ownerId: user.id,
 				mimeType: 'application/vnd.cloudstore.folder',
+				createdAt: expect.any(String),
+				deletedAt: null,
+				updatedAt: expect.any(String),
+			},
+			{
+				id: expect.any(Number),
+				name: 'Docs1',
+				text: 'Docs1 text',
+				parentId: parentFolder.id,
+				ownerId: user.id,
+				mimeType: 'application/vnd.cloudstore.docs',
 				createdAt: expect.any(String),
 				deletedAt: null,
 				updatedAt: expect.any(String),

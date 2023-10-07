@@ -3,12 +3,14 @@ import UserService from '../../auth/user.service';
 import FolderService from '../folder/folder.service';
 import AuthService from '../../auth/auth.service';
 import BlobService from '../blob/blob.service';
+import DocsService from '../docs/docs.service';
 
 describe('GET /api/item', () => {
 	let userService: UserService;
 	let folderService: FolderService;
 	let authService: AuthService;
 	let blobService: BlobService;
+	let docsService: DocsService;
 
 	let user: User;
 
@@ -17,6 +19,7 @@ describe('GET /api/item', () => {
 		folderService = new FolderService();
 		authService = new AuthService();
 		blobService = new BlobService();
+		docsService = new DocsService();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',
@@ -45,6 +48,13 @@ describe('GET /api/item', () => {
 		await folderService.createFolder({
 			name: 'Folder2',
 			color: '#987654',
+			ownerId: user.id,
+			parentId: null,
+		});
+
+		await docsService.createDocs({
+			name: 'Docs1',
+			text: 'Docs1 text',
 			ownerId: user.id,
 			parentId: null,
 		});
@@ -88,6 +98,17 @@ describe('GET /api/item', () => {
 				parentId: null,
 				ownerId: user.id,
 				mimeType: 'application/vnd.cloudstore.folder',
+				createdAt: expect.any(String),
+				deletedAt: null,
+				updatedAt: expect.any(String),
+			},
+			{
+				id: expect.any(Number),
+				name: 'Docs1',
+				text: 'Docs1 text',
+				parentId: null,
+				ownerId: user.id,
+				mimeType: 'application/vnd.cloudstore.docs',
 				createdAt: expect.any(String),
 				deletedAt: null,
 				updatedAt: expect.any(String),

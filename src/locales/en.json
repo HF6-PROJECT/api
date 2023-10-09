@@ -108,6 +108,9 @@
 		"docs": {
 			"notFound": "Docs not found"
 		},
+		"shortcut": {
+			"notFound": "Shortcut not found"
+		},
 		"notFound": "Item not found"
 	},
 	"folder": {
@@ -139,6 +142,23 @@
 		"text": {
 			"required": "Text is required",
 			"type": "Text must be a string"
+		},
+		"parentId": {
+			"type": "Parent id must be a number"
+		}
+	},
+	"shortcut": {
+		"id": {
+			"required": "id is required",
+			"type": "id must be a number"
+		},
+		"name": {
+			"required": "Name is required",
+			"type": "Name must be a string"
+		},
+		"linkedItemId": {
+			"required": "Linked itemId is required",
+			"type": "Linked itemId must be a number"
 		},
 		"parentId": {
 			"type": "Parent id must be a number"

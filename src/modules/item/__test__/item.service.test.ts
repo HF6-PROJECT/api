@@ -4,6 +4,7 @@ import ItemService from '../item.service';
 import FolderService from '../folder/folder.service';
 import SharingService from '../sharing/sharing.service';
 import BlobService from '../blob/blob.service';
+import ShortcutService from '../shortcut/shortcut.service';
 
 describe('ItemService', () => {
 	let itemService: ItemService;
@@ -11,6 +12,7 @@ describe('ItemService', () => {
 	let folderService: FolderService;
 	let sharingService: SharingService;
 	let blobService: BlobService;
+	let shortcutService: ShortcutService;
 
 	let user: User;
 	let otherUser: User;
@@ -21,6 +23,7 @@ describe('ItemService', () => {
 		folderService = new FolderService();
 		sharingService = new SharingService();
 		blobService = new BlobService();
+		shortcutService = new ShortcutService();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',
@@ -44,7 +47,7 @@ describe('ItemService', () => {
 				blobUrl: 'https://example.com/test1.txt',
 			});
 
-			await folderService.createFolder({
+			const folder = await folderService.createFolder({
 				name: 'Folder1',
 				color: '#123456',
 				ownerId: user.id,
@@ -55,6 +58,13 @@ describe('ItemService', () => {
 				name: 'Folder2',
 				color: '#987654',
 				ownerId: user.id,
+				parentId: null,
+			});
+
+			await shortcutService.createShortcut({
+				name: 'Shortcut',
+				ownerId: user.id,
+				linkedItemId: folder.id,
 				parentId: null,
 			});
 
@@ -93,6 +103,18 @@ describe('ItemService', () => {
 					ownerId: user.id,
 					itemId: expect.any(Number),
 					mimeType: 'application/vnd.cloudstore.folder',
+					createdAt: expect.any(Date),
+					deletedAt: null,
+					updatedAt: expect.any(Date),
+				},
+				{
+					id: expect.any(Number),
+					name: 'Shortcut',
+					parentId: null,
+					ownerId: user.id,
+					linkedItemId: folder.id,
+					itemId: expect.any(Number),
+					mimeType: 'application/vnd.cloudstore.shortcut',
 					createdAt: expect.any(Date),
 					deletedAt: null,
 					updatedAt: expect.any(Date),
@@ -170,6 +192,25 @@ describe('ItemService', () => {
 				userId: otherUser.id,
 			});
 
+			const shortcut1 = await shortcutService.createShortcut({
+				name: 'Shortcut1',
+				ownerId: user.id,
+				linkedItemId: folder1.id,
+				parentId: folder.id,
+			});
+
+			await shortcutService.createShortcut({
+				name: 'Shortcut2',
+				ownerId: user.id,
+				linkedItemId: folder3.id,
+				parentId: folder.id,
+			});
+
+			await sharingService.createSharing({
+				itemId: shortcut1.id,
+				userId: otherUser.id,
+			});
+
 			const itemsOwner = await itemService.getAllOwnedAndSharredItemsByParentIdAndUserId(
 				user.id,
 				folder.id,
@@ -240,6 +281,30 @@ describe('ItemService', () => {
 					deletedAt: null,
 					updatedAt: expect.any(Date),
 				},
+				{
+					id: expect.any(Number),
+					name: 'Shortcut1',
+					parentId: folder.id,
+					linkedItemId: folder1.id,
+					ownerId: user.id,
+					itemId: expect.any(Number),
+					mimeType: 'application/vnd.cloudstore.shortcut',
+					createdAt: expect.any(Date),
+					deletedAt: null,
+					updatedAt: expect.any(Date),
+				},
+				{
+					id: expect.any(Number),
+					name: 'Shortcut2',
+					parentId: folder.id,
+					linkedItemId: folder3.id,
+					ownerId: user.id,
+					itemId: expect.any(Number),
+					mimeType: 'application/vnd.cloudstore.shortcut',
+					createdAt: expect.any(Date),
+					deletedAt: null,
+					updatedAt: expect.any(Date),
+				},
 			];
 			const expectedSharredUser = [
 				{
@@ -274,6 +339,18 @@ describe('ItemService', () => {
 					ownerId: user.id,
 					itemId: expect.any(Number),
 					mimeType: 'application/vnd.cloudstore.folder',
+					createdAt: expect.any(Date),
+					deletedAt: null,
+					updatedAt: expect.any(Date),
+				},
+				{
+					id: expect.any(Number),
+					name: 'Shortcut1',
+					parentId: folder.id,
+					linkedItemId: folder1.id,
+					ownerId: user.id,
+					itemId: expect.any(Number),
+					mimeType: 'application/vnd.cloudstore.shortcut',
 					createdAt: expect.any(Date),
 					deletedAt: null,
 					updatedAt: expect.any(Date),

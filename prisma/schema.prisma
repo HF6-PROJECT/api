@@ -48,13 +48,15 @@ model Item {
     ownerId  Int
     parentId Int?
 
-    owner       User          @relation(fields: [ownerId], references: [id])
-    parentItem  Item?         @relation("ItemToItem", fields: [parentId], references: [id])
-    Items       Item[]        @relation("ItemToItem")
-    ItemFolder  ItemFolder?
-    ItemBlob    ItemBlob?
-    ItemDocs    ItemDocs?
-    ItemSharing ItemSharing[]
+    owner                 User          @relation(fields: [ownerId], references: [id])
+    parentItem            Item?         @relation("ItemToItem", fields: [parentId], references: [id])
+    Items                 Item[]        @relation("ItemToItem")
+    ItemFolder            ItemFolder?
+    ItemBlob              ItemBlob?
+    ItemDocs              ItemDocs?
+    ItemSharing           ItemSharing[]
+    ItemShortcut          ItemShortcut? @relation("shortcutItem")
+    LinkedItemShortcut    ItemShortcut[] @relation("linkedItem")
 
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
@@ -104,4 +106,15 @@ model ItemSharing {
     @@unique([itemId, userId])
     @@index([itemId])
     @@index([userId])
+}
+
+model ItemShortcut {
+    id           Int @id @default(autoincrement())
+    itemId       Int @unique
+    linkedItemId Int
+
+    shortcutItem Item @relation("shortcutItem", fields: [itemId], references: [id], onDelete: Cascade)
+    linkedItem   Item @relation("linkedItem", fields: [linkedItemId], references: [id], onDelete: Cascade)
+    
+    @@index([linkedItemId])
 }

@@ -6,6 +6,7 @@ import docs from './docs';
 import folder from './folder';
 import sharing from './sharing';
 import itemRoute from './item.route';
+import shortcut from './shortcut';
 import { itemSchemas } from './item.schema';
 
 export default fastifyPlugin(async (fastify: FastifyInstance, options: FastifyPluginOptions) => {
@@ -13,6 +14,7 @@ export default fastifyPlugin(async (fastify: FastifyInstance, options: FastifyPl
 	await fastify.register(docs, getOptionsWithPrefix(options, '/docs'));
 	await fastify.register(folder, getOptionsWithPrefix(options, '/folder'));
 	await fastify.register(sharing, getOptionsWithPrefix(options, '/sharing'));
+	await fastify.register(shortcut, getOptionsWithPrefix(options, '/shortcut'));
 	await fastify.register(itemRoute, getOptionsWithPrefix(options, '/item'));
 
 	for (const schema of itemSchemas) {

@@ -1,11 +1,13 @@
 import { User } from '@prisma/client';
 import UserService from '../../../auth/user.service';
 import AuthService from '../../../auth/auth.service';
-import FolderService from '../folder.service';
+import ShortcutService from '../shortcut.service';
+import FolderService from '../../folder/folder.service';
 
-describe('PUT /api/folder', () => {
+describe('PUT /api/shortcut', () => {
 	let userService: UserService;
 	let authService: AuthService;
+	let shortcutService: ShortcutService;
 	let folderService: FolderService;
 
 	let user: User;
@@ -14,6 +16,7 @@ describe('PUT /api/folder', () => {
 	beforeAll(async () => {
 		authService = new AuthService();
 		userService = new UserService();
+		shortcutService = new ShortcutService();
 		folderService = new FolderService();
 
 		user = await userService.createUser({
@@ -28,7 +31,7 @@ describe('PUT /api/folder', () => {
 		});
 	});
 
-	it('should return status 200 and folder', async () => {
+	it('should return status 200 and shortcut', async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const folder = await folderService.createFolder({
@@ -38,27 +41,33 @@ describe('PUT /api/folder', () => {
 			color: '#78BC61',
 		});
 
+		const shortcut = await shortcutService.createShortcut({
+			name: 'Shortcut Folder',
+			ownerId: user.id,
+			linkedItemId: folder.id,
+			parentId: null,
+		});
+
 		const response = await global.fastify.inject({
 			method: 'PUT',
-			url: '/api/folder',
+			url: '/api/shortcut',
 			headers: {
 				authorization: 'Bearer ' + accessToken,
 			},
 			payload: {
-				id: folder.id,
-				name: folder.name + ' updated',
-				color: '#79BC61',
+				id: shortcut.id,
+				name: shortcut.name + ' Updated',
 			},
 		});
 
 		expect(response.statusCode).toBe(200);
 		expect(response.json()).toEqual({
-			...folder,
-			name: folder.name + ' updated',
-			color: '#79BC61',
-			createdAt: folder.createdAt.toISOString(),
+			...shortcut,
+			name: shortcut.name + ' Updated',
+			linkedItemId: folder.id,
+			createdAt: shortcut.createdAt.toISOString(),
 			updatedAt: expect.any(String),
-			deletedAt: folder.deletedAt?.toISOString() ?? null,
+			deletedAt: shortcut.deletedAt?.toISOString() ?? null,
 		});
 	});
 
@@ -70,16 +79,22 @@ describe('PUT /api/folder', () => {
 			color: '#78BC61',
 		});
 
+		const shortcut = await shortcutService.createShortcut({
+			name: 'Shortcut Folder',
+			ownerId: user.id,
+			linkedItemId: folder.id,
+			parentId: null,
+		});
+
 		const response = await global.fastify.inject({
 			method: 'PUT',
-			url: '/api/folder',
+			url: '/api/shortcut',
 			headers: {
 				authorization: 'invalid_access_token!!!',
 			},
 			payload: {
-				id: folder.id,
-				name: folder.name + ' updated',
-				color: '#79BC61',
+				id: shortcut.id,
+				name: shortcut.name + ' Updated',
 			},
 		});
 
@@ -93,7 +108,7 @@ describe('PUT /api/folder', () => {
 		});
 	});
 
-	it('should return status 401, when moving folder to a folder without sharing access', async () => {
+	it('should return status 401, when moving shortcut to a folder without sharing access', async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const parentFolder = await folderService.createFolder({
@@ -110,16 +125,22 @@ describe('PUT /api/folder', () => {
 			color: '#78BC61',
 		});
 
+		const shortcut = await shortcutService.createShortcut({
+			name: 'Shortcut Folder',
+			ownerId: user.id,
+			linkedItemId: folder.id,
+			parentId: null,
+		});
+
 		const response = await global.fastify.inject({
 			method: 'PUT',
-			url: '/api/folder',
+			url: '/api/shortcut',
 			headers: {
 				authorization: 'Bearer ' + accessToken,
 			},
 			payload: {
-				id: folder.id,
-				name: 'Folder1',
-				color: '#78BC61',
+				id: shortcut.id,
+				name: 'Shortcut Folder',
 				parentId: parentFolder.id,
 			},
 		});
@@ -134,7 +155,7 @@ describe('PUT /api/folder', () => {
 		});
 	});
 
-	it('should return status 401, when folder id is not accessible to you', async () => {
+	it('should return status 401, when shortcut id is not accessible to you', async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const folder = await folderService.createFolder({
@@ -144,16 +165,22 @@ describe('PUT /api/folder', () => {
 			color: '#78BC61',
 		});
 
+		const shortcut = await shortcutService.createShortcut({
+			name: 'Shortcut Folder',
+			ownerId: otherUser.id,
+			linkedItemId: folder.id,
+			parentId: null,
+		});
+
 		const response = await global.fastify.inject({
 			method: 'PUT',
-			url: '/api/folder',
+			url: '/api/shortcut',
 			headers: {
 				authorization: 'Bearer ' + accessToken,
 			},
 			payload: {
-				id: folder.id,
-				name: folder.name + ' updated',
-				color: '#79BC61',
+				id: shortcut.id,
+				name: 'Folder Shortcut Updated',
 			},
 		});
 
@@ -167,19 +194,18 @@ describe('PUT /api/folder', () => {
 		});
 	});
 
-	it("should return status 400, when folder id isn't a number", async () => {
+	it("should return status 400, when shortcut id isn't a number", async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const response = await global.fastify.inject({
 			method: 'PUT',
-			url: '/api/folder',
+			url: '/api/shortcut',
 			headers: {
 				authorization: 'Bearer ' + accessToken,
 			},
 			payload: {
 				id: 'invalid_id',
 				name: 'updated',
-				color: '#79BC61',
 			},
 		});
 
@@ -193,18 +219,17 @@ describe('PUT /api/folder', () => {
 		});
 	});
 
-	it("should return status 400, when folder id isn't given", async () => {
+	it("should return status 400, when shortcut id isn't given", async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const response = await global.fastify.inject({
 			method: 'PUT',
-			url: '/api/folder',
+			url: '/api/shortcut',
 			headers: {
 				authorization: 'Bearer ' + accessToken,
 			},
 			payload: {
 				name: 'updated',
-				color: '#79BC61',
 			},
 		});
 
@@ -218,19 +243,18 @@ describe('PUT /api/folder', () => {
 		});
 	});
 
-	it("should return status 400, when folder with id doesn't exist", async () => {
+	it("should return status 400, when shortcut with id doesn't exist", async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const response = await global.fastify.inject({
 			method: 'PUT',
-			url: '/api/folder',
+			url: '/api/shortcut',
 			headers: {
 				authorization: 'Bearer ' + accessToken,
 			},
 			payload: {
 				id: 1234,
 				name: 'updated',
-				color: '#79BC61',
 			},
 		});
 
@@ -238,7 +262,7 @@ describe('PUT /api/folder', () => {
 		expect(response.json()).toEqual({
 			error: 'BadRequestError',
 			errors: {
-				_: ['Folder not found'],
+				_: ['Shortcut not found'],
 			},
 			statusCode: 400,
 		});

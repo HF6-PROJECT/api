@@ -4,6 +4,7 @@ import FolderService from '../folder/folder.service';
 import AuthService from '../../auth/auth.service';
 import BlobService from '../blob/blob.service';
 import DocsService from '../docs/docs.service';
+import ShortcutService from '../shortcut/shortcut.service';
 
 describe('GET /api/item', () => {
 	let userService: UserService;
@@ -11,6 +12,7 @@ describe('GET /api/item', () => {
 	let authService: AuthService;
 	let blobService: BlobService;
 	let docsService: DocsService;
+	let shortcutService: ShortcutService;
 
 	let user: User;
 
@@ -20,6 +22,7 @@ describe('GET /api/item', () => {
 		authService = new AuthService();
 		blobService = new BlobService();
 		docsService = new DocsService();
+		shortcutService = new ShortcutService();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',
@@ -39,7 +42,7 @@ describe('GET /api/item', () => {
 			blobUrl: 'https://example.com/test1.txt',
 		});
 
-		await folderService.createFolder({
+		const folder = await folderService.createFolder({
 			name: 'Folder1',
 			color: '#123456',
 			ownerId: user.id,
@@ -56,6 +59,13 @@ describe('GET /api/item', () => {
 			name: 'Docs1',
 			text: 'Docs1 text',
 			ownerId: user.id,
+			parentId: null,
+		});
+
+		await shortcutService.createShortcut({
+			name: 'Shortcut',
+			ownerId: user.id,
+			linkedItemId: folder.id,
 			parentId: null,
 		});
 
@@ -113,6 +123,16 @@ describe('GET /api/item', () => {
 				deletedAt: null,
 				updatedAt: expect.any(String),
 			},
+			{
+				id: expect.any(Number),
+				name: 'Shortcut',
+				parentId: null,
+				ownerId: user.id,
+				mimeType: 'application/vnd.cloudstore.shortcut',
+				createdAt: expect.any(String),
+				deletedAt: null,
+				updatedAt: expect.any(String),
+			},
 		]);
 	});
 
@@ -125,7 +145,7 @@ describe('GET /api/item', () => {
 			blobUrl: 'https://example.com/test1.txt',
 		});
 
-		await folderService.createFolder({
+		const folder = await folderService.createFolder({
 			name: 'Folder1',
 			color: '#123456',
 			ownerId: user.id,
@@ -135,6 +155,13 @@ describe('GET /api/item', () => {
 			name: 'Folder2',
 			color: '#987654',
 			ownerId: user.id,
+			parentId: null,
+		});
+
+		await shortcutService.createShortcut({
+			name: 'Shortcut',
+			ownerId: user.id,
+			linkedItemId: folder.id,
 			parentId: null,
 		});
 

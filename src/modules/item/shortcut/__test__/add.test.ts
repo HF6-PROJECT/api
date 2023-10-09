@@ -54,8 +54,68 @@ describe('POST /api/shortcut', () => {
 		expect(response.json()).toEqual({
 			id: expect.any(Number),
 			name: 'Shortcut Folder',
+			linkedItemId: folder.id,
 			parentId: null,
 			ownerId: user.id,
+			mimeType: 'application/vnd.cloudstore.shortcut',
+			createdAt: expect.any(String),
+			deletedAt: null,
+			updatedAt: expect.any(String),
+		});
+	});
+
+	it('should return status 200 and item, when adding a shortcut twice', async () => {
+		const { accessToken } = await authService.createTokens(user.id);
+
+		const folder = await folderService.createFolder({
+			name: 'Folder1',
+			ownerId: user.id,
+			parentId: null,
+			color: '#78BC61',
+		});
+
+		const response = await global.fastify.inject({
+			method: 'POST',
+			url: '/api/shortcut',
+			headers: {
+				authorization: 'Bearer ' + accessToken,
+			},
+			payload: {
+				name: 'Shortcut Folder',
+				linkedItemId: folder.id,
+			},
+		});
+
+		const response2 = await global.fastify.inject({
+			method: 'POST',
+			url: '/api/shortcut',
+			headers: {
+				authorization: 'Bearer ' + accessToken,
+			},
+			payload: {
+				name: 'Shortcut Folder2',
+				linkedItemId: folder.id,
+			},
+		});
+
+		expect(response.statusCode).toBe(200);
+		expect(response.json()).toEqual({
+			id: expect.any(Number),
+			name: 'Shortcut Folder',
+			parentId: null,
+			ownerId: user.id,
+			linkedItemId: folder.id,
+			mimeType: 'application/vnd.cloudstore.shortcut',
+			createdAt: expect.any(String),
+			deletedAt: null,
+			updatedAt: expect.any(String),
+		});
+		expect(response2.json()).toEqual({
+			id: expect.any(Number),
+			name: 'Shortcut Folder2',
+			parentId: null,
+			ownerId: user.id,
+			linkedItemId: folder.id,
 			mimeType: 'application/vnd.cloudstore.shortcut',
 			createdAt: expect.any(String),
 			deletedAt: null,

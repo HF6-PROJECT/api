@@ -21,7 +21,6 @@ export default class ShortcutService {
 			},
 			include: {
 				shortcutItem: true,
-				linkedItem: true,
 			},
 		});
 
@@ -35,7 +34,6 @@ export default class ShortcutService {
 			},
 			include: {
 				shortcutItem: true,
-				linkedItem: true,
 			},
 		});
 
@@ -61,7 +59,6 @@ export default class ShortcutService {
 			},
 			include: {
 				shortcutItem: true,
-				linkedItem: true,
 			},
 		});
 
@@ -78,6 +75,7 @@ export default class ShortcutService {
 
 	private formatItemShortcut(itemShortcut: ItemShortcut): Shortcut {
 		return {
+			linkedItemId: itemShortcut.linkedItemId,
 			...itemShortcut.shortcutItem,
 		};
 	}

@@ -11,10 +11,7 @@ CREATE TABLE "ItemShortcut" (
 CREATE UNIQUE INDEX "ItemShortcut_itemId_key" ON "ItemShortcut"("itemId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ItemShortcut_linkedItemId_key" ON "ItemShortcut"("linkedItemId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "ItemShortcut_itemId_linkedItemId_key" ON "ItemShortcut"("itemId", "linkedItemId");
+CREATE INDEX "ItemShortcut_linkedItemId_idx" ON "ItemShortcut"("linkedItemId");
 
 -- AddForeignKey
 ALTER TABLE "ItemShortcut" ADD CONSTRAINT "ItemShortcut_itemId_fkey" FOREIGN KEY ("itemId") REFERENCES "Item"("id") ON DELETE CASCADE ON UPDATE CASCADE;

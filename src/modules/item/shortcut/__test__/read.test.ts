@@ -59,6 +59,7 @@ describe('GET /api/shortcut/:id', () => {
 		expect(response.statusCode).toBe(200);
 		expect(response.json()).toEqual({
 			...shortcut,
+			linkedItemId: folder.id,
 			createdAt: shortcut.createdAt.toISOString(),
 			updatedAt: shortcut.updatedAt.toISOString(),
 			deletedAt: shortcut.deletedAt?.toISOString() ?? null,

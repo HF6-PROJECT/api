@@ -28,11 +28,11 @@ const readShortcutResponseSchema = {
 		id: {
 			type: 'number',
 		},
-		color: {
-			type: 'string',
-		},
 		parentId: {
 			type: ['number', 'null'],
+		},
+		linkedItemId: {
+			type: 'number',
 		},
 		name: {
 			type: 'string',
@@ -97,6 +97,9 @@ const editShortcutResponseSchema = {
 		parentId: {
 			type: ['number', 'null'],
 		},
+		linkedItemId: {
+			type: 'number',
+		},
 		name: {
 			type: 'string',
 		},
@@ -159,8 +162,8 @@ const addShortcutResponseSchema = {
 		name: {
 			type: 'string',
 		},
-		color: {
-			type: 'string',
+		linkedItemId: {
+			type: 'number',
 		},
 		parentId: {
 			type: ['number', 'null'],
@@ -214,8 +217,8 @@ export type AddShortcut = {
 	parentId: number | null;
 };
 
-export type ItemShortcut = prismaItemShortcutType & { shortcutItem: Item } & { linkedItem: Item };
-export type Shortcut = Item;
+export type ItemShortcut = prismaItemShortcutType & { shortcutItem: Item };
+export type Shortcut = Omit<prismaItemShortcutType, 'id' | 'itemId'> & Item;
 export type UpdateShortcut = { id: number } & Partial<AddShortcut> & Omit<UpdateItem, 'mimeType'>;
 
 export const shortcutSchemas = [

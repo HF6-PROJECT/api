@@ -64,6 +64,7 @@ describe('PUT /api/shortcut', () => {
 		expect(response.json()).toEqual({
 			...shortcut,
 			name: shortcut.name + ' Updated',
+			linkedItemId: folder.id,
 			createdAt: shortcut.createdAt.toISOString(),
 			updatedAt: expect.any(String),
 			deletedAt: shortcut.deletedAt?.toISOString() ?? null,

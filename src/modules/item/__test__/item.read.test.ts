@@ -3,6 +3,7 @@ import UserService from '../../auth/user.service';
 import FolderService from '../folder/folder.service';
 import AuthService from '../../auth/auth.service';
 import BlobService from '../blob/blob.service';
+import DocsService from '../docs/docs.service';
 import ShortcutService from '../shortcut/shortcut.service';
 
 describe('GET /api/item/:parentId', () => {
@@ -10,6 +11,7 @@ describe('GET /api/item/:parentId', () => {
 	let folderService: FolderService;
 	let authService: AuthService;
 	let blobService: BlobService;
+	let docsService: DocsService;
 	let shortcutService: ShortcutService;
 
 	let user: User;
@@ -20,6 +22,7 @@ describe('GET /api/item/:parentId', () => {
 		folderService = new FolderService();
 		authService = new AuthService();
 		blobService = new BlobService();
+		docsService = new DocsService();
 		shortcutService = new ShortcutService();
 
 		user = await userService.createUser({
@@ -59,6 +62,13 @@ describe('GET /api/item/:parentId', () => {
 			parentId: parentFolder.id,
 		});
 
+		await docsService.createDocs({
+			name: 'Docs1',
+			text: 'Docs1 text',
+			ownerId: user.id,
+			parentId: parentFolder.id,
+		});
+
 		await shortcutService.createShortcut({
 			name: 'Shortcut',
 			ownerId: user.id,
@@ -94,6 +104,17 @@ describe('GET /api/item/:parentId', () => {
 				parentId: parentFolder.id,
 				ownerId: user.id,
 				mimeType: 'application/vnd.cloudstore.folder',
+				createdAt: expect.any(String),
+				deletedAt: null,
+				updatedAt: expect.any(String),
+			},
+			{
+				id: expect.any(Number),
+				name: 'Docs1',
+				text: 'Docs1 text',
+				parentId: parentFolder.id,
+				ownerId: user.id,
+				mimeType: 'application/vnd.cloudstore.docs',
 				createdAt: expect.any(String),
 				deletedAt: null,
 				updatedAt: expect.any(String),

@@ -41,6 +41,7 @@ export default class ItemService {
 			include: {
 				ItemBlob: true,
 				ItemFolder: true,
+				ItemDocs: true,
 				ItemShortcut: true,
 			},
 		});
@@ -71,6 +72,7 @@ export default class ItemService {
 			include: {
 				ItemBlob: true,
 				ItemFolder: true,
+				ItemDocs: true,
 				ItemShortcut: true,
 			},
 		});
@@ -80,11 +82,12 @@ export default class ItemService {
 
 	private formatItems(items: ItemPrismaProperties[]): ItemWithProperties[] {
 		return items.map((element) => {
-			const { ItemFolder, ItemBlob, ItemShortcut, ...strippedElement } = element;
+			const { ItemFolder, ItemBlob, ItemDocs, ItemShortcut, ...strippedElement } = element;
 
 			return {
 				...ItemBlob,
 				...ItemFolder,
+				...ItemDocs,
 				...ItemShortcut,
 				...strippedElement,
 			};

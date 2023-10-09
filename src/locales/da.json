@@ -105,6 +105,9 @@
 		"folder": {
 			"notFound": "Mappen blev ikke fundet"
 		},
+		"docs": {
+			"notFound": "Dokumentet blev ikke fundet"
+		},
 		"shortcut": {
 			"notFound": "Genvej blev ikke fundet"
 		},
@@ -122,6 +125,23 @@
 		"color": {
 			"required": "Farve er påkrævet",
 			"type": "Farve skal være en tekst"
+		},
+		"parentId": {
+			"type": "Parent id skal være et tal"
+		}
+	},
+	"docs": {
+		"id": {
+			"required": "id er påkrævet",
+			"type": "id skal være et tal"
+		},
+		"name": {
+			"required": "Navn er påkrævet",
+			"type": "Navn skal være en tekst"
+		},
+		"text": {
+			"required": "Tekst er påkrævet",
+			"type": "Tekst skal være en tekst"
 		},
 		"parentId": {
 			"type": "Parent id skal være et tal"

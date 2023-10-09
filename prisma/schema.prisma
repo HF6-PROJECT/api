@@ -53,6 +53,7 @@ model Item {
     Items                 Item[]        @relation("ItemToItem")
     ItemFolder            ItemFolder?
     ItemBlob              ItemBlob?
+    ItemDocs    ItemDocs?
     ItemSharing           ItemSharing[]
     ItemShortcut          ItemShortcut? @relation("shortcutItem")
     LinkedItemShortcut    ItemShortcut? @relation("linkedItem")
@@ -68,9 +69,9 @@ model Item {
 }
 
 model ItemFolder {
-    id       Int    @id @default(autoincrement())
-    color    String @db.VarChar(255)
-    itemId   Int    @unique
+    id     Int    @id @default(autoincrement())
+    color  String @db.VarChar(255)
+    itemId Int    @unique
 
     item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
 }
@@ -79,6 +80,14 @@ model ItemBlob {
     id      Int    @id @default(autoincrement())
     blobUrl String @db.VarChar(1024)
     itemId  Int    @unique
+
+    item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+}
+
+model ItemDocs {
+    id     Int    @id @default(autoincrement())
+    text   String @db.Text
+    itemId Int    @unique
 
     item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
 }

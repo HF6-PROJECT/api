@@ -105,6 +105,9 @@
 		"folder": {
 			"notFound": "Folder not found"
 		},
+		"docs": {
+			"notFound": "Docs not found"
+		},
 		"shortcut": {
 			"notFound": "Shortcut not found"
 		},
@@ -122,6 +125,23 @@
 		"color": {
 			"required": "Color is required",
 			"type": "Color must be a string"
+		},
+		"parentId": {
+			"type": "Parent id must be a number"
+		}
+	},
+	"docs": {
+		"id": {
+			"required": "id is required",
+			"type": "id must be a number"
+		},
+		"name": {
+			"required": "Name is required",
+			"type": "Name must be a string"
+		},
+		"text": {
+			"required": "Text is required",
+			"type": "Text must be a string"
 		},
 		"parentId": {
 			"type": "Parent id must be a number"

@@ -2,6 +2,7 @@ import {
 	Item as prismaItemType,
 	ItemBlob as prismaItemBlobType,
 	ItemFolder as prismaItemFolderType,
+	ItemShortcut as prismaItemShortcutType,
 } from '@prisma/client';
 import { FromSchema } from 'json-schema-to-ts';
 
@@ -9,10 +10,11 @@ export type Item = prismaItemType;
 
 export type ItemPrismaProperties = Item & { ItemBlob: prismaItemBlobType | null } & {
 	ItemFolder: prismaItemFolderType | null;
-};
+} & { ItemShortcut: prismaItemShortcutType | null };
 export type ItemWithProperties = Item &
 	Omit<Partial<prismaItemBlobType>, 'id' | 'itemId'> &
-	Omit<Partial<prismaItemFolderType>, 'id' | 'itemId'>;
+	Omit<Partial<prismaItemFolderType>, 'id' | 'itemId'> &
+	Omit<Partial<prismaItemShortcutType>, 'id' | 'itemId'>;
 
 export type CreateItem = Omit<Item, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>;
 

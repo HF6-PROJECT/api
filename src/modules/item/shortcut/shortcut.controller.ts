@@ -1,14 +1,14 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { ReadInput, EditInput, AddInput, DeleteInput } from './folder.schema';
-import FolderService from './folder.service';
+import { ReadInput, EditInput, AddInput, DeleteInput } from './shortcut.schema';
+import ShortcutService from './shortcut.service';
 import AccessService from '../sharing/access.service';
 
-export default class FolderController {
-	private folderService: FolderService;
+export default class ShortcutController {
+	private shortcutService: ShortcutService;
 	private accessService: AccessService;
 
-	constructor(folderService: FolderService, accessService: AccessService) {
-		this.folderService = folderService;
+	constructor(shortcutService: ShortcutService, accessService: AccessService) {
+		this.shortcutService = shortcutService;
 		this.accessService = accessService;
 	}
 
@@ -19,13 +19,13 @@ export default class FolderController {
 		reply: FastifyReply,
 	) {
 		try {
-			const folder = await this.folderService.getByItemId(request.params.id);
+			const shortcut = await this.shortcutService.getByItemId(request.params.id);
 
-			if (!(await this.accessService.hasAccessToItem(folder.id, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItem(shortcut.id, request.user.sub))) {
 				return reply.unauthorized();
 			}
 
-			return reply.code(200).send(folder);
+			return reply.code(200).send(shortcut);
 		} catch (e) {
 			if (e instanceof Error) {
 				return reply.badRequest(request.i18n.t(e.message));
@@ -43,9 +43,9 @@ export default class FolderController {
 		reply: FastifyReply,
 	) {
 		try {
-			const folder = await this.folderService.getByItemId(request.body.id);
+			const shortcut = await this.shortcutService.getByItemId(request.body.id);
 
-			if (!(await this.accessService.hasAccessToItem(folder.id, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItem(shortcut.id, request.user.sub))) {
 				return reply.unauthorized();
 			}
 
@@ -57,9 +57,9 @@ export default class FolderController {
 				return reply.unauthorized();
 			}
 
-			const updatedFolder = await this.folderService.updateFolder(request.body);
+			const updatedShortcut = await this.shortcutService.updateShortcut(request.body);
 
-			return reply.code(200).send(updatedFolder);
+			return reply.code(200).send(updatedShortcut);
 		} catch (e) {
 			if (e instanceof Error) {
 				return reply.badRequest(request.i18n.t(e.message));
@@ -85,14 +85,14 @@ export default class FolderController {
 				return reply.unauthorized();
 			}
 
-			const folder = await this.folderService.createFolder({
+			const shortcut = await this.shortcutService.createShortcut({
 				name: request.body.name,
-				color: request.body.color,
+				linkedItemId: request.body.linkedItemId,
 				ownerId: request.user.sub,
 				parentId: request.body.parentId ?? null,
 			});
 
-			return reply.code(200).send(folder);
+			return reply.code(200).send(shortcut);
 		} catch (e) {
 			/* istanbul ignore next */
 			return reply.badRequest();
@@ -106,13 +106,13 @@ export default class FolderController {
 		reply: FastifyReply,
 	) {
 		try {
-			const folder = await this.folderService.getByItemId(request.params.id);
+			const shortcut = await this.shortcutService.getByItemId(request.params.id);
 
-			if (!(await this.accessService.hasAccessToItem(folder.id, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItem(shortcut.id, request.user.sub))) {
 				return reply.unauthorized();
 			}
 
-			await this.folderService.deleteFolderByItemId(folder.id);
+			await this.shortcutService.deleteShortcutByItemId(shortcut.id);
 			return reply.code(204).send();
 		} catch (e) {
 			if (e instanceof Error) {

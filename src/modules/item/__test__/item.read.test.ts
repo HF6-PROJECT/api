@@ -3,12 +3,14 @@ import UserService from '../../auth/user.service';
 import FolderService from '../folder/folder.service';
 import AuthService from '../../auth/auth.service';
 import BlobService from '../blob/blob.service';
+import ShortcutService from '../shortcut/shortcut.service';
 
 describe('GET /api/item/:parentId', () => {
 	let userService: UserService;
 	let folderService: FolderService;
 	let authService: AuthService;
 	let blobService: BlobService;
+	let shortcutService: ShortcutService;
 
 	let user: User;
 	let otherUser: User;
@@ -18,6 +20,7 @@ describe('GET /api/item/:parentId', () => {
 		folderService = new FolderService();
 		authService = new AuthService();
 		blobService = new BlobService();
+		shortcutService = new ShortcutService();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',
@@ -41,7 +44,7 @@ describe('GET /api/item/:parentId', () => {
 			parentId: null,
 		});
 
-		await blobService.createBlob({
+		const blob = await blobService.createBlob({
 			mimeType: 'text/plain',
 			name: 'test1.txt',
 			ownerId: user.id,
@@ -53,6 +56,13 @@ describe('GET /api/item/:parentId', () => {
 			name: 'Folder2',
 			color: '#987654',
 			ownerId: user.id,
+			parentId: parentFolder.id,
+		});
+
+		await shortcutService.createShortcut({
+			name: 'Shortcut',
+			ownerId: user.id,
+			linkedItemId: blob.id,
 			parentId: parentFolder.id,
 		});
 
@@ -88,6 +98,16 @@ describe('GET /api/item/:parentId', () => {
 				deletedAt: null,
 				updatedAt: expect.any(String),
 			},
+			{
+				id: expect.any(Number),
+				name: 'Shortcut',
+				parentId: parentFolder.id,
+				ownerId: user.id,
+				mimeType: 'application/vnd.cloudstore.shortcut',
+				createdAt: expect.any(String),
+				deletedAt: null,
+				updatedAt: expect.any(String),
+			},
 		]);
 	});
 
@@ -99,7 +119,7 @@ describe('GET /api/item/:parentId', () => {
 			parentId: null,
 		});
 
-		await blobService.createBlob({
+		const blob = await blobService.createBlob({
 			mimeType: 'text/plain',
 			name: 'test1.txt',
 			ownerId: user.id,
@@ -111,6 +131,13 @@ describe('GET /api/item/:parentId', () => {
 			color: '#987654',
 			ownerId: user.id,
 			parentId: parentFolder.id,
+		});
+
+		await shortcutService.createShortcut({
+			name: 'Shortcut',
+			ownerId: user.id,
+			linkedItemId: blob.id,
+			parentId: null,
 		});
 
 		const response = await global.fastify.inject({

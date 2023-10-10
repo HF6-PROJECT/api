@@ -17,7 +17,7 @@ describe('GET /api/sharing/:id', () => {
 		authService = new AuthService();
 		userService = new UserService();
 		itemService = new ItemService();
-		sharingService = new SharingService();
+		sharingService = new SharingService(itemService);
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',
@@ -41,10 +41,13 @@ describe('GET /api/sharing/:id', () => {
 			mimeType: 'text/plain',
 		});
 
-		const sharing = await sharingService.createSharing({
-			itemId: item.id,
-			userId: user.id,
-		});
+		const sharing = await sharingService.createSharing(
+			{
+				itemId: item.id,
+				userId: user.id,
+			},
+			user.id,
+		);
 
 		const response = await global.fastify.inject({
 			method: 'GET',
@@ -70,10 +73,13 @@ describe('GET /api/sharing/:id', () => {
 			mimeType: 'text/plain',
 		});
 
-		const sharing = await sharingService.createSharing({
-			itemId: item.id,
-			userId: user.id,
-		});
+		const sharing = await sharingService.createSharing(
+			{
+				itemId: item.id,
+				userId: user.id,
+			},
+			user.id,
+		);
 
 		const response = await global.fastify.inject({
 			method: 'GET',
@@ -103,10 +109,13 @@ describe('GET /api/sharing/:id', () => {
 			mimeType: 'text/plain',
 		});
 
-		const sharing = await sharingService.createSharing({
-			itemId: item.id,
-			userId: otherUser.id,
-		});
+		const sharing = await sharingService.createSharing(
+			{
+				itemId: item.id,
+				userId: otherUser.id,
+			},
+			otherUser.id,
+		);
 
 		const response = await global.fastify.inject({
 			method: 'GET',

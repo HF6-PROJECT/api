@@ -1,7 +1,14 @@
 import { prisma } from '../../../plugins/prisma';
+import ItemService from '../item.service';
 import { Sharing, CreateSharing, UpdateSharing } from './sharing.schema';
 
 export default class SharingService {
+	private itemService: ItemService;
+
+	constructor(itemService: ItemService) {
+		this.itemService = itemService;
+	}
+
 	public async getById(id: number): Promise<Sharing> {
 		const itemSharing = await prisma.itemSharing.findUnique({
 			where: {
@@ -33,7 +40,23 @@ export default class SharingService {
 		return itemSharing;
 	}
 
-	public async createSharing(input: CreateSharing): Promise<Sharing> {
+	public async createSharing(input: CreateSharing, userId: number): Promise<Sharing> {
+		const accessableItems =
+			await this.itemService.getAllOwnedAndSharredItemsByParentIdAndUserIdRecursively(
+				userId,
+				input.itemId,
+			);
+
+		await prisma.itemSharing.createMany({
+			data: accessableItems.map((item) => {
+				return {
+					itemId: item.id,
+					userId: input.userId,
+				};
+			}),
+			skipDuplicates: true,
+		});
+
 		try {
 			await this.getByItemIdAndUserId(input.itemId, input.userId);
 
@@ -70,11 +93,36 @@ export default class SharingService {
 		return itemSharing;
 	}
 
-	public async deleteSharingById(id: number): Promise<void> {
-		await prisma.itemSharing.delete({
-			where: {
-				id: id,
-			},
-		});
+	public async deleteSharingByIdAndUserId(id: number, userId: number): Promise<void> {
+		try {
+			const itemSharing = await prisma.itemSharing.findUniqueOrThrow({
+				where: {
+					id: id,
+				},
+			});
+
+			const accessableItems =
+				await this.itemService.getAllOwnedAndSharredItemsByParentIdAndUserIdRecursively(
+					userId,
+					itemSharing.itemId,
+				);
+
+			await prisma.itemSharing.deleteMany({
+				where: {
+					itemId: {
+						in: accessableItems.map((item) => item.id),
+					},
+					userId: itemSharing.userId,
+				},
+			});
+
+			await prisma.itemSharing.delete({
+				where: {
+					id: id,
+				},
+			});
+		} catch (e) {
+			// Nothing to do here
+		}
 	}
 }

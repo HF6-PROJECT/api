@@ -6,10 +6,11 @@ import ItemService from '../item.service';
 import SharingService from '../sharing/sharing.service';
 
 export default async (fastify: FastifyInstance) => {
+	const itemService = new ItemService();
 	const docsService = new DocsService();
 	const docsController = new DocsController(
 		docsService,
-		new AccessService(new ItemService(), new SharingService()),
+		new AccessService(itemService, new SharingService(itemService)),
 	);
 
 	fastify.get(

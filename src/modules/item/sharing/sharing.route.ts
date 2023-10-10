@@ -5,10 +5,11 @@ import AccessService from './access.service';
 import ItemService from '../item.service';
 
 export default async (fastify: FastifyInstance) => {
-	const sharingService = new SharingService();
+	const itemService = new ItemService();
+	const sharingService = new SharingService(itemService);
 	const sharingController = new SharingController(
 		sharingService,
-		new AccessService(new ItemService(), sharingService),
+		new AccessService(itemService, sharingService),
 	);
 
 	fastify.get(

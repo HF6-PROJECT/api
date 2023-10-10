@@ -21,7 +21,7 @@ describe('ItemService', () => {
 		itemService = new ItemService();
 		userService = new UserService();
 		folderService = new FolderService();
-		sharingService = new SharingService();
+		sharingService = new SharingService(itemService);
 		blobService = new BlobService();
 		shortcutService = new ShortcutService();
 
@@ -137,10 +137,13 @@ describe('ItemService', () => {
 				parentId: null,
 			});
 
-			await sharingService.createSharing({
-				itemId: folder.id,
-				userId: otherUser.id,
-			});
+			await sharingService.createSharing(
+				{
+					itemId: folder.id,
+					userId: otherUser.id,
+				},
+				user.id,
+			);
 
 			const blob1 = await blobService.createBlob({
 				mimeType: 'text/plain',
@@ -177,20 +180,29 @@ describe('ItemService', () => {
 				parentId: folder.id,
 			});
 
-			await sharingService.createSharing({
-				itemId: blob1.id,
-				userId: otherUser.id,
-			});
+			await sharingService.createSharing(
+				{
+					itemId: blob1.id,
+					userId: otherUser.id,
+				},
+				user.id,
+			);
 
-			await sharingService.createSharing({
-				itemId: folder1.id,
-				userId: otherUser.id,
-			});
+			await sharingService.createSharing(
+				{
+					itemId: folder1.id,
+					userId: otherUser.id,
+				},
+				user.id,
+			);
 
-			await sharingService.createSharing({
-				itemId: folder3.id,
-				userId: otherUser.id,
-			});
+			await sharingService.createSharing(
+				{
+					itemId: folder3.id,
+					userId: otherUser.id,
+				},
+				user.id,
+			);
 
 			const shortcut1 = await shortcutService.createShortcut({
 				name: 'Shortcut1',
@@ -206,10 +218,13 @@ describe('ItemService', () => {
 				parentId: folder.id,
 			});
 
-			await sharingService.createSharing({
-				itemId: shortcut1.id,
-				userId: otherUser.id,
-			});
+			await sharingService.createSharing(
+				{
+					itemId: shortcut1.id,
+					userId: otherUser.id,
+				},
+				user.id,
+			);
 
 			const itemsOwner = await itemService.getAllOwnedAndSharredItemsByParentIdAndUserId(
 				user.id,

@@ -5,6 +5,7 @@ import StarredService from '../starred.service';
 import FolderService from '../../folder/folder.service';
 import BlobService from '../../blob/blob.service';
 import SharingService from '../../sharing/sharing.service';
+import ItemService from '../../item.service';
 
 describe('GET /api/starred', () => {
 	let userService: UserService;
@@ -23,7 +24,7 @@ describe('GET /api/starred', () => {
 		starredService = new StarredService();
 		folderService = new FolderService();
 		blobService = new BlobService();
-		sharingService = new SharingService();
+		sharingService = new SharingService(new ItemService());
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',
@@ -100,10 +101,13 @@ describe('GET /api/starred', () => {
 			userId: user.id,
 		});
 
-		await sharingService.createSharing({
-			itemId: blob2.id,
-			userId: user.id,
-		});
+		await sharingService.createSharing(
+			{
+				itemId: blob2.id,
+				userId: user.id,
+			},
+			otherUser.id,
+		);
 
 		await starredService.createStarred({
 			itemId: blob2.id,

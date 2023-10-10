@@ -4,6 +4,7 @@ import AuthService from '../../../auth/auth.service';
 import FolderService from '../../folder/folder.service';
 import StarredService from '../../starred/starred.service';
 import SharingService from '../../sharing/sharing.service';
+import ItemService from '../../item.service';
 
 describe('POST /api/starred', () => {
 	let userService: UserService;
@@ -20,7 +21,7 @@ describe('POST /api/starred', () => {
 		userService = new UserService();
 		folderService = new FolderService();
 		starredService = new StarredService();
-		sharingService = new SharingService();
+		sharingService = new SharingService(new ItemService());
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',
@@ -80,10 +81,13 @@ describe('POST /api/starred', () => {
 			color: '#78BC61',
 		});
 
-		await sharingService.createSharing({
-			itemId: folder.id,
-			userId: user.id,
-		});
+		await sharingService.createSharing(
+			{
+				itemId: folder.id,
+				userId: user.id,
+			},
+			otherUser.id,
+		);
 
 		const response = await global.fastify.inject({
 			method: 'POST',

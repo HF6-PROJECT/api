@@ -111,6 +111,10 @@
 		"shortcut": {
 			"notFound": "Genvej blev ikke fundet"
 		},
+		"starred": {
+			"notFound": "Stjernemarkeringen blev ikke fundet",
+			"alreadyExists": "Stjernemarkeringen findes allerede"
+		},
 		"notFound": "Item ikke fundet"
 	},
 	"folder": {
@@ -162,6 +166,16 @@
 		},
 		"parentId": {
 			"type": "Parent id skal være et tal"
+		}
+	},
+	"starred": {
+		"id": {
+			"required": "id er påkrævet",
+			"type": "id skal være et tal"
+		},
+		"itemId": {
+			"required": "itemId er påkrævet",
+			"type": "itemId skal være et tal"
 		}
 	}
 }

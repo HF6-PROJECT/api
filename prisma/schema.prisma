@@ -20,6 +20,7 @@ model User {
     sessions    UserSession[]
     Item        Item[]
     ItemSharing ItemSharing[]
+    ItemStarred ItemStarred[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -57,6 +58,7 @@ model Item {
     ItemSharing           ItemSharing[]
     ItemShortcut          ItemShortcut? @relation("shortcutItem")
     LinkedItemShortcut    ItemShortcut[] @relation("linkedItem")
+    ItemStarred           ItemStarred[]
 
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
@@ -117,4 +119,17 @@ model ItemShortcut {
     linkedItem   Item @relation("linkedItem", fields: [linkedItemId], references: [id], onDelete: Cascade)
     
     @@index([linkedItemId])
+}
+
+model ItemStarred {
+    id           Int @id @default(autoincrement())
+    itemId       Int
+    userId       Int
+
+    item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    
+    @@unique([itemId, userId])
+    @@index([itemId])
+    @@index([userId])
 }

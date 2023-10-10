@@ -111,6 +111,10 @@
 		"shortcut": {
 			"notFound": "Shortcut not found"
 		},
+		"starred": {
+			"notFound": "Starred not found",
+			"alreadyExists": "Starred already exists"
+		},
 		"notFound": "Item not found"
 	},
 	"folder": {
@@ -162,6 +166,16 @@
 		},
 		"parentId": {
 			"type": "Parent id must be a number"
+		}
+	},
+	"starred": {
+		"id": {
+			"required": "id is required",
+			"type": "id must be a number"
+		},
+		"itemId": {
+			"required": "itemId is required",
+			"type": "itemId must be a number"
 		}
 	}
 }

@@ -49,6 +49,32 @@ export default class ItemService {
 		return this.formatItems(items);
 	}
 
+	public async getAllOwnedAndSharredItemsByParentIdAndUserIdRecursively(
+		userId: number,
+		parentId: number | null,
+	): Promise<ItemWithProperties[]> {
+		const returnItems = [];
+
+		const items = await this.getAllOwnedAndSharredItemsByParentIdAndUserId(userId, parentId);
+		returnItems.push(...items);
+
+		await Promise.all(
+			items.map(async (item) => {
+				if (item.mimeType !== 'application/vnd.cloudstore.folder') {
+					return;
+				}
+
+				const childItems = await this.getAllOwnedAndSharredItemsByParentIdAndUserId(
+					userId,
+					item.id,
+				);
+				returnItems.push(...childItems);
+			}),
+		);
+
+		return returnItems;
+	}
+
 	public async getAllOwnedAndSharredItemsByParentIdAndUserId(
 		userId: number,
 		parentId: number | null,

@@ -8,7 +8,7 @@ export default async (fastify: FastifyInstance) => {
 	const itemService = new ItemService();
 	const itemController = new ItemController(
 		itemService,
-		new AccessService(itemService, new SharingService()),
+		new AccessService(itemService, new SharingService(itemService)),
 	);
 
 	fastify.get(

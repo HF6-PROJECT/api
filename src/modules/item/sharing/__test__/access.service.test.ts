@@ -16,7 +16,7 @@ describe('ItemService', () => {
 	beforeAll(async () => {
 		itemService = new ItemService();
 		userService = new UserService();
-		sharingService = new SharingService();
+		sharingService = new SharingService(itemService);
 		accessService = new AccessService(itemService, sharingService);
 
 		user = await userService.createUser({
@@ -52,10 +52,13 @@ describe('ItemService', () => {
 				parentId: null,
 				mimeType: 'text/plain',
 			});
-			await sharingService.createSharing({
-				itemId: createdItem.id,
-				userId: user.id,
-			});
+			await sharingService.createSharing(
+				{
+					itemId: createdItem.id,
+					userId: user.id,
+				},
+				otherUser.id,
+			);
 
 			const hasAccessToItem = await accessService.hasAccessToItem(createdItem.id, user.id);
 

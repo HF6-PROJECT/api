@@ -3,11 +3,13 @@ import UserService from '../../../auth/user.service';
 import AuthService from '../../../auth/auth.service';
 import ItemService from '../../item.service';
 import SharingService from '../sharing.service';
+import FolderService from '../../folder/folder.service';
 
 describe('DELETE /api/sharing/:id', () => {
 	let userService: UserService;
 	let authService: AuthService;
 	let itemService: ItemService;
+	let folderService: FolderService;
 	let sharingService: SharingService;
 
 	let user: User;
@@ -17,7 +19,8 @@ describe('DELETE /api/sharing/:id', () => {
 		authService = new AuthService();
 		userService = new UserService();
 		itemService = new ItemService();
-		sharingService = new SharingService();
+		folderService = new FolderService();
+		sharingService = new SharingService(itemService);
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',
@@ -41,10 +44,13 @@ describe('DELETE /api/sharing/:id', () => {
 			mimeType: 'text/plain',
 		});
 
-		const sharing = await sharingService.createSharing({
-			itemId: item.id,
-			userId: user.id,
-		});
+		const sharing = await sharingService.createSharing(
+			{
+				itemId: item.id,
+				userId: user.id,
+			},
+			user.id,
+		);
 
 		const response = await global.fastify.inject({
 			method: 'DELETE',
@@ -59,6 +65,97 @@ describe('DELETE /api/sharing/:id', () => {
 		await expect(sharingService.getById(sharing.id)).rejects.toThrow();
 	});
 
+	it('should return status 204 and delete sharings on child items', async () => {
+		const { accessToken } = await authService.createTokens(user.id);
+
+		const folder = await folderService.createFolder({
+			name: 'root',
+			ownerId: user.id,
+			parentId: null,
+			color: 'red',
+		});
+		const sharing = await sharingService.createSharing(
+			{
+				itemId: folder.id,
+				userId: user.id,
+			},
+			user.id,
+		);
+
+		const item1 = await itemService.createItem({
+			name: 'test1.txt',
+			ownerId: user.id,
+			parentId: folder.id,
+			mimeType: 'text/plain',
+		});
+		await sharingService.createSharing(
+			{
+				itemId: item1.id,
+				userId: user.id,
+			},
+			user.id,
+		);
+
+		const item2 = await itemService.createItem({
+			name: 'test2.txt',
+			ownerId: user.id,
+			parentId: folder.id,
+			mimeType: 'text/plain',
+		});
+		await sharingService.createSharing(
+			{
+				itemId: item2.id,
+				userId: user.id,
+			},
+			user.id,
+		);
+
+		const subFolder = await folderService.createFolder({
+			name: 'sub',
+			ownerId: user.id,
+			parentId: folder.id,
+			color: 'red',
+		});
+		await sharingService.createSharing(
+			{
+				itemId: subFolder.id,
+				userId: user.id,
+			},
+			user.id,
+		);
+
+		const item3 = await itemService.createItem({
+			name: 'test3.txt',
+			ownerId: user.id,
+			parentId: subFolder.id,
+			mimeType: 'text/plain',
+		});
+		await sharingService.createSharing(
+			{
+				itemId: item3.id,
+				userId: user.id,
+			},
+			user.id,
+		);
+
+		const response = await global.fastify.inject({
+			method: 'DELETE',
+			url: '/api/sharing/' + sharing.id,
+			headers: {
+				authorization: 'Bearer ' + accessToken,
+			},
+		});
+
+		expect(response.statusCode).toBe(204);
+		expect(response.body).toEqual('');
+
+		await expect(sharingService.getByItemIdAndUserId(folder.id, otherUser.id)).rejects.toThrow();
+		await expect(sharingService.getByItemIdAndUserId(item1.id, otherUser.id)).rejects.toThrow();
+		await expect(sharingService.getByItemIdAndUserId(item2.id, otherUser.id)).rejects.toThrow();
+		await expect(sharingService.getByItemIdAndUserId(subFolder.id, otherUser.id)).rejects.toThrow();
+		await expect(sharingService.getByItemIdAndUserId(item3.id, otherUser.id)).rejects.toThrow();
+	});
+
 	it('should return status 401, when unauthorized', async () => {
 		const item = await itemService.createItem({
 			name: 'test.txt',
@@ -67,10 +164,13 @@ describe('DELETE /api/sharing/:id', () => {
 			mimeType: 'text/plain',
 		});
 
-		const sharing = await sharingService.createSharing({
-			itemId: item.id,
-			userId: user.id,
-		});
+		const sharing = await sharingService.createSharing(
+			{
+				itemId: item.id,
+				userId: user.id,
+			},
+			user.id,
+		);
 
 		const response = await global.fastify.inject({
 			method: 'DELETE',
@@ -100,10 +200,13 @@ describe('DELETE /api/sharing/:id', () => {
 			mimeType: 'text/plain',
 		});
 
-		const sharing = await sharingService.createSharing({
-			itemId: item.id,
-			userId: otherUser.id,
-		});
+		const sharing = await sharingService.createSharing(
+			{
+				itemId: item.id,
+				userId: otherUser.id,
+			},
+			otherUser.id,
+		);
 
 		const response = await global.fastify.inject({
 			method: 'DELETE',

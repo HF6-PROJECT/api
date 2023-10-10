@@ -3,11 +3,13 @@ import UserService from '../../../auth/user.service';
 import AuthService from '../../../auth/auth.service';
 import ItemService from '../../item.service';
 import SharingService from '../sharing.service';
+import FolderService from '../../folder/folder.service';
 
 describe('POST /api/sharing', () => {
 	let userService: UserService;
 	let authService: AuthService;
 	let itemService: ItemService;
+	let folderService: FolderService;
 	let sharingService: SharingService;
 
 	let user: User;
@@ -17,7 +19,8 @@ describe('POST /api/sharing', () => {
 		authService = new AuthService();
 		userService = new UserService();
 		itemService = new ItemService();
-		sharingService = new SharingService();
+		folderService = new FolderService();
+		sharingService = new SharingService(itemService);
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',
@@ -61,6 +64,81 @@ describe('POST /api/sharing', () => {
 			createdAt: expect.any(String),
 			updatedAt: expect.any(String),
 		});
+	});
+
+	it('should return status 200, return the created sharing and recursively create sharings on all child items', async () => {
+		const { accessToken } = await authService.createTokens(user.id);
+
+		const folder = await folderService.createFolder({
+			name: 'root',
+			ownerId: user.id,
+			parentId: null,
+			color: 'red',
+		});
+
+		const item1 = await itemService.createItem({
+			name: 'test1.txt',
+			ownerId: user.id,
+			parentId: folder.id,
+			mimeType: 'text/plain',
+		});
+
+		const item2 = await itemService.createItem({
+			name: 'test2.txt',
+			ownerId: user.id,
+			parentId: folder.id,
+			mimeType: 'text/plain',
+		});
+
+		const subFolder = await folderService.createFolder({
+			name: 'sub',
+			ownerId: user.id,
+			parentId: folder.id,
+			color: 'red',
+		});
+
+		const item3 = await itemService.createItem({
+			name: 'test3.txt',
+			ownerId: user.id,
+			parentId: subFolder.id,
+			mimeType: 'text/plain',
+		});
+
+		const response = await global.fastify.inject({
+			method: 'POST',
+			url: '/api/sharing',
+			headers: {
+				authorization: 'Bearer ' + accessToken,
+			},
+			payload: {
+				itemId: folder.id,
+				userId: otherUser.id,
+			},
+		});
+
+		expect(response.statusCode).toBe(200);
+		expect(response.json()).toEqual({
+			id: expect.any(Number),
+			itemId: folder.id,
+			userId: otherUser.id,
+			createdAt: expect.any(String),
+			updatedAt: expect.any(String),
+		});
+		await expect(
+			sharingService.getByItemIdAndUserId(folder.id, otherUser.id),
+		).resolves.toBeDefined();
+		await expect(
+			sharingService.getByItemIdAndUserId(item1.id, otherUser.id),
+		).resolves.toBeDefined();
+		await expect(
+			sharingService.getByItemIdAndUserId(item2.id, otherUser.id),
+		).resolves.toBeDefined();
+		await expect(
+			sharingService.getByItemIdAndUserId(subFolder.id, otherUser.id),
+		).resolves.toBeDefined();
+		await expect(
+			sharingService.getByItemIdAndUserId(item3.id, otherUser.id),
+		).resolves.toBeDefined();
 	});
 
 	it('should return status 401, when unauthorized', async () => {
@@ -135,10 +213,13 @@ describe('POST /api/sharing', () => {
 			mimeType: 'text/plain',
 		});
 
-		await sharingService.createSharing({
-			itemId: item.id,
-			userId: user.id,
-		});
+		await sharingService.createSharing(
+			{
+				itemId: item.id,
+				userId: user.id,
+			},
+			otherUser.id,
+		);
 
 		const response = await global.fastify.inject({
 			method: 'POST',

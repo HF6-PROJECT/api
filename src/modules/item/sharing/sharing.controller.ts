@@ -73,7 +73,7 @@ export default class SharingController {
 				return reply.unauthorized();
 			}
 
-			const sharing = await this.sharingService.createSharing(request.body);
+			const sharing = await this.sharingService.createSharing(request.body, request.user.sub);
 
 			return reply.code(200).send(sharing);
 		} catch (e) {
@@ -99,7 +99,7 @@ export default class SharingController {
 				return reply.unauthorized();
 			}
 
-			await this.sharingService.deleteSharingById(request.params.id);
+			await this.sharingService.deleteSharingByIdAndUserId(request.params.id, request.user.sub);
 
 			return reply.code(204).send();
 		} catch (e) {

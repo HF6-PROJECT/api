@@ -6,9 +6,10 @@ import ItemService from '../item.service';
 import AccessService from '../sharing/access.service';
 
 export default async (fastify: FastifyInstance) => {
+	const itemService = new ItemService();
 	const blobController = new BlobController(
 		new BlobService(),
-		new AccessService(new ItemService(), new SharingService()),
+		new AccessService(itemService, new SharingService(itemService)),
 	);
 
 	fastify.get(

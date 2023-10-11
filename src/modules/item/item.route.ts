@@ -50,6 +50,25 @@ export default async (fastify: FastifyInstance) => {
 	);
 
 	fastify.get(
+		'/folders',
+		{
+			schema: {
+				tags: ['Item'],
+				response: {
+					200: { $ref: 'itemsResponseSchema' },
+				},
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
+			},
+			onRequest: [fastify.authenticate],
+		},
+		itemController.browseHandler.bind(itemController),
+	);
+
+	fastify.get(
 		'/:parentId',
 		{
 			schema: {

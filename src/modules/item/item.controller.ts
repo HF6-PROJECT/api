@@ -23,6 +23,17 @@ export default class ItemController {
 		}
 	}
 
+	public async browseHandler(request: FastifyRequest, reply: FastifyReply) {
+		try {
+			const items = await this.itemService.getByOwnerId(request.user.sub);
+
+			return reply.code(200).send(items);
+		} catch (e) {
+			/* istanbul ignore next */
+			return reply.badRequest();
+		}
+	}
+
 	public async itemRootHandler(request: FastifyRequest, reply: FastifyReply) {
 		try {
 			const items = await this.itemService.getByOwnerIdAndParentId(request.user.sub, null);

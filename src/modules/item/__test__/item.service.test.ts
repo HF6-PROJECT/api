@@ -419,4 +419,10 @@ describe('ItemService', () => {
 			await expect(itemService.getById(1234)).rejects.toThrow();
 		});
 	});
+
+	describe('getItemByIdWithSharingsAndOwner()', () => {
+		it("should throw error, when item doesn't exist", async () => {
+			await expect(itemService.getItemByIdWithSharingsAndOwner(1234)).rejects.toThrow();
+		});
+	});
 });

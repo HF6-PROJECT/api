@@ -3,6 +3,7 @@ import SharingController from './sharing.controller';
 import SharingService from './sharing.service';
 import AccessService from './access.service';
 import ItemService from '../item.service';
+import UserService from '../../auth/user.service';
 
 export default async (fastify: FastifyInstance) => {
 	const itemService = new ItemService();
@@ -10,6 +11,7 @@ export default async (fastify: FastifyInstance) => {
 	const sharingController = new SharingController(
 		sharingService,
 		new AccessService(itemService, sharingService),
+		new UserService(),
 	);
 
 	fastify.get(
@@ -61,9 +63,9 @@ export default async (fastify: FastifyInstance) => {
 		{
 			schema: {
 				tags: ['Sharing'],
-				body: { $ref: 'uploadSharingSchema' },
+				body: { $ref: 'addSharingSchema' },
 				response: {
-					200: { $ref: 'uploadSharingResponseSchema' },
+					200: { $ref: 'addSharingResponseSchema' },
 				},
 				security: [
 					{

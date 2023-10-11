@@ -99,6 +99,11 @@
 				"required": "userId is required",
 				"type": "userId must be a number"
 			},
+			"email": {
+				"required": "Email is required",
+				"type": "Email must be a number",
+				"format": "Email must be of correct format"
+			},
 			"notFound": "Sharing not found",
 			"alreadyExists": "Sharing already exists"
 		},

@@ -89,6 +89,7 @@ describe('GET /api/item', () => {
 				createdAt: expect.any(String),
 				deletedAt: null,
 				updatedAt: expect.any(String),
+				isStarred: false,
 			},
 			{
 				id: expect.any(Number),
@@ -100,6 +101,7 @@ describe('GET /api/item', () => {
 				createdAt: expect.any(String),
 				deletedAt: null,
 				updatedAt: expect.any(String),
+				isStarred: false,
 			},
 			{
 				id: expect.any(Number),
@@ -111,6 +113,7 @@ describe('GET /api/item', () => {
 				createdAt: expect.any(String),
 				deletedAt: null,
 				updatedAt: expect.any(String),
+				isStarred: false,
 			},
 			{
 				id: expect.any(Number),
@@ -122,6 +125,7 @@ describe('GET /api/item', () => {
 				createdAt: expect.any(String),
 				deletedAt: null,
 				updatedAt: expect.any(String),
+				isStarred: false,
 			},
 			{
 				id: expect.any(Number),
@@ -132,6 +136,7 @@ describe('GET /api/item', () => {
 				createdAt: expect.any(String),
 				deletedAt: null,
 				updatedAt: expect.any(String),
+				isStarred: false,
 			},
 		]);
 	});

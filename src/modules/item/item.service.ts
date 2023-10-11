@@ -43,6 +43,11 @@ export default class ItemService {
 				ItemFolder: true,
 				ItemDocs: true,
 				ItemShortcut: true,
+				ItemStarred: {
+					where: {
+						userId: ownerId,
+					},
+				},
 			},
 		});
 
@@ -75,6 +80,31 @@ export default class ItemService {
 		return returnItems;
 	}
 
+	public async getStarredItemsByUserId(userId: number): Promise<ItemWithProperties[]> {
+		const items = await prisma.item.findMany({
+			where: {
+				ItemStarred: {
+					some: {
+						userId: userId,
+					},
+				},
+			},
+			include: {
+				ItemBlob: true,
+				ItemFolder: true,
+				ItemDocs: true,
+				ItemShortcut: true,
+				ItemStarred: {
+					where: {
+						userId: userId,
+					},
+				},
+			},
+		});
+
+		return this.formatItems(items);
+	}
+
 	public async getAllOwnedAndSharredItemsByParentIdAndUserId(
 		userId: number,
 		parentId: number | null,
@@ -100,6 +130,11 @@ export default class ItemService {
 				ItemFolder: true,
 				ItemDocs: true,
 				ItemShortcut: true,
+				ItemStarred: {
+					where: {
+						userId: userId,
+					},
+				},
 			},
 		});
 
@@ -108,7 +143,8 @@ export default class ItemService {
 
 	private formatItems(items: ItemPrismaProperties[]): ItemWithProperties[] {
 		return items.map((element) => {
-			const { ItemFolder, ItemBlob, ItemDocs, ItemShortcut, ...strippedElement } = element;
+			const { ItemFolder, ItemBlob, ItemDocs, ItemShortcut, ItemStarred, ...strippedElement } =
+				element;
 
 			return {
 				...ItemBlob,
@@ -116,6 +152,7 @@ export default class ItemService {
 				...ItemDocs,
 				...ItemShortcut,
 				...strippedElement,
+				isStarred: ItemStarred.length > 0,
 			};
 		});
 	}

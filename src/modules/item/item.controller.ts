@@ -12,6 +12,17 @@ export default class ItemController {
 		this.accessService = accessService;
 	}
 
+	public async itemStarredHandler(request: FastifyRequest, reply: FastifyReply) {
+		try {
+			const starred = await this.itemService.getStarredItemsByUserId(request.user.sub);
+
+			return reply.code(200).send(starred);
+		} catch (e) {
+			/* istanbul ignore next */
+			return reply.badRequest();
+		}
+	}
+
 	public async itemRootHandler(request: FastifyRequest, reply: FastifyReply) {
 		try {
 			const items = await this.itemService.getByOwnerIdAndParentId(request.user.sub, null);

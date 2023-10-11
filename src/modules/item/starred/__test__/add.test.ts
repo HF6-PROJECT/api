@@ -59,15 +59,8 @@ describe('POST /api/starred', () => {
 		expect(response.statusCode).toBe(200);
 		expect(response.json()).toEqual({
 			id: expect.any(Number),
-			name: 'Folder1',
-			parentId: null,
 			userId: user.id,
 			itemId: folder.id,
-			ownerId: user.id,
-			mimeType: 'application/vnd.cloudstore.folder',
-			createdAt: expect.any(String),
-			deletedAt: null,
-			updatedAt: expect.any(String),
 		});
 	});
 
@@ -103,15 +96,8 @@ describe('POST /api/starred', () => {
 		expect(response.statusCode).toBe(200);
 		expect(response.json()).toEqual({
 			id: expect.any(Number),
-			name: 'Folder1',
-			parentId: null,
 			itemId: folder.id,
 			userId: user.id,
-			ownerId: otherUser.id,
-			mimeType: 'application/vnd.cloudstore.folder',
-			createdAt: expect.any(String),
-			deletedAt: null,
-			updatedAt: expect.any(String),
 		});
 	});
 

@@ -12,6 +12,25 @@ export default async (fastify: FastifyInstance) => {
 	);
 
 	fastify.get(
+		'/starred',
+		{
+			schema: {
+				tags: ['Item'],
+				response: {
+					200: { $ref: 'itemsResponseSchema' },
+				},
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
+			},
+			onRequest: [fastify.authenticate],
+		},
+		itemController.itemStarredHandler.bind(itemController),
+	);
+
+	fastify.get(
 		'/',
 		{
 			schema: {

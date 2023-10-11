@@ -12,22 +12,6 @@ export default class StarredController {
 		this.accessService = accessService;
 	}
 
-	public async browseHandler(
-		request: FastifyRequest<{
-			Params: ReadInput;
-		}>,
-		reply: FastifyReply,
-	) {
-		try {
-			const starred = await this.starredService.getByUserId(request.user.sub);
-
-			return reply.code(200).send(starred);
-		} catch (e) {
-			/* istanbul ignore next */
-			return reply.badRequest();
-		}
-	}
-
 	public async readHandler(
 		request: FastifyRequest<{
 			Params: ReadInput;

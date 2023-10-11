@@ -1,13 +1,13 @@
 import { User } from '@prisma/client';
-import UserService from '../../../auth/user.service';
-import AuthService from '../../../auth/auth.service';
-import StarredService from '../starred.service';
-import FolderService from '../../folder/folder.service';
-import BlobService from '../../blob/blob.service';
-import SharingService from '../../sharing/sharing.service';
-import ItemService from '../../item.service';
+import UserService from '../../auth/user.service';
+import AuthService from '../../auth/auth.service';
+import StarredService from '../starred/starred.service';
+import FolderService from '../folder/folder.service';
+import BlobService from '../blob/blob.service';
+import SharingService from '../sharing/sharing.service';
+import ItemService from '../item.service';
 
-describe('GET /api/starred', () => {
+describe('GET /api/item/starred', () => {
 	let userService: UserService;
 	let authService: AuthService;
 	let starredService: StarredService;
@@ -38,12 +38,12 @@ describe('GET /api/starred', () => {
 		});
 	});
 
-	it('should return status 400, when starred browse is empty', async () => {
+	it('should return status 400, when item starred browse is empty', async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const response = await global.fastify.inject({
 			method: 'GET',
-			url: '/api/starred',
+			url: '/api/item/starred',
 			headers: {
 				authorization: 'Bearer ' + accessToken,
 			},
@@ -53,7 +53,7 @@ describe('GET /api/starred', () => {
 		expect(response.json()).toStrictEqual([]);
 	});
 
-	it('should return status 200 and starred', async () => {
+	it('should return status 200 and items', async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const folder1 = await folderService.createFolder({
@@ -116,7 +116,7 @@ describe('GET /api/starred', () => {
 
 		const response = await global.fastify.inject({
 			method: 'GET',
-			url: '/api/starred',
+			url: '/api/item/starred',
 			headers: {
 				authorization: 'Bearer ' + accessToken,
 			},
@@ -125,48 +125,44 @@ describe('GET /api/starred', () => {
 		expect(response.statusCode).toBe(200);
 		expect(response.json()).toEqual([
 			{
-				id: expect.any(Number),
+				id: folder1.id,
 				name: 'Folder1',
-				itemId: folder1.id,
+				color: '#78BC61',
 				parentId: null,
 				ownerId: user.id,
-				userId: user.id,
 				mimeType: 'application/vnd.cloudstore.folder',
 				createdAt: expect.any(String),
 				deletedAt: null,
 				updatedAt: expect.any(String),
 			},
 			{
-				id: expect.any(Number),
-				name: 'Folder2',
-				itemId: folder2.id,
+				id: blob2.id,
+				name: 'test2.txt',
+				blobUrl: 'https://example.com/test2.txt',
 				parentId: null,
-				ownerId: user.id,
-				userId: user.id,
-				mimeType: 'application/vnd.cloudstore.folder',
-				createdAt: expect.any(String),
-				deletedAt: null,
-				updatedAt: expect.any(String),
-			},
-			{
-				id: expect.any(Number),
-				name: 'test1.txt',
-				itemId: blob.id,
-				parentId: null,
-				ownerId: user.id,
-				userId: user.id,
+				ownerId: otherUser.id,
 				mimeType: 'text/plain',
 				createdAt: expect.any(String),
 				deletedAt: null,
 				updatedAt: expect.any(String),
 			},
 			{
-				id: expect.any(Number),
-				name: 'test2.txt',
-				itemId: blob2.id,
+				id: folder2.id,
+				name: 'Folder2',
+				color: '#79BC61',
 				parentId: null,
-				ownerId: otherUser.id,
-				userId: user.id,
+				ownerId: user.id,
+				mimeType: 'application/vnd.cloudstore.folder',
+				createdAt: expect.any(String),
+				deletedAt: null,
+				updatedAt: expect.any(String),
+			},
+			{
+				id: blob.id,
+				name: 'test1.txt',
+				blobUrl: 'https://example.com/test1.txt',
+				parentId: null,
+				ownerId: user.id,
 				mimeType: 'text/plain',
 				createdAt: expect.any(String),
 				deletedAt: null,
@@ -190,7 +186,7 @@ describe('GET /api/starred', () => {
 
 		const response = await global.fastify.inject({
 			method: 'GET',
-			url: '/api/starred',
+			url: '/api/item/starred',
 			headers: {
 				authorization: 'invalid_access_token!!!',
 			},
@@ -203,27 +199,6 @@ describe('GET /api/starred', () => {
 				_: ['Unauthorized'],
 			},
 			statusCode: 401,
-		});
-	});
-
-	it("should return status 400, when starred id isn't a number", async () => {
-		const { accessToken } = await authService.createTokens(user.id);
-
-		const response = await global.fastify.inject({
-			method: 'GET',
-			url: '/api/starred/invalid_id',
-			headers: {
-				authorization: 'Bearer ' + accessToken,
-			},
-		});
-
-		expect(response.statusCode).toBe(400);
-		expect(response.json()).toEqual({
-			error: 'ValidationError',
-			errors: {
-				id: ['id must be a number'],
-			},
-			statusCode: 400,
 		});
 	});
 });

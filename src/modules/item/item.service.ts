@@ -75,6 +75,26 @@ export default class ItemService {
 		return returnItems;
 	}
 
+	public async getStarredItemsByUserId(userId: number): Promise<ItemWithProperties[]> {
+		const items = await prisma.item.findMany({
+			where: {
+				ItemStarred: {
+					some: {
+						userId: userId,
+					},
+				},
+			},
+			include: {
+				ItemBlob: true,
+				ItemFolder: true,
+				ItemDocs: true,
+				ItemShortcut: true,
+			},
+		});
+
+		return this.formatItems(items);
+	}
+
 	public async getAllOwnedAndSharredItemsByParentIdAndUserId(
 		userId: number,
 		parentId: number | null,

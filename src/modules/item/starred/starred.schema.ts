@@ -2,46 +2,6 @@ import { FromSchema } from 'json-schema-to-ts';
 import { Item } from '../item.schema';
 import { ItemStarred as prismaItemStarredType } from '@prisma/client';
 
-const browseStarredResponseSchema = {
-	$id: 'browseStarredResponseSchema',
-	type: 'array',
-	starred: {
-		type: 'object',
-		properties: {
-			id: {
-				type: 'number',
-			},
-			userId: {
-				type: 'number',
-			},
-			itemId: {
-				type: 'number',
-			},
-			parentId: {
-				type: ['number', 'null'],
-			},
-			name: {
-				type: 'string',
-			},
-			mimeType: {
-				type: 'string',
-			},
-			ownerId: {
-				type: 'number',
-			},
-			deletedAt: {
-				type: ['string', 'null'],
-			},
-			createdAt: {
-				type: 'string',
-			},
-			updatedAt: {
-				type: 'string',
-			},
-		},
-	},
-} as const;
-
 const readStarredSchema = {
 	$id: 'readStarredSchema',
 	type: 'object',
@@ -183,10 +143,9 @@ export type AddStarred = {
 };
 
 export type ItemStarred = prismaItemStarredType & { item: Item };
-export type Starred = prismaItemStarredType & Omit<Item, 'id'>;
+export type Starred = prismaItemStarredType;
 
 export const starredSchemas = [
-	browseStarredResponseSchema,
 	readStarredSchema,
 	readStarredResponseSchema,
 	addStarredSchema,

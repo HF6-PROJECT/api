@@ -56,12 +56,9 @@ describe('GET /api/starred/:id', () => {
 
 		expect(response.statusCode).toBe(200);
 		expect(response.json()).toEqual({
-			...starred,
+			id: starred.id,
 			itemId: folder.id,
-			userId: folder.id,
-			createdAt: starred.createdAt.toISOString(),
-			updatedAt: starred.updatedAt.toISOString(),
-			deletedAt: starred.deletedAt?.toISOString() ?? null,
+			userId: user.id,
 		});
 	});
 

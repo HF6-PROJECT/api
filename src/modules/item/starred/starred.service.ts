@@ -31,20 +31,6 @@ export default class StarredService {
 		}
 	}
 
-	public async getById(id: number): Promise<Starred> {
-		const itemStarred = await prisma.itemStarred.findUnique({
-			where: {
-				id,
-			},
-		});
-
-		if (!itemStarred) {
-			throw new Error('item.starred.notFound');
-		}
-
-		return itemStarred;
-	}
-
 	public async getByItemIdAndUserId(itemId: number, userId: number): Promise<Starred> {
 		const itemStarred = await prisma.itemStarred.findUnique({
 			where: {

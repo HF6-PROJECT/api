@@ -4,6 +4,7 @@ import {
 	ItemFolder as prismaItemFolderType,
 	ItemDocs as prismaItemDocsType,
 	ItemShortcut as prismaItemShortcutType,
+	ItemStarred as prismaItemStarredType,
 } from '@prisma/client';
 import { FromSchema } from 'json-schema-to-ts';
 
@@ -11,13 +12,15 @@ export type Item = prismaItemType;
 
 export type ItemPrismaProperties = Item & { ItemBlob: prismaItemBlobType | null } & {
 	ItemFolder: prismaItemFolderType | null;
-} & { ItemDocs: prismaItemDocsType | null } & { ItemShortcut: prismaItemShortcutType | null };
+} & { ItemDocs: prismaItemDocsType | null } & { ItemShortcut: prismaItemShortcutType | null } & {
+	ItemStarred: prismaItemStarredType[];
+};
 
 export type ItemWithProperties = Item &
 	Omit<Partial<prismaItemBlobType>, 'id' | 'itemId'> &
 	Omit<Partial<prismaItemFolderType>, 'id' | 'itemId'> &
 	Omit<Partial<prismaItemDocsType>, 'id' | 'itemId'> &
-	Omit<Partial<prismaItemShortcutType>, 'id' | 'itemId'>;
+	Omit<Partial<prismaItemShortcutType>, 'id' | 'itemId'> & { isStarred: boolean };
 
 export type CreateItem = Omit<Item, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>;
 
@@ -65,6 +68,9 @@ const itemsResponseSchema = {
 			},
 			parentId: {
 				type: ['number', 'null'],
+			},
+			isStarred: {
+				type: 'boolean',
 			},
 			mimeType: {
 				type: 'string',

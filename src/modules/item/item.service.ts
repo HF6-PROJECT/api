@@ -43,6 +43,11 @@ export default class ItemService {
 				ItemFolder: true,
 				ItemDocs: true,
 				ItemShortcut: true,
+				ItemStarred: {
+					where: {
+						userId: ownerId,
+					},
+				},
 			},
 		});
 
@@ -89,6 +94,11 @@ export default class ItemService {
 				ItemFolder: true,
 				ItemDocs: true,
 				ItemShortcut: true,
+				ItemStarred: {
+					where: {
+						userId: userId,
+					},
+				},
 			},
 		});
 
@@ -120,6 +130,11 @@ export default class ItemService {
 				ItemFolder: true,
 				ItemDocs: true,
 				ItemShortcut: true,
+				ItemStarred: {
+					where: {
+						userId: userId,
+					},
+				},
 			},
 		});
 
@@ -128,7 +143,8 @@ export default class ItemService {
 
 	private formatItems(items: ItemPrismaProperties[]): ItemWithProperties[] {
 		return items.map((element) => {
-			const { ItemFolder, ItemBlob, ItemDocs, ItemShortcut, ...strippedElement } = element;
+			const { ItemFolder, ItemBlob, ItemDocs, ItemShortcut, ItemStarred, ...strippedElement } =
+				element;
 
 			return {
 				...ItemBlob,
@@ -136,6 +152,7 @@ export default class ItemService {
 				...ItemDocs,
 				...ItemShortcut,
 				...strippedElement,
+				isStarred: ItemStarred.length > 0,
 			};
 		});
 	}

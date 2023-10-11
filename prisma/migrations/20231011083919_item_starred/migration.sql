@@ -3,6 +3,8 @@ CREATE TABLE "ItemStarred" (
     "id" SERIAL NOT NULL,
     "itemId" INTEGER NOT NULL,
     "userId" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "ItemStarred_pkey" PRIMARY KEY ("id")
 );

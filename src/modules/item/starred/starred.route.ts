@@ -13,26 +13,6 @@ export default async (fastify: FastifyInstance) => {
 		new AccessService(itemService, new SharingService(itemService)),
 	);
 
-	fastify.get(
-		'/:id',
-		{
-			schema: {
-				tags: ['Starred'],
-				params: { $ref: 'readStarredSchema' },
-				response: {
-					200: { $ref: 'readStarredResponseSchema' },
-				},
-				security: [
-					{
-						bearerAuth: [],
-					},
-				],
-			},
-			onRequest: [fastify.authenticate],
-		},
-		starredController.readHandler.bind(starredController),
-	);
-
 	fastify.post(
 		'/',
 		{

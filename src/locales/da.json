@@ -173,6 +173,10 @@
 			"required": "id er påkrævet",
 			"type": "id skal være et tal"
 		},
+		"userId": {
+			"required": "userId er påkrævet",
+			"type": "userId skal være et tal"
+		},
 		"itemId": {
 			"required": "itemId er påkrævet",
 			"type": "itemId skal være et tal"

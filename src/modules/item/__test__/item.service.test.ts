@@ -82,6 +82,7 @@ describe('ItemService', () => {
 					createdAt: expect.any(Date),
 					deletedAt: null,
 					updatedAt: expect.any(Date),
+					isStarred: false,
 				},
 				{
 					id: expect.any(Number),
@@ -94,6 +95,7 @@ describe('ItemService', () => {
 					createdAt: expect.any(Date),
 					deletedAt: null,
 					updatedAt: expect.any(Date),
+					isStarred: false,
 				},
 				{
 					id: expect.any(Number),
@@ -106,6 +108,7 @@ describe('ItemService', () => {
 					createdAt: expect.any(Date),
 					deletedAt: null,
 					updatedAt: expect.any(Date),
+					isStarred: false,
 				},
 				{
 					id: expect.any(Number),
@@ -118,6 +121,7 @@ describe('ItemService', () => {
 					createdAt: expect.any(Date),
 					deletedAt: null,
 					updatedAt: expect.any(Date),
+					isStarred: false,
 				},
 			]);
 		});
@@ -247,6 +251,7 @@ describe('ItemService', () => {
 					createdAt: expect.any(Date),
 					deletedAt: null,
 					updatedAt: expect.any(Date),
+					isStarred: false,
 				},
 				{
 					id: expect.any(Number),
@@ -259,6 +264,7 @@ describe('ItemService', () => {
 					createdAt: expect.any(Date),
 					deletedAt: null,
 					updatedAt: expect.any(Date),
+					isStarred: false,
 				},
 				{
 					id: expect.any(Number),
@@ -271,6 +277,7 @@ describe('ItemService', () => {
 					createdAt: expect.any(Date),
 					deletedAt: null,
 					updatedAt: expect.any(Date),
+					isStarred: false,
 				},
 				{
 					id: expect.any(Number),
@@ -283,6 +290,7 @@ describe('ItemService', () => {
 					createdAt: expect.any(Date),
 					deletedAt: null,
 					updatedAt: expect.any(Date),
+					isStarred: false,
 				},
 				{
 					id: expect.any(Number),
@@ -295,6 +303,7 @@ describe('ItemService', () => {
 					createdAt: expect.any(Date),
 					deletedAt: null,
 					updatedAt: expect.any(Date),
+					isStarred: false,
 				},
 				{
 					id: expect.any(Number),
@@ -307,6 +316,7 @@ describe('ItemService', () => {
 					createdAt: expect.any(Date),
 					deletedAt: null,
 					updatedAt: expect.any(Date),
+					isStarred: false,
 				},
 				{
 					id: expect.any(Number),
@@ -319,6 +329,7 @@ describe('ItemService', () => {
 					createdAt: expect.any(Date),
 					deletedAt: null,
 					updatedAt: expect.any(Date),
+					isStarred: false,
 				},
 			];
 			const expectedSharredUser = [
@@ -333,6 +344,7 @@ describe('ItemService', () => {
 					createdAt: expect.any(Date),
 					deletedAt: null,
 					updatedAt: expect.any(Date),
+					isStarred: false,
 				},
 				{
 					id: expect.any(Number),
@@ -345,6 +357,7 @@ describe('ItemService', () => {
 					createdAt: expect.any(Date),
 					deletedAt: null,
 					updatedAt: expect.any(Date),
+					isStarred: false,
 				},
 				{
 					id: expect.any(Number),
@@ -357,6 +370,7 @@ describe('ItemService', () => {
 					createdAt: expect.any(Date),
 					deletedAt: null,
 					updatedAt: expect.any(Date),
+					isStarred: false,
 				},
 				{
 					id: expect.any(Number),
@@ -369,6 +383,7 @@ describe('ItemService', () => {
 					createdAt: expect.any(Date),
 					deletedAt: null,
 					updatedAt: expect.any(Date),
+					isStarred: false,
 				},
 			];
 

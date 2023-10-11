@@ -61,10 +61,12 @@ describe('POST /api/starred', () => {
 			id: expect.any(Number),
 			userId: user.id,
 			itemId: folder.id,
+			createdAt: expect.any(String),
+			updatedAt: expect.any(String),
 		});
 	});
 
-	it('should return status 200 and item, when sharred', async () => {
+	it('should return status 200 and item, when starred', async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const folder = await folderService.createFolder({
@@ -98,6 +100,8 @@ describe('POST /api/starred', () => {
 			id: expect.any(Number),
 			itemId: folder.id,
 			userId: user.id,
+			createdAt: expect.any(String),
+			updatedAt: expect.any(String),
 		});
 	});
 

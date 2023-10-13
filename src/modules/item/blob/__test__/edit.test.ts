@@ -2,6 +2,8 @@ import { User } from '@prisma/client';
 import UserService from '../../../auth/user.service';
 import AuthService from '../../../auth/auth.service';
 import BlobService from '../blob.service';
+import { AuthServiceFactory, UserServiceFactory } from '../../../auth/auth.factory';
+import { BlobServiceFactory } from '../blob.factory';
 
 describe('PUT /api/blob', () => {
 	let userService: UserService;
@@ -12,9 +14,9 @@ describe('PUT /api/blob', () => {
 	let otherUser: User;
 
 	beforeAll(async () => {
-		authService = new AuthService();
-		userService = new UserService();
-		blobService = new BlobService();
+		authService = AuthServiceFactory.make();
+		userService = UserServiceFactory.make();
+		blobService = BlobServiceFactory.make();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',

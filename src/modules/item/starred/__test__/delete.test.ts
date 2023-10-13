@@ -4,7 +4,10 @@ import AuthService from '../../../auth/auth.service';
 import StarredService from '../starred.service';
 import FolderService from '../../folder/folder.service';
 import SharingService from '../../sharing/sharing.service';
-import ItemService from '../../item.service';
+import { AuthServiceFactory, UserServiceFactory } from '../../../auth/auth.factory';
+import { StarredServiceFactory } from '../starred.factory';
+import { FolderServiceFactory } from '../../folder/folder.factory';
+import { SharingServiceFactory } from '../../sharing/sharing.factory';
 
 describe('DELETE /api/starred/:id', () => {
 	let userService: UserService;
@@ -17,11 +20,11 @@ describe('DELETE /api/starred/:id', () => {
 	let otherUser: User;
 
 	beforeAll(async () => {
-		authService = new AuthService();
-		userService = new UserService();
-		starredService = new StarredService();
-		folderService = new FolderService();
-		sharingService = new SharingService(new ItemService());
+		authService = AuthServiceFactory.make();
+		userService = UserServiceFactory.make();
+		starredService = StarredServiceFactory.make();
+		folderService = FolderServiceFactory.make();
+		sharingService = SharingServiceFactory.make();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',

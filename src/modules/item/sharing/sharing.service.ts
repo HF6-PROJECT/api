@@ -1,6 +1,6 @@
 import { prisma } from '../../../plugins/prisma';
 import ItemService from '../item.service';
-import { Sharing, CreateSharing, UpdateSharing } from './sharing.schema';
+import { Sharing, CreateSharing, UpdateSharing, DeleteSharing } from './sharing.schema';
 
 export default class SharingService {
 	private itemService: ItemService;
@@ -77,6 +77,45 @@ export default class SharingService {
 		}
 	}
 
+	public async deleteSharing(input: DeleteSharing, userId: number): Promise<void> {
+		try {
+			const itemSharing = await prisma.itemSharing.findUniqueOrThrow({
+				where: {
+					itemId_userId: {
+						itemId: input.itemId,
+						userId: input.userId,
+					},
+				},
+			});
+
+			const accessableItems =
+				await this.itemService.getAllOwnedAndSharredItemsByParentIdAndUserIdRecursively(
+					userId,
+					itemSharing.itemId,
+				);
+
+			await prisma.itemSharing.deleteMany({
+				where: {
+					itemId: {
+						in: accessableItems.map((item) => item.id),
+					},
+					userId: itemSharing.userId,
+				},
+			});
+
+			await prisma.itemSharing.delete({
+				where: {
+					itemId_userId: {
+						itemId: input.itemId,
+						userId: input.userId,
+					},
+				},
+			});
+		} catch (e) {
+			// Nothing to do here
+		}
+	}
+
 	public async updateSharing(input: UpdateSharing): Promise<Sharing> {
 		const itemSharing = await prisma.itemSharing.update({
 			data: {
@@ -124,5 +163,23 @@ export default class SharingService {
 		} catch (e) {
 			// Nothing to do here
 		}
+	}
+
+	public async syncSharingsByItemId(fromItemId: number, toItemId: number) {
+		const sharings = await prisma.itemSharing.findMany({
+			where: {
+				itemId: fromItemId,
+			},
+		});
+
+		const created = await prisma.itemSharing.createMany({
+			data: sharings.map((sharing) => {
+				return {
+					itemId: toItemId,
+					userId: sharing.userId,
+				};
+			}),
+			skipDuplicates: true,
+		});
 	}
 }

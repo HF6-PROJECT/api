@@ -5,6 +5,11 @@ import AuthService from '../../auth/auth.service';
 import BlobService from '../blob/blob.service';
 import DocsService from '../docs/docs.service';
 import ShortcutService from '../shortcut/shortcut.service';
+import { AuthServiceFactory, UserServiceFactory } from '../../auth/auth.factory';
+import { FolderServiceFactory } from '../folder/folder.factory';
+import { BlobServiceFactory } from '../blob/blob.factory';
+import { DocsServiceFactory } from '../docs/docs.factory';
+import { ShortcutServiceFactory } from '../shortcut/shortcut.factory';
 
 describe('GET /api/item/:parentId', () => {
 	let userService: UserService;
@@ -18,12 +23,12 @@ describe('GET /api/item/:parentId', () => {
 	let otherUser: User;
 
 	beforeAll(async () => {
-		userService = new UserService();
-		folderService = new FolderService();
-		authService = new AuthService();
-		blobService = new BlobService();
-		docsService = new DocsService();
-		shortcutService = new ShortcutService();
+		userService = UserServiceFactory.make();
+		folderService = FolderServiceFactory.make();
+		authService = AuthServiceFactory.make();
+		blobService = BlobServiceFactory.make();
+		docsService = DocsServiceFactory.make();
+		shortcutService = ShortcutServiceFactory.make();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',

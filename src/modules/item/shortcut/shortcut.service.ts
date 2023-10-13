@@ -1,7 +1,14 @@
 import { prisma } from '../../../plugins/prisma';
+import SharingService from '../sharing/sharing.service';
 import { Shortcut, AddShortcut, UpdateShortcut, ItemShortcut } from './shortcut.schema';
 
 export default class ShortcutService {
+	private sharingService: SharingService;
+
+	constructor(sharingService: SharingService) {
+		this.sharingService = sharingService;
+	}
+
 	public async createShortcut(input: AddShortcut): Promise<Shortcut> {
 		const itemShortcut = await prisma.itemShortcut.create({
 			data: {
@@ -23,6 +30,10 @@ export default class ShortcutService {
 				shortcutItem: true,
 			},
 		});
+
+		if (input.parentId) {
+			await this.sharingService.syncSharingsByItemId(input.parentId, itemShortcut.shortcutItem.id);
+		}
 
 		return this.formatItemShortcut(itemShortcut);
 	}

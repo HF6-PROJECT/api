@@ -1,7 +1,14 @@
 import { prisma } from '../../../plugins/prisma';
+import SharingService from '../sharing/sharing.service';
 import { Docs, AddDocs, UpdateDocs, ItemDocs } from './docs.schema';
 
 export default class DocsService {
+	private sharingService: SharingService;
+
+	constructor(sharingService: SharingService) {
+		this.sharingService = sharingService;
+	}
+
 	public async createDocs(input: AddDocs): Promise<Docs> {
 		const itemDocs = await prisma.itemDocs.create({
 			data: {
@@ -19,6 +26,10 @@ export default class DocsService {
 				item: true,
 			},
 		});
+
+		if (input.parentId) {
+			await this.sharingService.syncSharingsByItemId(input.parentId, itemDocs.item.id);
+		}
 
 		return this.formatitemDocs(itemDocs);
 	}

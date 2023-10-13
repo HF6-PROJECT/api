@@ -4,6 +4,10 @@ import AuthService from '../../../auth/auth.service';
 import ShortcutService from '../shortcut.service';
 import FolderService from '../../folder/folder.service';
 import ItemService from '../../item.service';
+import { AuthServiceFactory, UserServiceFactory } from '../../../auth/auth.factory';
+import { ShortcutServiceFactory } from '../shortcut.factory';
+import { FolderServiceFactory } from '../../folder/folder.factory';
+import { ItemServiceFactory } from '../../item.factory';
 
 describe('DELETE /api/shortcut/:id', () => {
 	let userService: UserService;
@@ -16,11 +20,11 @@ describe('DELETE /api/shortcut/:id', () => {
 	let otherUser: User;
 
 	beforeAll(async () => {
-		authService = new AuthService();
-		userService = new UserService();
-		shortcutService = new ShortcutService();
-		folderService = new FolderService();
-		itemService = new ItemService();
+		authService = AuthServiceFactory.make();
+		userService = UserServiceFactory.make();
+		shortcutService = ShortcutServiceFactory.make();
+		folderService = FolderServiceFactory.make();
+		itemService = ItemServiceFactory.make();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',

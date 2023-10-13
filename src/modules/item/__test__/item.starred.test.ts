@@ -5,7 +5,11 @@ import StarredService from '../starred/starred.service';
 import FolderService from '../folder/folder.service';
 import BlobService from '../blob/blob.service';
 import SharingService from '../sharing/sharing.service';
-import ItemService from '../item.service';
+import { AuthServiceFactory, UserServiceFactory } from '../../auth/auth.factory';
+import { FolderServiceFactory } from '../folder/folder.factory';
+import { BlobServiceFactory } from '../blob/blob.factory';
+import { SharingServiceFactory } from '../sharing/sharing.factory';
+import { StarredServiceFactory } from '../starred/starred.factory';
 
 describe('GET /api/item/starred', () => {
 	let userService: UserService;
@@ -19,12 +23,12 @@ describe('GET /api/item/starred', () => {
 	let otherUser: User;
 
 	beforeAll(async () => {
-		authService = new AuthService();
-		userService = new UserService();
-		starredService = new StarredService();
-		folderService = new FolderService();
-		blobService = new BlobService();
-		sharingService = new SharingService(new ItemService());
+		authService = AuthServiceFactory.make();
+		userService = UserServiceFactory.make();
+		starredService = StarredServiceFactory.make();
+		folderService = FolderServiceFactory.make();
+		blobService = BlobServiceFactory.make();
+		sharingService = SharingServiceFactory.make();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',

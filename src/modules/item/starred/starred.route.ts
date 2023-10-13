@@ -1,17 +1,8 @@
 import { FastifyInstance } from 'fastify';
-import StarredController from './starred.controller';
-import StarredService from './starred.service';
-import AccessService from '../sharing/access.service';
-import ItemService from '../item.service';
-import SharingService from '../sharing/sharing.service';
+import { StarredControllerFactory } from './starred.factory';
 
 export default async (fastify: FastifyInstance) => {
-	const itemService = new ItemService();
-	const starredService = new StarredService();
-	const starredController = new StarredController(
-		starredService,
-		new AccessService(itemService, new SharingService(itemService)),
-	);
+	const starredController = StarredControllerFactory.make();
 
 	fastify.post(
 		'/',

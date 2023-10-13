@@ -5,6 +5,12 @@ import FolderService from '../folder/folder.service';
 import SharingService from '../sharing/sharing.service';
 import BlobService from '../blob/blob.service';
 import ShortcutService from '../shortcut/shortcut.service';
+import { UserServiceFactory } from '../../auth/auth.factory';
+import { FolderServiceFactory } from '../folder/folder.factory';
+import { BlobServiceFactory } from '../blob/blob.factory';
+import { ShortcutServiceFactory } from '../shortcut/shortcut.factory';
+import { SharingServiceFactory } from '../sharing/sharing.factory';
+import { ItemServiceFactory } from '../item.factory';
 
 describe('ItemService', () => {
 	let itemService: ItemService;
@@ -18,12 +24,12 @@ describe('ItemService', () => {
 	let otherUser: User;
 
 	beforeAll(async () => {
-		itemService = new ItemService();
-		userService = new UserService();
-		folderService = new FolderService();
-		sharingService = new SharingService(itemService);
-		blobService = new BlobService();
-		shortcutService = new ShortcutService();
+		itemService = ItemServiceFactory.make();
+		userService = UserServiceFactory.make();
+		folderService = FolderServiceFactory.make();
+		sharingService = SharingServiceFactory.make();
+		blobService = BlobServiceFactory.make();
+		shortcutService = ShortcutServiceFactory.make();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',
@@ -149,7 +155,7 @@ describe('ItemService', () => {
 				user.id,
 			);
 
-			const blob1 = await blobService.createBlob({
+			await blobService.createBlob({
 				mimeType: 'text/plain',
 				name: 'test1.txt',
 				ownerId: user.id,
@@ -157,13 +163,14 @@ describe('ItemService', () => {
 				blobUrl: 'https://example.com/test1.txt',
 			});
 
-			await blobService.createBlob({
+			const blob2 = await blobService.createBlob({
 				mimeType: 'text/plain',
 				name: 'test2.txt',
 				ownerId: user.id,
 				parentId: folder.id,
 				blobUrl: 'https://example.com/test2.txt',
 			});
+			await sharingService.deleteSharing({ itemId: blob2.id, userId: otherUser.id }, user.id);
 
 			const folder1 = await folderService.createFolder({
 				name: 'Folder1',
@@ -171,12 +178,14 @@ describe('ItemService', () => {
 				ownerId: user.id,
 				parentId: folder.id,
 			});
-			await folderService.createFolder({
+			const folder2 = await folderService.createFolder({
 				name: 'Folder2',
 				color: '#111111',
 				ownerId: user.id,
 				parentId: folder.id,
 			});
+			await sharingService.deleteSharing({ itemId: folder2.id, userId: otherUser.id }, user.id);
+
 			const folder3 = await folderService.createFolder({
 				name: 'Folder3',
 				color: '#987654',
@@ -184,51 +193,20 @@ describe('ItemService', () => {
 				parentId: folder.id,
 			});
 
-			await sharingService.createSharing(
-				{
-					itemId: blob1.id,
-					userId: otherUser.id,
-				},
-				user.id,
-			);
-
-			await sharingService.createSharing(
-				{
-					itemId: folder1.id,
-					userId: otherUser.id,
-				},
-				user.id,
-			);
-
-			await sharingService.createSharing(
-				{
-					itemId: folder3.id,
-					userId: otherUser.id,
-				},
-				user.id,
-			);
-
-			const shortcut1 = await shortcutService.createShortcut({
+			await shortcutService.createShortcut({
 				name: 'Shortcut1',
 				ownerId: user.id,
 				linkedItemId: folder1.id,
 				parentId: folder.id,
 			});
 
-			await shortcutService.createShortcut({
+			const shortcut2 = await shortcutService.createShortcut({
 				name: 'Shortcut2',
 				ownerId: user.id,
 				linkedItemId: folder3.id,
 				parentId: folder.id,
 			});
-
-			await sharingService.createSharing(
-				{
-					itemId: shortcut1.id,
-					userId: otherUser.id,
-				},
-				user.id,
-			);
+			await sharingService.deleteSharing({ itemId: shortcut2.id, userId: otherUser.id }, user.id);
 
 			const itemsOwner = await itemService.getAllOwnedAndSharredItemsByParentIdAndUserId(
 				user.id,
@@ -239,7 +217,7 @@ describe('ItemService', () => {
 				folder.id,
 			);
 
-			const expectedOwner = [
+			expect(itemsOwner).toEqual([
 				{
 					id: expect.any(Number),
 					name: 'test1.txt',
@@ -331,8 +309,8 @@ describe('ItemService', () => {
 					updatedAt: expect.any(Date),
 					isStarred: false,
 				},
-			];
-			const expectedSharredUser = [
+			]);
+			expect(itemsSharredUser).toEqual([
 				{
 					id: expect.any(Number),
 					name: 'test1.txt',
@@ -385,10 +363,7 @@ describe('ItemService', () => {
 					updatedAt: expect.any(Date),
 					isStarred: false,
 				},
-			];
-
-			expect(itemsOwner).toEqual(expectedOwner);
-			expect(itemsSharredUser).toEqual(expectedSharredUser);
+			]);
 		});
 
 		it('should return empty array, when no items are found', async () => {

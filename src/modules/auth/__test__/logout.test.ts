@@ -1,14 +1,15 @@
 import { prisma } from '../../../plugins/prisma';
 import UserService from '../user.service';
 import AuthService from '../auth.service';
+import { AuthServiceFactory, UserServiceFactory } from '../auth.factory';
 
 describe('POST /api/auth/logout', () => {
 	let userService: UserService;
 	let authService: AuthService;
 
 	beforeAll(async () => {
-		userService = new UserService();
-		authService = new AuthService();
+		userService = UserServiceFactory.make();
+		authService = AuthServiceFactory.make();
 	});
 
 	beforeEach(async () => {

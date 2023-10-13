@@ -1,7 +1,14 @@
 import { prisma } from '../../../plugins/prisma';
+import SharingService from '../sharing/sharing.service';
 import { Folder, AddFolder, UpdateFolder, ItemFolder } from './folder.schema';
 
 export default class FolderService {
+	private sharingService: SharingService;
+
+	constructor(sharingService: SharingService) {
+		this.sharingService = sharingService;
+	}
+
 	public async createFolder(input: AddFolder): Promise<Folder> {
 		const itemFolder = await prisma.itemFolder.create({
 			data: {
@@ -19,6 +26,10 @@ export default class FolderService {
 				item: true,
 			},
 		});
+
+		if (input.parentId) {
+			await this.sharingService.syncSharingsByItemId(input.parentId, itemFolder.item.id);
+		}
 
 		return this.formatItemFolder(itemFolder);
 	}

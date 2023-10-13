@@ -11,6 +11,10 @@ export type UpdateSharing = {
 	itemId: number;
 	userId: number;
 } & Partial<CreateSharing>;
+export type DeleteSharing = {
+	itemId: number;
+	userId: number;
+};
 
 const addSharingSchema = {
 	$id: 'addSharingSchema',

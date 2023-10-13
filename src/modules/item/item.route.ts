@@ -68,4 +68,42 @@ export default async (fastify: FastifyInstance) => {
 		},
 		itemController.itemHandler.bind(itemController),
 	);
+
+	fastify.get(
+		'/shared',
+		{
+			schema: {
+				tags: ['Item'],
+				response: {
+					200: { $ref: 'itemsResponseSchema' },
+				},
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
+			},
+			onRequest: [fastify.authenticate],
+		},
+		itemController.sharedItemHandler.bind(itemController),
+	);
+
+	fastify.get(
+		'/:id/sharings',
+		{
+			schema: {
+				tags: ['Item'],
+				response: {
+					200: { $ref: 'itemSharingsResponseSchema' },
+				},
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
+			},
+			onRequest: [fastify.authenticate],
+		},
+		itemController.sharingsHandler.bind(itemController),
+	);
 };

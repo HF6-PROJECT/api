@@ -23,10 +23,10 @@ declare module 'fastify' {
 			REDIS_URL: string;
 			NODE_ENV: NODE_ENV;
 			ALLOWED_ORIGINS: string[];
-            PUSHER_APP_ID: string;
-            PUSHER_APP_KEY: string;
-            PUSHER_APP_SECRET: string;
-            PUSHER_APP_CLUSTER: string;
+			PUSHER_APP_ID: string;
+			PUSHER_APP_KEY: string;
+			PUSHER_APP_SECRET: string;
+			PUSHER_APP_CLUSTER: string;
 		};
 	}
 }
@@ -47,10 +47,10 @@ export default fastifyPlugin(
 				'DATABASE_URL_NON_POOLING',
 				'REDIS_URL',
 				'BLOB_READ_WRITE_TOKEN',
-                'PUSHER_APP_ID',
-                'PUSHER_APP_KEY',
-                'PUSHER_APP_SECRET',
-                'PUSHER_APP_CLUSTER',
+				'PUSHER_APP_ID',
+				'PUSHER_APP_KEY',
+				'PUSHER_APP_SECRET',
+				'PUSHER_APP_CLUSTER',
 			],
 			properties: {
 				SECRET: {
@@ -91,18 +91,18 @@ export default fastifyPlugin(
 					separator: ',',
 					default: 'http://localhost:4321',
 				},
-                PUSHER_APP_ID: {
-                    type: 'string',
-                },
-                PUSHER_APP_KEY: {
-                    type: 'string',
-                },
-                PUSHER_APP_SECRET: {
-                    type: 'string',
-                },
-                PUSHER_APP_CLUSTER: {
-                    type: 'string',
-                },
+				PUSHER_APP_ID: {
+					type: 'string',
+				},
+				PUSHER_APP_KEY: {
+					type: 'string',
+				},
+				PUSHER_APP_SECRET: {
+					type: 'string',
+				},
+				PUSHER_APP_CLUSTER: {
+					type: 'string',
+				},
 			},
 		};
 

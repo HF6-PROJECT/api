@@ -12,6 +12,7 @@ import jwt from './jwt';
 import i18n from './i18n';
 import errorHandler from './error.handler';
 import plainText from './plainText';
+import pusher from './pusher';
 
 export default fastifyPlugin(async (fastify: FastifyInstance) => {
 	await Promise.all([
@@ -24,6 +25,7 @@ export default fastifyPlugin(async (fastify: FastifyInstance) => {
 
 	await Promise.all([
 		fastify.register(prisma),
+		fastify.register(pusher),
 		fastify.register(redis),
 		fastify.register(cookie),
 		fastify.register(cors),

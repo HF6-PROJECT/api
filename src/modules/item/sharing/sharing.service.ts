@@ -172,7 +172,7 @@ export default class SharingService {
 			},
 		});
 
-		const created = await prisma.itemSharing.createMany({
+		await prisma.itemSharing.createMany({
 			data: sharings.map((sharing) => {
 				return {
 					itemId: toItemId,

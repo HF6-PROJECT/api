@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { ReadInput, EditInput, AddInput, DeleteInput } from './folder.schema';
 import FolderService from './folder.service';
 import AccessService from '../sharing/access.service';
-import Pusher from 'pusher';
+import { pusher } from '../../../plugins/pusher';
 
 export default class FolderController {
 	private folderService: FolderService;
@@ -91,14 +91,6 @@ export default class FolderController {
 				color: request.body.color,
 				ownerId: request.user.sub,
 				parentId: request.body.parentId ?? null,
-			});
-
-			const pusher = new Pusher({
-				appId: '1684269',
-				key: '3a4575271634ad5a09ef',
-				secret: '486036ded3c32d02bac3',
-				cluster: 'eu',
-				useTLS: true,
 			});
 
 			const channelName = request.body.parentId

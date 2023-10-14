@@ -50,6 +50,25 @@ export default async (fastify: FastifyInstance) => {
 	);
 
 	fastify.get(
+		'/:id/single',
+		{
+			schema: {
+				tags: ['Item'],
+				response: {
+					200: { $ref: 'itemFolderDocsBlobResponseSchema' },
+				},
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
+			},
+			onRequest: [fastify.authenticate],
+		},
+		itemController.readHandler.bind(itemController),
+	);
+
+	fastify.get(
 		'/folders',
 		{
 			schema: {
@@ -86,5 +105,43 @@ export default async (fastify: FastifyInstance) => {
 			onRequest: [fastify.authenticate],
 		},
 		itemController.itemHandler.bind(itemController),
+	);
+
+	fastify.get(
+		'/shared',
+		{
+			schema: {
+				tags: ['Item'],
+				response: {
+					200: { $ref: 'itemsResponseSchema' },
+				},
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
+			},
+			onRequest: [fastify.authenticate],
+		},
+		itemController.sharedItemHandler.bind(itemController),
+	);
+
+	fastify.get(
+		'/:id/sharings',
+		{
+			schema: {
+				tags: ['Item'],
+				response: {
+					200: { $ref: 'itemSharingsResponseSchema' },
+				},
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
+			},
+			onRequest: [fastify.authenticate],
+		},
+		itemController.sharingsHandler.bind(itemController),
 	);
 };

@@ -52,7 +52,7 @@ describe('POST /api/sharing', () => {
 			},
 			payload: {
 				itemId: item.id,
-				userId: user.id,
+				email: user.email,
 			},
 		});
 
@@ -112,7 +112,7 @@ describe('POST /api/sharing', () => {
 			},
 			payload: {
 				itemId: folder.id,
-				userId: otherUser.id,
+				email: otherUser.email,
 			},
 		});
 
@@ -157,7 +157,7 @@ describe('POST /api/sharing', () => {
 			},
 			payload: {
 				itemId: item.id,
-				userId: user.id,
+				email: user.email,
 			},
 		});
 
@@ -189,7 +189,7 @@ describe('POST /api/sharing', () => {
 			},
 			payload: {
 				itemId: item.id,
-				userId: user.id,
+				email: user.email,
 			},
 		});
 
@@ -200,6 +200,38 @@ describe('POST /api/sharing', () => {
 				_: ['Unauthorized'],
 			},
 			statusCode: 401,
+		});
+	});
+
+	it("should return status 400, when user with email doesn't exist", async () => {
+		const { accessToken } = await authService.createTokens(user.id);
+
+		const item = await itemService.createItem({
+			name: 'test.txt',
+			ownerId: user.id,
+			parentId: null,
+			mimeType: 'text/plain',
+		});
+
+		const response = await global.fastify.inject({
+			method: 'POST',
+			url: '/api/sharing',
+			headers: {
+				authorization: 'Bearer ' + accessToken,
+			},
+			payload: {
+				itemId: item.id,
+				email: 'user@whodoesnotexist.com',
+			},
+		});
+
+		expect(response.statusCode).toBe(400);
+		expect(response.json()).toEqual({
+			error: 'BadRequestError',
+			errors: {
+				_: ['User not found'],
+			},
+			statusCode: 400,
 		});
 	});
 
@@ -228,7 +260,7 @@ describe('POST /api/sharing', () => {
 				authorization: 'Bearer ' + accessToken,
 			},
 			payload: {
-				userId: user.id,
+				email: user.email,
 				itemId: item.id,
 			},
 		});
@@ -243,7 +275,7 @@ describe('POST /api/sharing', () => {
 		});
 	});
 
-	it("should return status 400, when user id isn't provided", async () => {
+	it("should return status 400, when email isn't provided", async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const item = await itemService.createItem({
@@ -268,13 +300,13 @@ describe('POST /api/sharing', () => {
 		expect(response.json()).toEqual({
 			error: 'ValidationError',
 			errors: {
-				_: ['userId is required'],
+				_: ['Email is required'],
 			},
 			statusCode: 400,
 		});
 	});
 
-	it("should return status 400, when user id isn't a number", async () => {
+	it("should return status 400, when email isn't a valid email", async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const item = await itemService.createItem({
@@ -292,7 +324,7 @@ describe('POST /api/sharing', () => {
 			},
 			payload: {
 				itemId: item.id,
-				userId: 'invalid_id',
+				email: 'invalid_email',
 			},
 		});
 
@@ -300,7 +332,7 @@ describe('POST /api/sharing', () => {
 		expect(response.json()).toEqual({
 			error: 'ValidationError',
 			errors: {
-				userId: ['userId must be a number'],
+				email: ['Email must be of correct format'],
 			},
 			statusCode: 400,
 		});
@@ -323,7 +355,7 @@ describe('POST /api/sharing', () => {
 				authorization: 'Bearer ' + accessToken,
 			},
 			payload: {
-				userId: user.id,
+				email: user.email,
 			},
 		});
 
@@ -355,7 +387,7 @@ describe('POST /api/sharing', () => {
 			},
 			payload: {
 				itemId: 'invalid_id',
-				userId: user.id,
+				email: user.email,
 			},
 		});
 

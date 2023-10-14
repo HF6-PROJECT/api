@@ -164,6 +164,72 @@ export default class ItemService {
 		return this.formatItems(items);
 	}
 
+	public async getAllSharedItemsByUserId(userId: number) {
+		const items = await prisma.item.findMany({
+			where: {
+				ItemSharing: {
+					some: {
+						userId: userId,
+					},
+				},
+			},
+			include: {
+				ItemBlob: true,
+				ItemFolder: true,
+				ItemDocs: true,
+				ItemShortcut: true,
+				ItemStarred: {
+					where: {
+						userId: userId,
+					},
+				},
+			},
+		});
+
+		return this.formatItems(items);
+	}
+
+	public async getItemByIdWithSharingsAndOwner(id: number) {
+		const item = await prisma.item.findUnique({
+			where: {
+				id,
+			},
+			include: {
+				owner: true,
+				ItemSharing: {
+					include: {
+						user: true,
+					},
+				},
+			},
+		});
+
+		if (!item) {
+			throw new Error('item.notFound');
+		}
+
+		return item;
+	}
+
+	public async getItemByIdWithFolderAndDocsAndBlob(id: number) {
+		const item = await prisma.item.findUnique({
+			where: {
+				id,
+			},
+			include: {
+				ItemBlob: true,
+				ItemFolder: true,
+				ItemDocs: true,
+			},
+		});
+
+		if (!item) {
+			throw new Error('item.notFound');
+		}
+
+		return item;
+	}
+
 	private formatItems(items: ItemPrismaProperties[]): ItemWithProperties[] {
 		return items.map((element) => {
 			const { ItemFolder, ItemBlob, ItemDocs, ItemShortcut, ItemStarred, ...strippedElement } =

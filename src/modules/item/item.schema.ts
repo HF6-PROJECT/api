@@ -66,6 +66,9 @@ const itemsResponseSchema = {
 			blobUrl: {
 				type: ['string', 'null'],
 			},
+			linkedItemId: {
+				type: ['number', 'null'],
+			},
 			parentId: {
 				type: ['number', 'null'],
 			},
@@ -91,6 +94,207 @@ const itemsResponseSchema = {
 	},
 } as const;
 
+const itemReadSchema = {
+	$id: 'itemReadSchema',
+	type: 'object',
+	properties: {
+		id: {
+			type: 'string',
+			errorMessage: {
+				type: 'item.id.type',
+			},
+		},
+	},
+	required: ['id'],
+	errorMessage: {
+		required: {
+			id: 'item.id.required',
+		},
+	},
+} as const;
+
+const itemSharingsSchema = {
+	$id: 'itemSharingsSchema',
+	type: 'object',
+	properties: {
+		id: {
+			type: 'string',
+			errorMessage: {
+				type: 'item.id.type',
+			},
+		},
+	},
+	required: ['id'],
+	errorMessage: {
+		required: {
+			id: 'item.id.required',
+		},
+	},
+} as const;
+
+const itemSharingsResponseSchema = {
+	$id: 'itemSharingsResponseSchema',
+	type: 'object',
+	properties: {
+		id: {
+			type: 'number',
+		},
+		name: {
+			type: 'string',
+		},
+		mimeType: {
+			type: 'string',
+		},
+		ownerId: {
+			type: 'string',
+		},
+		parentId: {
+			type: ['number', 'null'],
+		},
+		owner: {
+			type: 'object',
+			properties: {
+				id: {
+					type: 'number',
+				},
+				email: {
+					type: 'string',
+				},
+				name: {
+					type: 'string',
+				},
+				createdAt: {
+					type: 'string',
+				},
+				updatedAt: {
+					type: 'string',
+				},
+			},
+		},
+		ItemSharing: {
+			type: 'array',
+			items: {
+				type: 'object',
+				properties: {
+					id: {
+						type: 'number',
+					},
+					userId: {
+						type: 'number',
+					},
+					user: {
+						type: 'object',
+						properties: {
+							id: {
+								type: 'number',
+							},
+							email: {
+								type: 'string',
+							},
+							name: {
+								type: 'string',
+							},
+							createdAt: {
+								type: 'string',
+							},
+							updatedAt: {
+								type: 'string',
+							},
+						},
+					},
+					itemId: {
+						type: 'number',
+					},
+					createdAt: {
+						type: 'string',
+					},
+					updatedAt: {
+						type: 'string',
+					},
+				},
+			},
+		},
+		deletedAt: {
+			type: ['string', 'null'],
+		},
+		createdAt: {
+			type: 'string',
+		},
+		updatedAt: {
+			type: 'string',
+		},
+	},
+} as const;
+
+const itemFolderDocsBlobResponseSchema = {
+	$id: 'itemFolderDocsBlobResponseSchema',
+	type: 'object',
+	properties: {
+		id: {
+			type: 'number',
+		},
+		name: {
+			type: 'string',
+		},
+		mimeType: {
+			type: 'string',
+		},
+		ownerId: {
+			type: 'string',
+		},
+		parentId: {
+			type: ['number', 'null'],
+		},
+		ItemFolder: {
+			type: ['object', 'null'],
+			properties: {
+				id: {
+					type: 'number',
+				},
+				color: {
+					type: 'string',
+				},
+			},
+		},
+		ItemBlob: {
+			type: ['object', 'null'],
+            properties: {
+                id: {
+                    type: 'number',
+                },
+                blobUrl: {
+                    type: 'string',
+                },
+            },
+		},
+		ItemDocs: {
+			type: ['object', 'null'],
+			items: {
+				type: 'object',
+				properties: {
+					id: {
+						type: 'number',
+					},
+					text: {
+						type: 'string',
+					},
+				},
+			},
+		},
+		deletedAt: {
+			type: ['string', 'null'],
+		},
+		createdAt: {
+			type: 'string',
+		},
+		updatedAt: {
+			type: 'string',
+		},
+	},
+} as const;
+
+export type itemSharingsInput = FromSchema<typeof itemSharingsSchema>;
+export type itemReadInput = FromSchema<typeof itemReadSchema>;
 export type ReadInput = FromSchema<typeof readItemsSchema>;
 
-export const itemSchemas = [readItemsSchema, itemsResponseSchema];
+export const itemSchemas = [readItemsSchema, itemsResponseSchema, itemSharingsResponseSchema, itemFolderDocsBlobResponseSchema];

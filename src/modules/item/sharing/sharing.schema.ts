@@ -13,7 +13,7 @@ export type UpdateSharing = {
 } & Partial<CreateSharing>;
 
 const addSharingSchema = {
-	$id: 'uploadSharingSchema',
+	$id: 'addSharingSchema',
 	type: 'object',
 	properties: {
 		itemId: {
@@ -22,25 +22,27 @@ const addSharingSchema = {
 				type: 'item.sharing.itemId.type',
 			},
 		},
-		userId: {
-			type: 'number',
+		email: {
+			type: 'string',
+			format: 'email',
 			errorMessage: {
-				type: 'item.sharing.userId.type',
+				type: 'item.sharing.email.type',
+				format: 'item.sharing.email.format',
 			},
 		},
 	},
-	required: ['itemId', 'userId'],
+	required: ['itemId', 'email'],
 	errorMessage: {
 		required: {
 			itemId: 'item.sharing.itemId.required',
-			userId: 'item.sharing.userId.required',
+			email: 'item.sharing.email.required',
 		},
 	},
 } as const;
 export type AddInput = FromSchema<typeof addSharingSchema>;
 
-const uploadSharingResponseSchema = {
-	$id: 'uploadSharingResponseSchema',
+const addSharingResponseSchema = {
+	$id: 'addSharingResponseSchema',
 	type: 'object',
 	properties: {
 		id: {
@@ -181,7 +183,7 @@ export type DeleteInput = FromSchema<typeof deleteSharingSchema>;
 
 export const sharingSchemas = [
 	addSharingSchema,
-	uploadSharingResponseSchema,
+	addSharingResponseSchema,
 	readSharingSchema,
 	readSharingResponseSchema,
 	editSharingSchema,

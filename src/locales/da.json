@@ -99,6 +99,11 @@
 				"required": "userId er påkrævet",
 				"type": "userId skal være et tal"
 			},
+			"email": {
+				"required": "Email er påkrævet",
+				"type": "Email skal være en tekst",
+				"format": "Email skal være af korrekt format"
+			},
 			"notFound": "Delning ikke fundet",
 			"alreadyExists": "Delning findes allerede"
 		},

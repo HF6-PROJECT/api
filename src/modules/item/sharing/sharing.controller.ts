@@ -2,14 +2,21 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { AddInput, ReadInput, EditInput, DeleteInput } from './sharing.schema';
 import SharingService from './sharing.service';
 import AccessService from './access.service';
+import UserService from '../../auth/user.service';
 
 export default class SharingController {
 	private sharingService: SharingService;
 	private accessService: AccessService;
+	private userService: UserService;
 
-	constructor(sharingService: SharingService, accessService: AccessService) {
+	constructor(
+		sharingService: SharingService,
+		accessService: AccessService,
+		userService: UserService,
+	) {
 		this.sharingService = sharingService;
 		this.accessService = accessService;
+		this.userService = userService;
 	}
 
 	public async readHandler(
@@ -73,7 +80,12 @@ export default class SharingController {
 				return reply.unauthorized();
 			}
 
-			const sharing = await this.sharingService.createSharing(request.body, request.user.sub);
+			const user = await this.userService.getUserByEmail(request.body.email);
+
+			const sharing = await this.sharingService.createSharing(
+				{ userId: user.id, itemId: request.body.itemId },
+				request.user.sub,
+			);
 
 			return reply.code(200).send(sharing);
 		} catch (e) {

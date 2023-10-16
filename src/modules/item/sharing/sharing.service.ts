@@ -166,17 +166,25 @@ export default class SharingService {
 	}
 
 	public async syncSharingsByItemId(fromItemId: number, toItemId: number) {
-		const sharings = await prisma.itemSharing.findMany({
+		const fromItem = await prisma.item.findUniqueOrThrow({
 			where: {
-				itemId: fromItemId,
+				id: fromItemId,
+			},
+			include: {
+				ItemSharing: true,
 			},
 		});
 
+		const userIds = [fromItem.ownerId];
+		fromItem.ItemSharing.forEach((sharing) => {
+			userIds.push(sharing.userId);
+		});
+
 		await prisma.itemSharing.createMany({
-			data: sharings.map((sharing) => {
+			data: userIds.map((userId) => {
 				return {
 					itemId: toItemId,
-					userId: sharing.userId,
+					userId: userId,
 				};
 			}),
 			skipDuplicates: true,

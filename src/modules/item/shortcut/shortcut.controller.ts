@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { ReadInput, EditInput, AddInput, DeleteInput } from './shortcut.schema';
 import ShortcutService from './shortcut.service';
 import AccessService from '../sharing/access.service';
+import { ItemEventType, triggerItemEvent } from '../item.event_handler';
 
 export default class ShortcutController {
 	private shortcutService: ShortcutService;
@@ -59,6 +60,8 @@ export default class ShortcutController {
 
 			const updatedShortcut = await this.shortcutService.updateShortcut(request.body);
 
+			triggerItemEvent(updatedShortcut, ItemEventType.UPDATE);
+
 			return reply.code(200).send(updatedShortcut);
 		} catch (e) {
 			if (e instanceof Error) {
@@ -92,6 +95,8 @@ export default class ShortcutController {
 				parentId: request.body.parentId ?? null,
 			});
 
+			triggerItemEvent(shortcut, ItemEventType.UPDATE);
+
 			return reply.code(200).send(shortcut);
 		} catch (e) {
 			/* istanbul ignore next */
@@ -113,6 +118,9 @@ export default class ShortcutController {
 			}
 
 			await this.shortcutService.deleteShortcutByItemId(shortcut.id);
+
+			triggerItemEvent(shortcut, ItemEventType.DELETE);
+
 			return reply.code(204).send();
 		} catch (e) {
 			if (e instanceof Error) {

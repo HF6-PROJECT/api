@@ -149,6 +149,9 @@ export default class ItemService {
 						userId: userId,
 					},
 				},
+				ownerId: {
+					not: userId,
+				},
 			},
 			include: {
 				ItemBlob: true,

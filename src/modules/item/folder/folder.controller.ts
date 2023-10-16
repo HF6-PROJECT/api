@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { ReadInput, EditInput, AddInput, DeleteInput } from './folder.schema';
 import FolderService from './folder.service';
 import AccessService from '../sharing/access.service';
-import { pusher } from '../../../plugins/pusher';
+import { ItemEventType, triggerItemEvent } from '../item.event_handler';
 
 export default class FolderController {
 	private folderService: FolderService;
@@ -60,6 +60,8 @@ export default class FolderController {
 
 			const updatedFolder = await this.folderService.updateFolder(request.body);
 
+			triggerItemEvent(updatedFolder, ItemEventType.UPDATE);
+
 			return reply.code(200).send(updatedFolder);
 		} catch (e) {
 			if (e instanceof Error) {
@@ -93,13 +95,7 @@ export default class FolderController {
 				parentId: request.body.parentId ?? null,
 			});
 
-			const channelName = request.body.parentId
-				? `browser-folder-${request.body.parentId}`
-				: `browser-root-${request.user.sub}`;
-
-			pusher.trigger(channelName, 'update', {
-				message: 'hello world',
-			});
+			triggerItemEvent(folder, ItemEventType.UPDATE);
 
 			return reply.code(200).send(folder);
 		} catch (e) {
@@ -122,6 +118,9 @@ export default class FolderController {
 			}
 
 			await this.folderService.deleteFolderByItemId(folder.id);
+
+			triggerItemEvent(folder, ItemEventType.DELETE);
+
 			return reply.code(204).send();
 		} catch (e) {
 			if (e instanceof Error) {

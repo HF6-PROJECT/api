@@ -52,7 +52,7 @@ export default class DocsController {
 
 			const updatedDocs = await this.docsService.updateDocs(request.body);
 
-			triggerItemEvent(updatedDocs, ItemEventType.UPDATE);
+			await triggerItemEvent(updatedDocs, ItemEventType.UPDATE);
 
 			return reply.code(200).send(updatedDocs);
 		} catch (e) {
@@ -87,7 +87,7 @@ export default class DocsController {
 				parentId: request.body.parentId ?? null,
 			});
 
-			triggerItemEvent(docs, ItemEventType.UPDATE);
+			await triggerItemEvent(docs, ItemEventType.UPDATE);
 
 			return reply.code(200).send(docs);
 		} catch (e) {
@@ -111,7 +111,7 @@ export default class DocsController {
 
 			await this.docsService.deleteDocsByItemId(docs.id);
 
-			triggerItemEvent(docs, ItemEventType.DELETE);
+			await triggerItemEvent(docs, ItemEventType.DELETE);
 
 			return reply.code(204).send();
 		} catch (e) {

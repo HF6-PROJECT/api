@@ -60,7 +60,7 @@ export default class FolderController {
 
 			const updatedFolder = await this.folderService.updateFolder(request.body);
 
-			triggerItemEvent(updatedFolder, ItemEventType.UPDATE);
+			await triggerItemEvent(updatedFolder, ItemEventType.UPDATE);
 
 			return reply.code(200).send(updatedFolder);
 		} catch (e) {
@@ -95,7 +95,7 @@ export default class FolderController {
 				parentId: request.body.parentId ?? null,
 			});
 
-			triggerItemEvent(folder, ItemEventType.UPDATE);
+			await triggerItemEvent(folder, ItemEventType.UPDATE);
 
 			return reply.code(200).send(folder);
 		} catch (e) {
@@ -119,7 +119,7 @@ export default class FolderController {
 
 			await this.folderService.deleteFolderByItemId(folder.id);
 
-			triggerItemEvent(folder, ItemEventType.DELETE);
+			await triggerItemEvent(folder, ItemEventType.DELETE);
 
 			return reply.code(204).send();
 		} catch (e) {

@@ -60,7 +60,7 @@ export default class ShortcutController {
 
 			const updatedShortcut = await this.shortcutService.updateShortcut(request.body);
 
-			triggerItemEvent(updatedShortcut, ItemEventType.UPDATE);
+			await triggerItemEvent(updatedShortcut, ItemEventType.UPDATE);
 
 			return reply.code(200).send(updatedShortcut);
 		} catch (e) {
@@ -95,7 +95,7 @@ export default class ShortcutController {
 				parentId: request.body.parentId ?? null,
 			});
 
-			triggerItemEvent(shortcut, ItemEventType.UPDATE);
+			await triggerItemEvent(shortcut, ItemEventType.UPDATE);
 
 			return reply.code(200).send(shortcut);
 		} catch (e) {
@@ -119,7 +119,7 @@ export default class ShortcutController {
 
 			await this.shortcutService.deleteShortcutByItemId(shortcut.id);
 
-			triggerItemEvent(shortcut, ItemEventType.DELETE);
+			await triggerItemEvent(shortcut, ItemEventType.DELETE);
 
 			return reply.code(204).send();
 		} catch (e) {

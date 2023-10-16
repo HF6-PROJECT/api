@@ -52,7 +52,7 @@ export default class BlobController {
 
 			const updatedBlob = await this.blobService.updateBlob(request.body);
 
-			triggerItemEvent(updatedBlob, ItemEventType.UPDATE);
+			await triggerItemEvent(updatedBlob, ItemEventType.UPDATE);
 
 			return reply.code(200).send(updatedBlob);
 		} catch (e) {
@@ -105,7 +105,7 @@ export default class BlobController {
 							parentId: tokenPayloadObject.parentId ?? null,
 						});
 
-						triggerItemEvent(createdBlob, ItemEventType.UPDATE);
+						await triggerItemEvent(createdBlob, ItemEventType.UPDATE);
 					} catch (e) {
 						request.log.error(e);
 						await this.blobService.deleteBlobByUrl(blob.url);
@@ -168,7 +168,7 @@ export default class BlobController {
 
 			await this.blobService.deleteBlobByItemId(blob.id);
 
-			triggerItemEvent(blob, ItemEventType.DELETE);
+			await triggerItemEvent(blob, ItemEventType.DELETE);
 
 			return reply.code(204).send();
 		} catch (e) {

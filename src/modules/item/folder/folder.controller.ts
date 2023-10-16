@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { ReadInput, EditInput, AddInput, DeleteInput } from './folder.schema';
 import FolderService from './folder.service';
 import AccessService from '../sharing/access.service';
-import { ItemEventType, triggerItemEvent } from '../item.event_handler';
+import { ItemEventType, triggerItemEvent } from '../item.event';
 
 export default class FolderController {
 	private folderService: FolderService;

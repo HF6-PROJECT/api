@@ -96,19 +96,18 @@ export default class SharingService {
 
 			await prisma.itemSharing.deleteMany({
 				where: {
-					itemId: {
-						in: accessableItems.map((item) => item.id),
-					},
-					userId: itemSharing.userId,
-				},
-			});
-
-			await prisma.itemSharing.delete({
-				where: {
-					itemId_userId: {
-						itemId: input.itemId,
-						userId: input.userId,
-					},
+					OR: [
+						{
+							itemId: input.itemId,
+							userId: input.userId,
+						},
+						{
+							itemId: {
+								in: accessableItems.map((item) => item.id),
+							},
+							userId: itemSharing.userId,
+						},
+					],
 				},
 			});
 		} catch (e) {
@@ -148,16 +147,17 @@ export default class SharingService {
 
 			await prisma.itemSharing.deleteMany({
 				where: {
-					itemId: {
-						in: accessableItems.map((item) => item.id),
-					},
-					userId: itemSharing.userId,
-				},
-			});
-
-			await prisma.itemSharing.delete({
-				where: {
-					id: id,
+					OR: [
+						{
+							itemId: {
+								in: accessableItems.map((item) => item.id),
+							},
+							userId: itemSharing.userId,
+						},
+						{
+							id: id,
+						},
+					],
 				},
 			});
 		} catch (e) {

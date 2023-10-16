@@ -25,12 +25,14 @@ export default fastifyPlugin(async (fastify: FastifyInstance) => {
 
 	await Promise.all([
 		fastify.register(prisma),
-		fastify.register(pusher),
 		fastify.register(redis),
 		fastify.register(cookie),
 		fastify.register(cors),
 		fastify.config.NODE_ENV === 'local'
 			? /* istanbul ignore next */ fastify.register(swagger)
+			: /* istanbul ignore next */ null,
+		fastify.config.NODE_ENV !== 'test'
+			? /* istanbul ignore next */ fastify.register(pusher)
 			: /* istanbul ignore next */ null,
 	]);
 

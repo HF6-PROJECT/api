@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { UploadInput, ReadInput, EditInput, DeleteInput } from './blob.schema';
 import BlobService from './blob.service';
 import AccessService from '../sharing/access.service';
-import { ItemEventType, triggerItemEvent } from '../item.event_handler';
+import { ItemEventType, triggerItemEvent } from '../item.event';
 
 export default class BlobController {
 	private blobService: BlobService;

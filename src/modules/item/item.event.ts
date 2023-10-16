@@ -6,6 +6,7 @@ export enum ItemEventType {
 	DELETE = 'delete',
 }
 
+/* istanbul ignore next */
 const getItemParentChannel = (item: Item): string => {
 	if (!item.parentId) {
 		return `browser-root-${item.ownerId}`;
@@ -14,8 +15,15 @@ const getItemParentChannel = (item: Item): string => {
 	return `browser-folder-${item.parentId}`;
 };
 
+/* istanbul ignore next */
 export const triggerItemEvent = async (item: Item, type: ItemEventType): Promise<void> => {
+	if (fastify.config.NODE_ENV === 'test') {
+		return;
+	}
+
+	/* istanbul ignore next */
 	const channelName = getItemParentChannel(item);
 
+	/* istanbul ignore next */
 	await pusher.trigger(channelName, type, item);
 };

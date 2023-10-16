@@ -4,6 +4,7 @@ import TimeUtil from '../../../utils/time';
 import UserService from '../user.service';
 import AuthService from '../auth.service';
 import { v4 } from 'uuid';
+import { AuthServiceFactory, UserServiceFactory } from '../auth.factory';
 
 describe('GET /api/auth/user', () => {
 	let userService: UserService;
@@ -12,8 +13,8 @@ describe('GET /api/auth/user', () => {
 	let user: User;
 
 	beforeAll(async () => {
-		authService = new AuthService();
-		userService = new UserService();
+		authService = AuthServiceFactory.make();
+		userService = UserServiceFactory.make();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',

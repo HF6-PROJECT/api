@@ -2,6 +2,8 @@ import { User } from '@prisma/client';
 import UserService from '../../../auth/user.service';
 import AuthService from '../../../auth/auth.service';
 import DocsService from '../docs.service';
+import { AuthServiceFactory, UserServiceFactory } from '../../../auth/auth.factory';
+import { DocsServiceFactory } from '../docs.factory';
 
 describe('GET /api/docs/:id', () => {
 	let userService: UserService;
@@ -12,9 +14,9 @@ describe('GET /api/docs/:id', () => {
 	let otherUser: User;
 
 	beforeAll(async () => {
-		authService = new AuthService();
-		userService = new UserService();
-		docsService = new DocsService();
+		authService = AuthServiceFactory.make();
+		userService = UserServiceFactory.make();
+		docsService = DocsServiceFactory.make();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',

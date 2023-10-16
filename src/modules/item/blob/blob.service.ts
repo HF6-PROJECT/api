@@ -4,6 +4,7 @@ import { accessTokenPayload, jwt } from '../../../plugins/jwt';
 import { FastifyRequest } from 'fastify';
 import { prisma } from '../../../plugins/prisma';
 import { Blob, CreateBlob, UpdateBlob, ItemBlob } from './blob.schema';
+import SharingService from '../sharing/sharing.service';
 
 type OnUploadCompletedCallback = (body: {
 	blob: PutBlobResult;
@@ -26,6 +27,12 @@ type BlobUploadedCompletedResponse = {
 };
 
 export default class BlobService {
+	private sharingService: SharingService;
+
+	constructor(sharingService: SharingService) {
+		this.sharingService = sharingService;
+	}
+
 	private formatItemBlob(itemBlob: ItemBlob): Blob {
 		return {
 			blobUrl: itemBlob.blobUrl,
@@ -67,6 +74,10 @@ export default class BlobService {
 				item: true,
 			},
 		});
+
+		if (input.parentId) {
+			await this.sharingService.syncSharingsByItemId(input.parentId, itemBlob.item.id);
+		}
 
 		return this.formatItemBlob(itemBlob);
 	}

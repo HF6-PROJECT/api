@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { UploadInput, ReadInput, EditInput, DeleteInput } from './blob.schema';
 import BlobService from './blob.service';
 import AccessService from '../sharing/access.service';
+import { ItemEventType, triggerItemEvent } from '../item.event';
 
 export default class BlobController {
 	private blobService: BlobService;
@@ -51,6 +52,8 @@ export default class BlobController {
 
 			const updatedBlob = await this.blobService.updateBlob(request.body);
 
+			triggerItemEvent(updatedBlob, ItemEventType.UPDATE);
+
 			return reply.code(200).send(updatedBlob);
 		} catch (e) {
 			if (e instanceof Error) {
@@ -94,13 +97,15 @@ export default class BlobController {
 							throw new Error('Unauthorized');
 						}
 
-						await this.blobService.createBlob({
+						const createdBlob = await this.blobService.createBlob({
 							name: blob.pathname,
 							mimeType: blob.contentType,
 							blobUrl: blob.url,
 							ownerId: tokenPayloadObject.ownerId,
 							parentId: tokenPayloadObject.parentId ?? null,
 						});
+
+						triggerItemEvent(createdBlob, ItemEventType.UPDATE);
 					} catch (e) {
 						request.log.error(e);
 						await this.blobService.deleteBlobByUrl(blob.url);
@@ -162,6 +167,8 @@ export default class BlobController {
 			}
 
 			await this.blobService.deleteBlobByItemId(blob.id);
+
+			triggerItemEvent(blob, ItemEventType.DELETE);
 
 			return reply.code(204).send();
 		} catch (e) {

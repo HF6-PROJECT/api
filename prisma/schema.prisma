@@ -49,16 +49,16 @@ model Item {
     ownerId  Int
     parentId Int?
 
-    owner                 User          @relation(fields: [ownerId], references: [id])
-    parentItem            Item?         @relation("ItemToItem", fields: [parentId], references: [id])
-    Items                 Item[]        @relation("ItemToItem")
-    ItemFolder            ItemFolder?
-    ItemBlob              ItemBlob?
-    ItemDocs              ItemDocs?
-    ItemSharing           ItemSharing[]
-    ItemShortcut          ItemShortcut? @relation("shortcutItem")
-    LinkedItemShortcut    ItemShortcut[] @relation("linkedItem")
-    ItemStarred           ItemStarred[]
+    owner              User           @relation(fields: [ownerId], references: [id])
+    parentItem         Item?          @relation("ItemToItem", fields: [parentId], references: [id])
+    Items              Item[]         @relation("ItemToItem")
+    ItemFolder         ItemFolder?
+    ItemBlob           ItemBlob?
+    ItemDocs           ItemDocs?
+    ItemSharing        ItemSharing[]
+    ItemShortcut       ItemShortcut?  @relation("shortcutItem")
+    LinkedItemShortcut ItemShortcut[] @relation("linkedItem")
+    ItemStarred        ItemStarred[]
 
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
@@ -117,21 +117,21 @@ model ItemShortcut {
 
     shortcutItem Item @relation("shortcutItem", fields: [itemId], references: [id], onDelete: Cascade)
     linkedItem   Item @relation("linkedItem", fields: [linkedItemId], references: [id], onDelete: Cascade)
-    
+
     @@index([linkedItemId])
 }
 
 model ItemStarred {
-    id           Int @id @default(autoincrement())
-    itemId       Int
-    userId       Int
+    id     Int @id @default(autoincrement())
+    itemId Int
+    userId Int
 
     item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-    
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    
+
     @@unique([itemId, userId])
     @@index([itemId])
     @@index([userId])

@@ -1,6 +1,7 @@
 import { User } from '@prisma/client';
 import { jwt } from '../../../plugins/jwt';
 import UserService from '../user.service';
+import { UserServiceFactory } from '../auth.factory';
 
 describe('POST /api/auth/login', () => {
 	let userService: UserService;
@@ -9,7 +10,7 @@ describe('POST /api/auth/login', () => {
 	const userPassword = '1234';
 
 	beforeAll(async () => {
-		userService = new UserService();
+		userService = UserServiceFactory.make();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',

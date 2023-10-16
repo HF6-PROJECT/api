@@ -4,6 +4,10 @@ import AuthService from '../../../auth/auth.service';
 import ItemService from '../../item.service';
 import SharingService from '../sharing.service';
 import FolderService from '../../folder/folder.service';
+import { AuthServiceFactory, UserServiceFactory } from '../../../auth/auth.factory';
+import { ItemServiceFactory } from '../../item.factory';
+import { FolderServiceFactory } from '../../folder/folder.factory';
+import { SharingServiceFactory } from '../sharing.factory';
 
 describe('POST /api/sharing', () => {
 	let userService: UserService;
@@ -16,11 +20,11 @@ describe('POST /api/sharing', () => {
 	let otherUser: User;
 
 	beforeAll(async () => {
-		authService = new AuthService();
-		userService = new UserService();
-		itemService = new ItemService();
-		folderService = new FolderService();
-		sharingService = new SharingService(itemService);
+		authService = AuthServiceFactory.make();
+		userService = UserServiceFactory.make();
+		itemService = ItemServiceFactory.make();
+		folderService = FolderServiceFactory.make();
+		sharingService = SharingServiceFactory.make();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',

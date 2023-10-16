@@ -3,6 +3,9 @@ import UserService from '../../../auth/user.service';
 import ItemService from '../../item.service';
 import AccessService from '../access.service';
 import SharingService from '../sharing.service';
+import { ItemServiceFactory } from '../../item.factory';
+import { UserServiceFactory } from '../../../auth/auth.factory';
+import { AccessServiceFactory, SharingServiceFactory } from '../sharing.factory';
 
 describe('ItemService', () => {
 	let itemService: ItemService;
@@ -14,10 +17,10 @@ describe('ItemService', () => {
 	let otherUser: User;
 
 	beforeAll(async () => {
-		itemService = new ItemService();
-		userService = new UserService();
-		sharingService = new SharingService(itemService);
-		accessService = new AccessService(itemService, sharingService);
+		itemService = ItemServiceFactory.make();
+		userService = UserServiceFactory.make();
+		sharingService = SharingServiceFactory.make();
+		accessService = AccessServiceFactory.make();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',

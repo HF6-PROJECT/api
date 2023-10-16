@@ -3,6 +3,9 @@ import UserService from '../../../auth/user.service';
 import AuthService from '../../../auth/auth.service';
 import ShortcutService from '../shortcut.service';
 import FolderService from '../../folder/folder.service';
+import { AuthServiceFactory, UserServiceFactory } from '../../../auth/auth.factory';
+import { ShortcutServiceFactory } from '../shortcut.factory';
+import { FolderServiceFactory } from '../../folder/folder.factory';
 
 describe('GET /api/shortcut/:id', () => {
 	let userService: UserService;
@@ -14,10 +17,10 @@ describe('GET /api/shortcut/:id', () => {
 	let otherUser: User;
 
 	beforeAll(async () => {
-		authService = new AuthService();
-		userService = new UserService();
-		shortcutService = new ShortcutService();
-		folderService = new FolderService();
+		authService = AuthServiceFactory.make();
+		userService = UserServiceFactory.make();
+		shortcutService = ShortcutServiceFactory.make();
+		folderService = FolderServiceFactory.make();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',

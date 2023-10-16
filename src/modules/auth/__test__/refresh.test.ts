@@ -5,6 +5,7 @@ import { jwt } from '../../../plugins/jwt';
 import TimeUtil from '../../../utils/time';
 import AuthService from '../auth.service';
 import UserService from '../user.service';
+import { AuthServiceFactory, UserServiceFactory } from '../auth.factory';
 
 describe('POST /api/auth/refresh', () => {
 	let authService: AuthService;
@@ -13,8 +14,8 @@ describe('POST /api/auth/refresh', () => {
 	let user: User;
 
 	beforeAll(async () => {
-		authService = new AuthService();
-		userService = new UserService();
+		authService = AuthServiceFactory.make();
+		userService = UserServiceFactory.make();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',

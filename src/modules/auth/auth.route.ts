@@ -1,10 +1,8 @@
 import { FastifyInstance } from 'fastify';
-import AuthController from './auth.controller';
-import AuthService from './auth.service';
-import UserService from './user.service';
+import { AuthControllerFactory } from './auth.factory';
 
 export default async (fastify: FastifyInstance) => {
-	const authController = new AuthController(new AuthService(), new UserService());
+	const authController = AuthControllerFactory.make();
 
 	fastify.post(
 		'/register',

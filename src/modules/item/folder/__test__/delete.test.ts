@@ -3,6 +3,9 @@ import UserService from '../../../auth/user.service';
 import AuthService from '../../../auth/auth.service';
 import FolderService from '../folder.service';
 import ItemService from '../../item.service';
+import { AuthServiceFactory, UserServiceFactory } from '../../../auth/auth.factory';
+import { FolderServiceFactory } from '../folder.factory';
+import { ItemServiceFactory } from '../../item.factory';
 
 describe('DELETE /api/folder/:id', () => {
 	let userService: UserService;
@@ -14,10 +17,10 @@ describe('DELETE /api/folder/:id', () => {
 	let otherUser: User;
 
 	beforeAll(async () => {
-		authService = new AuthService();
-		userService = new UserService();
-		folderService = new FolderService();
-		itemService = new ItemService();
+		authService = AuthServiceFactory.make();
+		userService = UserServiceFactory.make();
+		folderService = FolderServiceFactory.make();
+		itemService = ItemServiceFactory.make();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',

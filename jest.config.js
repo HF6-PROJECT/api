@@ -6,7 +6,12 @@ module.exports = {
 		'^.+\\.(t|j)sx?$': ['@swc/jest'],
 	},
 	setupFilesAfterEnv: ['./src/test/setupTest.ts'],
-	collectCoverageFrom: ['./src/**', '!./src/plugins/prisma.ts', '!./src/server.ts'],
+	collectCoverageFrom: [
+		'./src/**',
+		'!./src/server.ts',
+		'!./src/plugins/prisma.ts',
+		'!./src/plugins/pusher.ts',
+	],
 	coverageReporters: ['json-summary', 'text', 'html', 'json'],
 	coveragePathIgnorePatterns: ['node_modules'],
 };

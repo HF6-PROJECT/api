@@ -3,6 +3,9 @@ import UserService from '../../../auth/user.service';
 import AuthService from '../../../auth/auth.service';
 import BlobService from '../blob.service';
 import ItemService from '../../item.service';
+import { AuthServiceFactory, UserServiceFactory } from '../../../auth/auth.factory';
+import { BlobServiceFactory } from '../blob.factory';
+import { ItemServiceFactory } from '../../item.factory';
 
 describe('DELETE /api/blob/:id', () => {
 	let userService: UserService;
@@ -14,10 +17,10 @@ describe('DELETE /api/blob/:id', () => {
 	let otherUser: User;
 
 	beforeAll(async () => {
-		authService = new AuthService();
-		userService = new UserService();
-		blobService = new BlobService();
-		itemService = new ItemService();
+		authService = AuthServiceFactory.make();
+		userService = UserServiceFactory.make();
+		blobService = BlobServiceFactory.make();
+		itemService = ItemServiceFactory.make();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',

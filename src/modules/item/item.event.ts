@@ -17,7 +17,7 @@ const getItemParentChannel = (item: Item): string => {
 
 /* istanbul ignore next */
 export const triggerItemEvent = async (item: Item, type: ItemEventType): Promise<void> => {
-	if (fastify.config.NODE_ENV === 'test') {
+	if (process.env.NODE_ENV === 'test') {
 		return;
 	}
 

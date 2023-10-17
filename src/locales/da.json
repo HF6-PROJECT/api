@@ -21,6 +21,7 @@
 		"emailOrPasswordIncorrect": "Email og/eller adgangskode er forkert"
 	},
 	"refreshToken": {
+		"invalid": "Refresh token er invalid",
 		"expired": "Refresh token er udløbet",
 		"used": "Refresh token er allerede blevet brugt"
 	},
@@ -186,5 +187,8 @@
 			"required": "itemId er påkrævet",
 			"type": "itemId skal være et tal"
 		}
+	},
+	"error": {
+		"unauthorized": "Uautoriseret"
 	}
 }

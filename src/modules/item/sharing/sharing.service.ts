@@ -1,4 +1,5 @@
 import { prisma } from '../../../plugins/prisma';
+import { AlreadyExistsError, MissingError } from '../../../utils/error';
 import ItemService from '../item.service';
 import { Sharing, CreateSharing, UpdateSharing, DeleteSharing } from './sharing.schema';
 
@@ -17,7 +18,7 @@ export default class SharingService {
 		});
 
 		if (!itemSharing) {
-			throw new Error('item.sharing.notFound');
+			throw new MissingError('item.sharing.notFound');
 		}
 
 		return itemSharing;
@@ -34,7 +35,7 @@ export default class SharingService {
 		});
 
 		if (!itemSharing) {
-			throw new Error('item.sharing.notFound');
+			throw new MissingError('item.sharing.notFound');
 		}
 
 		return itemSharing;
@@ -60,7 +61,7 @@ export default class SharingService {
 		try {
 			await this.getByItemIdAndUserId(input.itemId, input.userId);
 
-			throw new Error('item.sharing.alreadyExists');
+			throw new AlreadyExistsError('item.sharing.alreadyExists');
 		} catch (e) {
 			if (e instanceof Error && e.message === 'item.sharing.alreadyExists') {
 				throw e;

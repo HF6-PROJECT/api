@@ -6,7 +6,7 @@ import en from '../locales/en.json';
 import da from '../locales/da.json';
 
 export default fastifyPlugin(async (fastify: FastifyInstance) => {
-	fastify.register(i18n, {
+	await fastify.register(i18n, {
 		fallbackLocale: 'en',
 		messages: {
 			en: en,

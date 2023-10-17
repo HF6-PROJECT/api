@@ -3,6 +3,7 @@ import { UploadInput, ReadInput, EditInput, DeleteInput } from './blob.schema';
 import BlobService from './blob.service';
 import AccessService from '../sharing/access.service';
 import { ItemEventType, triggerItemEvent } from '../item.event';
+import { BadRequestError, UnauthorizedError, errorReply } from '../../../utils/error';
 
 export default class BlobController {
 	private blobService: BlobService;
@@ -23,17 +24,12 @@ export default class BlobController {
 			const blob = await this.blobService.getByItemId(request.params.id);
 
 			if (!(await this.accessService.hasAccessToItem(blob.id, request.user.sub))) {
-				return reply.unauthorized();
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			return reply.code(200).send(blob);
 		} catch (e) {
-			if (e instanceof Error) {
-				return reply.badRequest(request.i18n.t(e.message));
-			}
-
-			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -47,7 +43,7 @@ export default class BlobController {
 			const blob = await this.blobService.getByItemId(request.body.id);
 
 			if (!(await this.accessService.hasAccessToItem(blob.id, request.user.sub))) {
-				return reply.unauthorized();
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			const updatedBlob = await this.blobService.updateBlob(request.body);
@@ -56,12 +52,7 @@ export default class BlobController {
 
 			return reply.code(200).send(updatedBlob);
 		} catch (e) {
-			if (e instanceof Error) {
-				return reply.badRequest(request.i18n.t(e.message));
-			}
-
-			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -84,7 +75,7 @@ export default class BlobController {
 								blob,
 								tokenPayload,
 							);
-							throw new Error('Unauthorized');
+							throw new UnauthorizedError('error.unauthorized');
 						}
 
 						const tokenPayloadObject = JSON.parse(tokenPayload);
@@ -94,7 +85,7 @@ export default class BlobController {
 								blob,
 								tokenPayload,
 							);
-							throw new Error('Unauthorized');
+							throw new UnauthorizedError('error.unauthorized');
 						}
 
 						const createdBlob = await this.blobService.createBlob({
@@ -113,12 +104,12 @@ export default class BlobController {
 				},
 				async (clientPayload, accessTokenPayload) => {
 					if (!clientPayload) {
-						throw new Error(request.i18n.t('item.upload.clientPayload.required'));
+						throw new BadRequestError('item.upload.clientPayload.required');
 					}
 
 					const clientPayloadObject = JSON.parse(clientPayload);
 					if (clientPayloadObject.parentId === undefined) {
-						throw new Error(request.i18n.t('item.upload.clientPayload.parentId.required'));
+						throw new BadRequestError('item.upload.clientPayload.parentId.required');
 					}
 
 					if (
@@ -128,7 +119,7 @@ export default class BlobController {
 							accessTokenPayload.sub,
 						))
 					) {
-						throw new Error('Unauthorized');
+						throw new UnauthorizedError('error.unauthorized');
 					}
 
 					return JSON.stringify({
@@ -140,16 +131,7 @@ export default class BlobController {
 
 			return reply.code(200).send(jsonResponse);
 		} catch (e) {
-			if (e instanceof Error) {
-				if (e.message === 'Unauthorized') {
-					return reply.unauthorized();
-				}
-
-				return reply.badRequest(e.message);
-			}
-
-			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -163,7 +145,7 @@ export default class BlobController {
 			const blob = await this.blobService.getByItemId(request.params.id);
 
 			if (!(await this.accessService.hasAccessToItem(blob.id, request.user.sub))) {
-				return reply.unauthorized();
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			await this.blobService.deleteBlobByItemId(blob.id);
@@ -172,12 +154,7 @@ export default class BlobController {
 
 			return reply.code(204).send();
 		} catch (e) {
-			if (e instanceof Error) {
-				return reply.badRequest(request.i18n.t(e.message));
-			}
-
-			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 }

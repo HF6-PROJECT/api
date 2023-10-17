@@ -207,7 +207,7 @@ describe('POST /api/sharing', () => {
 		});
 	});
 
-	it("should return status 400, when user with email doesn't exist", async () => {
+	it("should return status 404, when user with email doesn't exist", async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const item = await itemService.createItem({
@@ -229,13 +229,13 @@ describe('POST /api/sharing', () => {
 			},
 		});
 
-		expect(response.statusCode).toBe(400);
+		expect(response.statusCode).toBe(404);
 		expect(response.json()).toEqual({
-			error: 'BadRequestError',
+			error: 'NotFoundError',
 			errors: {
 				_: ['User not found'],
 			},
-			statusCode: 400,
+			statusCode: 404,
 		});
 	});
 

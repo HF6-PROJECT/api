@@ -3,6 +3,7 @@ import { ReadInput, EditInput, AddInput, DeleteInput } from './docs.schema';
 import DocsService from './docs.service';
 import AccessService from '../sharing/access.service';
 import { ItemEventType, triggerItemEvent } from '../item.event';
+import { UnauthorizedError, errorReply } from '../../../utils/error';
 
 export default class DocsController {
 	private docsService: DocsService;
@@ -23,17 +24,12 @@ export default class DocsController {
 			const docs = await this.docsService.getByItemId(request.params.id);
 
 			if (!(await this.accessService.hasAccessToItem(docs.id, request.user.sub))) {
-				return reply.unauthorized();
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			return reply.code(200).send(docs);
 		} catch (e) {
-			if (e instanceof Error) {
-				return reply.badRequest(request.i18n.t(e.message));
-			}
-
-			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -47,7 +43,7 @@ export default class DocsController {
 			const docs = await this.docsService.getByItemId(request.body.id);
 
 			if (!(await this.accessService.hasAccessToItem(docs.id, request.user.sub))) {
-				return reply.unauthorized();
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			const updatedDocs = await this.docsService.updateDocs(request.body);
@@ -56,12 +52,7 @@ export default class DocsController {
 
 			return reply.code(200).send(updatedDocs);
 		} catch (e) {
-			if (e instanceof Error) {
-				return reply.badRequest(request.i18n.t(e.message));
-			}
-
-			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -77,7 +68,7 @@ export default class DocsController {
 				request.body.parentId !== undefined &&
 				!(await this.accessService.hasAccessToItem(request.body.parentId, request.user.sub))
 			) {
-				return reply.unauthorized();
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			const docs = await this.docsService.createDocs({
@@ -91,8 +82,7 @@ export default class DocsController {
 
 			return reply.code(200).send(docs);
 		} catch (e) {
-			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -106,7 +96,7 @@ export default class DocsController {
 			const docs = await this.docsService.getByItemId(request.params.id);
 
 			if (!(await this.accessService.hasAccessToItem(docs.id, request.user.sub))) {
-				return reply.unauthorized();
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			await this.docsService.deleteDocsByItemId(docs.id);
@@ -115,12 +105,7 @@ export default class DocsController {
 
 			return reply.code(204).send();
 		} catch (e) {
-			if (e instanceof Error) {
-				return reply.badRequest(request.i18n.t(e.message));
-			}
-
-			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 }

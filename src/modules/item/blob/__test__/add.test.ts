@@ -210,7 +210,7 @@ describe('POST /api/blob', () => {
 	/*
 	 * Upload completed callback tests
 	 */
-	it('should return status 400, when called without valid "x-vercel-signature" header', async () => {
+	it('should return status 500, when called without valid "x-vercel-signature" header', async () => {
 		const response = await global.fastify.inject({
 			method: 'POST',
 			url: '/api/blob',
@@ -231,13 +231,13 @@ describe('POST /api/blob', () => {
 			},
 		});
 
-		expect(response.statusCode).toBe(400);
+		expect(response.statusCode).toBe(500);
 		expect(response.json()).toEqual({
-			error: 'BadRequestError',
+			error: 'InternalServerError',
 			errors: {
-				_: ['Vercel Blob: Missing callback signature'],
+				_: ['Internal Server Error'],
 			},
-			statusCode: 400,
+			statusCode: 500,
 		});
 	});
 });

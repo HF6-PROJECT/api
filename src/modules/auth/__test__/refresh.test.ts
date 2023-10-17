@@ -89,7 +89,7 @@ describe('POST /api/auth/refresh', () => {
 		expect(response.json()).toMatchObject({
 			error: 'UnauthorizedError',
 			errors: {
-				_: ['Unauthorized'],
+				_: ['Refresh token has already been used'],
 			},
 			statusCode: 401,
 		});
@@ -116,7 +116,7 @@ describe('POST /api/auth/refresh', () => {
 		expect(response.json()).toMatchObject({
 			error: 'UnauthorizedError',
 			errors: {
-				_: ['Unauthorized'],
+				_: ['Refresh token has already been used'],
 			},
 			statusCode: 401,
 		});
@@ -152,7 +152,7 @@ describe('POST /api/auth/refresh', () => {
 		expect(response.json()).toMatchObject({
 			error: 'UnauthorizedError',
 			errors: {
-				_: ['Unauthorized'],
+				_: ['Refresh token has reached absolute expiry'],
 			},
 			statusCode: 401,
 		});
@@ -177,7 +177,7 @@ describe('POST /api/auth/refresh', () => {
 		expect(response.json()).toMatchObject({
 			error: 'UnauthorizedError',
 			errors: {
-				_: ['Unauthorized'],
+				_: ['Refresh token has reached absolute expiry'],
 			},
 			statusCode: 401,
 		});
@@ -196,7 +196,7 @@ describe('POST /api/auth/refresh', () => {
 		expect(response.json()).toMatchObject({
 			error: 'UnauthorizedError',
 			errors: {
-				_: ['Unauthorized'],
+				_: ['Refresh token is invalid'],
 			},
 			statusCode: 401,
 		});
@@ -208,7 +208,7 @@ describe('POST /api/auth/refresh', () => {
 			url: '/api/auth/refresh',
 			cookies: {
 				refreshToken: jwt.signRefreshToken({
-					sub: 542,
+					sub: 12345,
 					iat: TimeUtil.getNowUnixTimeStamp(),
 					aex: TimeUtil.getNowUnixTimeStamp() + 60,
 					tokenFamily: v4(),
@@ -220,7 +220,7 @@ describe('POST /api/auth/refresh', () => {
 		expect(response.json()).toMatchObject({
 			error: 'UnauthorizedError',
 			errors: {
-				_: ['Unauthorized'],
+				_: ['Refresh token has already been used'],
 			},
 			statusCode: 401,
 		});

@@ -3,6 +3,7 @@ import { AddInput, ReadInput, EditInput, DeleteInput } from './sharing.schema';
 import SharingService from './sharing.service';
 import AccessService from './access.service';
 import UserService from '../../auth/user.service';
+import { UnauthorizedError, errorReply } from '../../../utils/error';
 
 export default class SharingController {
 	private sharingService: SharingService;
@@ -29,17 +30,12 @@ export default class SharingController {
 			const sharing = await this.sharingService.getById(request.params.id);
 
 			if (!(await this.accessService.hasAccessToItem(sharing.itemId, request.user.sub))) {
-				return reply.unauthorized();
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			return reply.code(200).send(sharing);
 		} catch (e) {
-			if (e instanceof Error) {
-				return reply.badRequest(request.i18n.t(e.message));
-			}
-
-			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -53,19 +49,14 @@ export default class SharingController {
 			const sharing = await this.sharingService.getById(request.body.id);
 
 			if (!(await this.accessService.hasAccessToItem(sharing.itemId, request.user.sub))) {
-				return reply.unauthorized();
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			const updatedSharing = await this.sharingService.updateSharing(request.body);
 
 			return reply.code(200).send(updatedSharing);
 		} catch (e) {
-			if (e instanceof Error) {
-				return reply.badRequest(request.i18n.t(e.message));
-			}
-
-			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -77,7 +68,7 @@ export default class SharingController {
 	) {
 		try {
 			if (!(await this.accessService.hasAccessToItem(request.body.itemId, request.user.sub))) {
-				return reply.unauthorized();
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			const user = await this.userService.getUserByEmail(request.body.email);
@@ -89,12 +80,7 @@ export default class SharingController {
 
 			return reply.code(200).send(sharing);
 		} catch (e) {
-			if (e instanceof Error) {
-				return reply.badRequest(request.i18n.t(e.message));
-			}
-
-			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -108,19 +94,14 @@ export default class SharingController {
 			const sharing = await this.sharingService.getById(request.params.id);
 
 			if (!(await this.accessService.hasAccessToItem(sharing.itemId, request.user.sub))) {
-				return reply.unauthorized();
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			await this.sharingService.deleteSharingByIdAndUserId(request.params.id, request.user.sub);
 
 			return reply.code(204).send();
 		} catch (e) {
-			if (e instanceof Error) {
-				return reply.badRequest(request.i18n.t(e.message));
-			}
-
-			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 }

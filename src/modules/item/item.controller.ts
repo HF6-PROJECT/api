@@ -1,7 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import ItemService from './item.service';
-import { ReadInput, itemSharingsInput, itemReadInput } from './item.schema';
+import { ReadInput, itemSharingsInput, itemReadInput, itemBreadcrumbInput } from './item.schema';
 import AccessService from './sharing/access.service';
+import { UnauthorizedError, errorReply } from '../../utils/error';
 
 export default class ItemController {
 	private itemService: ItemService;
@@ -19,7 +20,7 @@ export default class ItemController {
 			return reply.code(200).send(starred);
 		} catch (e) {
 			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -30,7 +31,7 @@ export default class ItemController {
 			return reply.code(200).send(items);
 		} catch (e) {
 			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -42,7 +43,7 @@ export default class ItemController {
 	) {
 		try {
 			if (!(await this.accessService.hasAccessToItem(request.params.parentId, request.user.sub))) {
-				return reply.unauthorized();
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			const items = await this.itemService.getAllOwnedAndSharredItemsByParentIdAndUserId(
@@ -52,8 +53,7 @@ export default class ItemController {
 
 			return reply.code(200).send(items);
 		} catch (e) {
-			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -64,7 +64,7 @@ export default class ItemController {
 			return reply.code(200).send(items);
 		} catch (e) {
 			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -78,19 +78,14 @@ export default class ItemController {
 			const id = Number.parseInt(request.params.id);
 
 			if (!(await this.accessService.hasAccessToItem(id, request.user.sub))) {
-				return reply.unauthorized();
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			const item = await this.itemService.getItemByIdWithInclude(id, request.user.sub);
 
 			return reply.code(200).send(item);
 		} catch (e) {
-			if (e instanceof Error) {
-				return reply.badRequest(request.i18n.t(e.message));
-			}
-
-			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -104,19 +99,33 @@ export default class ItemController {
 			const id = Number.parseInt(request.params.id);
 
 			if (!(await this.accessService.hasAccessToItem(id, request.user.sub))) {
-				return reply.unauthorized();
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			const item = await this.itemService.getItemByIdWithSharingsAndOwner(id);
 
 			return reply.code(200).send(item);
 		} catch (e) {
-			if (e instanceof Error) {
-				return reply.badRequest(request.i18n.t(e.message));
+			return errorReply(request, reply, e);
+		}
+	}
+
+	public async breadcrumbHandler(
+		request: FastifyRequest<{
+			Params: itemBreadcrumbInput;
+		}>,
+		reply: FastifyReply,
+	) {
+		try {
+			if (!(await this.accessService.hasAccessToItem(request.params.id, request.user.sub))) {
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
-			/* istanbul ignore next */
-			return reply.badRequest();
+			const itemPath = await this.itemService.getItemPath(request.params.id, request.user.sub);
+
+			return reply.code(200).send(itemPath);
+		} catch (e) {
+			return errorReply(request, reply, e);
 		}
 	}
 }

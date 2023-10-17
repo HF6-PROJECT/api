@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { AddInput, DeleteInput } from './starred.schema';
 import StarredService from './starred.service';
 import AccessService from '../sharing/access.service';
+import { UnauthorizedError, errorReply } from '../../../utils/error';
 
 export default class StarredController {
 	private starredService: StarredService;
@@ -20,7 +21,7 @@ export default class StarredController {
 	) {
 		try {
 			if (!(await this.accessService.hasAccessToItem(request.body.itemId, request.user.sub))) {
-				return reply.unauthorized();
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			const starred = await this.starredService.createStarred({
@@ -30,12 +31,7 @@ export default class StarredController {
 
 			return reply.code(200).send(starred);
 		} catch (e) {
-			if (e instanceof Error) {
-				return reply.badRequest(request.i18n.t(e.message));
-			}
-
-			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -54,12 +50,7 @@ export default class StarredController {
 			await this.starredService.deleteStarredById(starred.id);
 			return reply.code(204).send();
 		} catch (e) {
-			if (e instanceof Error) {
-				return reply.badRequest(request.i18n.t(e.message));
-			}
-
-			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 }

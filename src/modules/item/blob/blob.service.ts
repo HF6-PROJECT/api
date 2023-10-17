@@ -5,6 +5,7 @@ import { FastifyRequest } from 'fastify';
 import { prisma } from '../../../plugins/prisma';
 import { Blob, CreateBlob, UpdateBlob, ItemBlob } from './blob.schema';
 import SharingService from '../sharing/sharing.service';
+import { MissingError, UnauthorizedError } from '../../../utils/error';
 
 type OnUploadCompletedCallback = (body: {
 	blob: PutBlobResult;
@@ -51,7 +52,7 @@ export default class BlobService {
 		});
 
 		if (!itemBlob) {
-			throw new Error('item.blob.notFound');
+			throw new MissingError('item.blob.notFound');
 		}
 
 		return this.formatItemBlob(itemBlob);
@@ -151,7 +152,7 @@ export default class BlobService {
 				try {
 					jwt.verify(accessToken);
 				} catch (error) {
-					throw new Error('Unauthorized');
+					throw new UnauthorizedError('error.unauthorized');
 				}
 
 				const accessTokenPayload = jwt.decodeAccessToken(accessToken);

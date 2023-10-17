@@ -1,4 +1,5 @@
 import { prisma } from '../../../plugins/prisma';
+import { AlreadyExistsError, MissingError } from '../../../utils/error';
 import { Starred, AddStarred } from './starred.schema';
 
 export default class StarredService {
@@ -6,7 +7,7 @@ export default class StarredService {
 		try {
 			await this.getByItemIdAndUserId(input.itemId, input.userId);
 
-			throw new Error('item.starred.alreadyExists');
+			throw new AlreadyExistsError('item.starred.alreadyExists');
 		} catch (e) {
 			if (e instanceof Error && e.message === 'item.starred.alreadyExists') {
 				throw e;
@@ -42,7 +43,7 @@ export default class StarredService {
 		});
 
 		if (!itemStarred) {
-			throw new Error('item.starred.notFound');
+			throw new MissingError('item.starred.notFound');
 		}
 
 		return itemStarred;

@@ -1,5 +1,12 @@
 import { prisma } from '../../plugins/prisma';
-import { CreateItem, Item, ItemPrismaProperties, ItemWithProperties } from './item.schema';
+import { MissingError } from '../../utils/error';
+import {
+	CreateItem,
+	Item,
+	ItemPath,
+	ItemPrismaProperties,
+	ItemWithProperties,
+} from './item.schema';
 
 export default class ItemService {
 	public async getById(id: number): Promise<Item> {
@@ -10,7 +17,7 @@ export default class ItemService {
 		});
 
 		if (!item) {
-			throw new Error('item.notFound');
+			throw new MissingError('item.notFound');
 		}
 
 		return item;
@@ -185,7 +192,7 @@ export default class ItemService {
 		});
 
 		if (!item) {
-			throw new Error('item.notFound');
+			throw new MissingError('item.notFound');
 		}
 
 		return item;
@@ -210,10 +217,49 @@ export default class ItemService {
 		});
 
 		if (!item) {
-			throw new Error('item.notFound');
+			throw new MissingError('item.notFound');
 		}
 
 		return this.formatItem(item);
+	}
+
+	public async getItemPath(id: number, userId: number): Promise<ItemPath | undefined> {
+		const item = await prisma.item.findUnique({
+			where: {
+				id,
+				OR: [
+					{
+						ItemSharing: {
+							some: {
+								userId: userId,
+							},
+						},
+					},
+					{
+						ownerId: userId,
+					},
+				],
+			},
+		});
+
+		if (!item) {
+			return undefined;
+		}
+
+		// If parent is a root folder and user doesn't have access to it, return undefined.
+		if (!item.parentId && item.ownerId !== userId) {
+			return {
+				id: item.id,
+				name: item.name,
+				parent: undefined,
+			};
+		}
+
+		return {
+			id: item.id,
+			name: item.name,
+			parent: item.parentId ? await this.getItemPath(item.parentId, userId) : null,
+		};
 	}
 
 	private formatItem(item: ItemPrismaProperties): ItemWithProperties {

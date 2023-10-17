@@ -47,6 +47,7 @@ export default async (fastify: FastifyInstance) => {
 		{
 			schema: {
 				tags: ['Item'],
+				params: { $ref: 'itemReadSchema' },
 				response: {
 					200: { $ref: 'itemResponseSchema' },
 				},
@@ -105,6 +106,7 @@ export default async (fastify: FastifyInstance) => {
 		{
 			schema: {
 				tags: ['Item'],
+				params: { $ref: 'itemSharingsSchema' },
 				response: {
 					200: { $ref: 'itemSharingsResponseSchema' },
 				},
@@ -117,5 +119,25 @@ export default async (fastify: FastifyInstance) => {
 			onRequest: [fastify.authenticate],
 		},
 		itemController.sharingsHandler.bind(itemController),
+	);
+
+	fastify.get(
+		'/:id/breadcrumb',
+		{
+			schema: {
+				tags: ['Item'],
+				params: { $ref: 'itemBreadcrumbSchema' },
+				response: {
+					200: { $ref: 'itemBreadcrumbResponseSchema' },
+				},
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
+			},
+			onRequest: [fastify.authenticate],
+		},
+		itemController.breadcrumbHandler.bind(itemController),
 	);
 };

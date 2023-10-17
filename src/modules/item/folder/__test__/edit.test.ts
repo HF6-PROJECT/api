@@ -220,7 +220,7 @@ describe('PUT /api/folder', () => {
 		});
 	});
 
-	it("should return status 400, when folder with id doesn't exist", async () => {
+	it("should return status 404, when folder with id doesn't exist", async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const response = await global.fastify.inject({
@@ -236,13 +236,13 @@ describe('PUT /api/folder', () => {
 			},
 		});
 
-		expect(response.statusCode).toBe(400);
+		expect(response.statusCode).toBe(404);
 		expect(response.json()).toEqual({
-			error: 'BadRequestError',
+			error: 'NotFoundError',
 			errors: {
 				_: ['Folder not found'],
 			},
-			statusCode: 400,
+			statusCode: 404,
 		});
 	});
 });

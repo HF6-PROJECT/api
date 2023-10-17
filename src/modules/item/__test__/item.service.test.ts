@@ -406,4 +406,63 @@ describe('ItemService', () => {
 			await expect(itemService.getItemByIdWithInclude(1234, user.id)).rejects.toThrow();
 		});
 	});
+
+	describe('getItemPath()', () => {
+		it('should return itemPath', async () => {
+			const folder1 = await folderService.createFolder({
+				name: 'Folder1',
+				color: '#123456',
+				ownerId: user.id,
+				parentId: null,
+			});
+
+			const folder2 = await folderService.createFolder({
+				name: 'Folder2',
+				color: '#123456',
+				ownerId: user.id,
+				parentId: folder1.id,
+			});
+
+			const folder3 = await folderService.createFolder({
+				name: 'Folder3',
+				color: '#123456',
+				ownerId: user.id,
+				parentId: folder2.id,
+			});
+
+			expect(await itemService.getItemPath(folder1.id, user.id)).toEqual({
+				id: folder1.id,
+				name: folder1.name,
+				parent: null,
+			});
+
+			expect(await itemService.getItemPath(folder2.id, user.id)).toEqual({
+				id: folder2.id,
+				name: folder2.name,
+				parent: {
+					id: folder1.id,
+					name: folder1.name,
+					parent: null,
+				},
+			});
+
+			expect(await itemService.getItemPath(folder3.id, user.id)).toEqual({
+				id: folder3.id,
+				name: folder3.name,
+				parent: {
+					id: folder2.id,
+					name: folder2.name,
+					parent: {
+						id: folder1.id,
+						name: folder1.name,
+						parent: null,
+					},
+				},
+			});
+		});
+
+		it("should return undefined, when item doesn't exist", async () => {
+			await expect(itemService.getItemPath(1234, user.id)).resolves.toBeUndefined();
+		});
+	});
 });

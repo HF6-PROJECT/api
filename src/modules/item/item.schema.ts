@@ -66,6 +66,9 @@ const itemsResponseSchema = {
 			blobUrl: {
 				type: ['string', 'null'],
 			},
+			linkedItemId: {
+				type: ['number', 'null'],
+			},
 			parentId: {
 				type: ['number', 'null'],
 			},
@@ -87,6 +90,71 @@ const itemsResponseSchema = {
 			updatedAt: {
 				type: 'string',
 			},
+		},
+	},
+} as const;
+
+const itemResponseSchema = {
+	$id: 'itemResponseSchema',
+	type: 'object',
+	properties: {
+		id: {
+			type: 'number',
+		},
+		name: {
+			type: 'string',
+		},
+		color: {
+			type: ['string', 'null'],
+		},
+		text: {
+			type: ['string', 'null'],
+		},
+		blobUrl: {
+			type: ['string', 'null'],
+		},
+		linkedItemId: {
+			type: ['number', 'null'],
+		},
+		parentId: {
+			type: ['number', 'null'],
+		},
+		isStarred: {
+			type: 'boolean',
+		},
+		mimeType: {
+			type: 'string',
+		},
+		ownerId: {
+			type: 'number',
+		},
+		deletedAt: {
+			type: ['string', 'null'],
+		},
+		createdAt: {
+			type: 'string',
+		},
+		updatedAt: {
+			type: 'string',
+		},
+	},
+} as const;
+
+const itemReadSchema = {
+	$id: 'itemReadSchema',
+	type: 'object',
+	properties: {
+		id: {
+			type: 'string',
+			errorMessage: {
+				type: 'item.id.type',
+			},
+		},
+	},
+	required: ['id'],
+	errorMessage: {
+		required: {
+			id: 'item.id.required',
 		},
 	},
 } as const;
@@ -205,6 +273,12 @@ const itemSharingsResponseSchema = {
 } as const;
 
 export type itemSharingsInput = FromSchema<typeof itemSharingsSchema>;
+export type itemReadInput = FromSchema<typeof itemReadSchema>;
 export type ReadInput = FromSchema<typeof readItemsSchema>;
 
-export const itemSchemas = [readItemsSchema, itemsResponseSchema, itemSharingsResponseSchema];
+export const itemSchemas = [
+	readItemsSchema,
+	itemsResponseSchema,
+	itemResponseSchema,
+	itemSharingsResponseSchema,
+];

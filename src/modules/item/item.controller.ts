@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import ItemService from './item.service';
-import { ReadInput, itemSharingsInput } from './item.schema';
+import { ReadInput, itemSharingsInput, itemReadInput } from './item.schema';
 import AccessService from './sharing/access.service';
 
 export default class ItemController {
@@ -63,6 +63,32 @@ export default class ItemController {
 
 			return reply.code(200).send(items);
 		} catch (e) {
+			/* istanbul ignore next */
+			return reply.badRequest();
+		}
+	}
+
+	public async readHandler(
+		request: FastifyRequest<{
+			Params: itemReadInput;
+		}>,
+		reply: FastifyReply,
+	) {
+		try {
+			const id = Number.parseInt(request.params.id);
+
+			if (!(await this.accessService.hasAccessToItem(id, request.user.sub))) {
+				return reply.unauthorized();
+			}
+
+			const item = await this.itemService.getItemByIdWithInclude(id, request.user.sub);
+
+			return reply.code(200).send(item);
+		} catch (e) {
+			if (e instanceof Error) {
+				return reply.badRequest(request.i18n.t(e.message));
+			}
+
 			/* istanbul ignore next */
 			return reply.badRequest();
 		}

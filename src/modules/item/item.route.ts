@@ -43,6 +43,25 @@ export default async (fastify: FastifyInstance) => {
 	);
 
 	fastify.get(
+		'/:id/single',
+		{
+			schema: {
+				tags: ['Item'],
+				response: {
+					200: { $ref: 'itemResponseSchema' },
+				},
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
+			},
+			onRequest: [fastify.authenticate],
+		},
+		itemController.readHandler.bind(itemController),
+	);
+
+	fastify.get(
 		'/:parentId',
 		{
 			schema: {

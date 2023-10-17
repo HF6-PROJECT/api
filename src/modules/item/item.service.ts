@@ -191,19 +191,47 @@ export default class ItemService {
 		return item;
 	}
 
+	public async getItemByIdWithInclude(id: number, userId: number): Promise<ItemWithProperties> {
+		const item = await prisma.item.findUnique({
+			where: {
+				id,
+			},
+			include: {
+				ItemBlob: true,
+				ItemFolder: true,
+				ItemDocs: true,
+				ItemShortcut: true,
+				ItemStarred: {
+					where: {
+						userId: userId,
+					},
+				},
+			},
+		});
+
+		if (!item) {
+			throw new Error('item.notFound');
+		}
+
+		return this.formatItem(item);
+	}
+
+	private formatItem(item: ItemPrismaProperties): ItemWithProperties {
+		const { ItemFolder, ItemBlob, ItemDocs, ItemShortcut, ItemStarred, ...strippedElement } = item;
+
+		return {
+			...ItemBlob,
+			...ItemFolder,
+			...ItemDocs,
+			...ItemShortcut,
+			...strippedElement,
+			isStarred: ItemStarred.length > 0,
+		};
+	}
+
 	private formatItems(items: ItemPrismaProperties[]): ItemWithProperties[] {
 		return items.map((element) => {
-			const { ItemFolder, ItemBlob, ItemDocs, ItemShortcut, ItemStarred, ...strippedElement } =
-				element;
-
-			return {
-				...ItemBlob,
-				...ItemFolder,
-				...ItemDocs,
-				...ItemShortcut,
-				...strippedElement,
-				isStarred: ItemStarred.length > 0,
-			};
+			return this.formatItem(element);
 		});
 	}
 }

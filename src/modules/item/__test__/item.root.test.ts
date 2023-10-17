@@ -142,6 +142,7 @@ describe('GET /api/item', () => {
 				deletedAt: null,
 				updatedAt: expect.any(String),
 				isStarred: false,
+				linkedItemId: folder.id,
 			},
 		]);
 	});

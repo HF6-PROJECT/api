@@ -136,6 +136,7 @@ describe('GET /api/item/shared', () => {
 				createdAt: expect.any(String),
 				deletedAt: null,
 				updatedAt: expect.any(String),
+				linkedItemId: blob.id,
 			},
 			{
 				id: expect.any(Number),

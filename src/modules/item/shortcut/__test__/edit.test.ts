@@ -246,7 +246,7 @@ describe('PUT /api/shortcut', () => {
 		});
 	});
 
-	it("should return status 400, when shortcut with id doesn't exist", async () => {
+	it("should return status 404, when shortcut with id doesn't exist", async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const response = await global.fastify.inject({
@@ -261,13 +261,13 @@ describe('PUT /api/shortcut', () => {
 			},
 		});
 
-		expect(response.statusCode).toBe(400);
+		expect(response.statusCode).toBe(404);
 		expect(response.json()).toEqual({
-			error: 'BadRequestError',
+			error: 'NotFoundError',
 			errors: {
 				_: ['Shortcut not found'],
 			},
-			statusCode: 400,
+			statusCode: 404,
 		});
 	});
 });

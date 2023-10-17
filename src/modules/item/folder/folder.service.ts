@@ -1,4 +1,5 @@
 import { prisma } from '../../../plugins/prisma';
+import { MissingError } from '../../../utils/error';
 import SharingService from '../sharing/sharing.service';
 import { Folder, AddFolder, UpdateFolder, ItemFolder } from './folder.schema';
 
@@ -45,7 +46,7 @@ export default class FolderService {
 		});
 
 		if (!itemFolder) {
-			throw new Error('item.folder.notFound');
+			throw new MissingError('item.folder.notFound');
 		}
 
 		return this.formatItemFolder(itemFolder);

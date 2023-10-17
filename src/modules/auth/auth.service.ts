@@ -3,6 +3,8 @@ import { prisma } from '../../plugins/prisma';
 import { accessTokenPayload, jwt, refreshTokenPayload } from '../../plugins/jwt';
 import TimeUtil from '../../utils/time';
 import { v4 } from 'uuid';
+import { UnauthorizedError } from '../../utils/error';
+import { TokenError } from 'fast-jwt';
 
 export default class AuthService {
 	public verifyPassword(userPassword: string, password: string): boolean {
@@ -105,7 +107,17 @@ export default class AuthService {
 		accessToken: string;
 		accessTokenPayload: accessTokenPayload;
 	}> {
-		jwt.verify(oldRefreshToken);
+		try {
+			jwt.verify(oldRefreshToken);
+		} catch (e) {
+			if (e instanceof TokenError) {
+				if (e.code === 'FAST_JWT_EXPIRED') {
+					throw new UnauthorizedError('refreshToken.expired');
+				}
+
+				throw new UnauthorizedError('refreshToken.invalid');
+			}
+		}
 
 		const oldRefreshTokenObject = jwt.decodeRefreshToken(oldRefreshToken);
 
@@ -116,7 +128,7 @@ export default class AuthService {
 				},
 			});
 
-			throw new Error('refreshToken.expired');
+			throw new UnauthorizedError('refreshToken.expired');
 		}
 
 		const userSession = await prisma.userSession.findFirst({
@@ -127,13 +139,13 @@ export default class AuthService {
 		});
 
 		if (!userSession) {
-			await prisma.userSession.delete({
+			await prisma.userSession.deleteMany({
 				where: {
 					tokenFamily: oldRefreshTokenObject.tokenFamily,
 				},
 			});
 
-			throw new Error('refreshToken.used');
+			throw new UnauthorizedError('refreshToken.used');
 		}
 
 		const { refreshToken, refreshTokenPayload } =

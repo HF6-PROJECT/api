@@ -95,7 +95,7 @@ describe('GET /api/item/:id/sharings', () => {
 		});
 	});
 
-	it("Should return status 200, item, it's sharings, their users and the owner by itemId", async () => {
+	it("Should return status 404, when item doesn't exist", async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const response = await global.fastify.inject({
@@ -106,13 +106,13 @@ describe('GET /api/item/:id/sharings', () => {
 			},
 		});
 
-		expect(response.statusCode).toBe(400);
+		expect(response.statusCode).toBe(404);
 		expect(response.json()).toEqual({
-			error: 'BadRequestError',
+			error: 'NotFoundError',
 			errors: {
 				_: ['Item not found'],
 			},
-			statusCode: 400,
+			statusCode: 404,
 		});
 	});
 

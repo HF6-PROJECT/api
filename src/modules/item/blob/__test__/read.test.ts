@@ -135,7 +135,7 @@ describe('GET /api/blob/:id', () => {
 		});
 	});
 
-	it("should return status 400, when blob with id doesn't exist", async () => {
+	it("should return status 404, when blob with id doesn't exist", async () => {
 		const { accessToken } = await authService.createTokens(user.id);
 
 		const response = await global.fastify.inject({
@@ -146,13 +146,13 @@ describe('GET /api/blob/:id', () => {
 			},
 		});
 
-		expect(response.statusCode).toBe(400);
+		expect(response.statusCode).toBe(404);
 		expect(response.json()).toEqual({
-			error: 'BadRequestError',
+			error: 'NotFoundError',
 			errors: {
 				_: ['Blob not found'],
 			},
-			statusCode: 400,
+			statusCode: 404,
 		});
 	});
 });

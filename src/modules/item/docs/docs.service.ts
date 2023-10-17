@@ -1,4 +1,5 @@
 import { prisma } from '../../../plugins/prisma';
+import { MissingError } from '../../../utils/error';
 import SharingService from '../sharing/sharing.service';
 import { Docs, AddDocs, UpdateDocs, ItemDocs } from './docs.schema';
 
@@ -45,7 +46,7 @@ export default class DocsService {
 		});
 
 		if (!itemDocs) {
-			throw new Error('item.docs.notFound');
+			throw new MissingError('item.docs.notFound');
 		}
 
 		return this.formatitemDocs(itemDocs);

@@ -10,6 +10,8 @@ import { FromSchema } from 'json-schema-to-ts';
 
 export type Item = prismaItemType;
 
+export type ItemPath = { id: number; name: string; parent?: ItemPath | null };
+
 export type ItemPrismaProperties = Item & { ItemBlob: prismaItemBlobType | null } & {
 	ItemFolder: prismaItemFolderType | null;
 } & { ItemDocs: prismaItemDocsType | null } & { ItemShortcut: prismaItemShortcutType | null } & {
@@ -25,6 +27,50 @@ export type ItemWithProperties = Item &
 export type CreateItem = Omit<Item, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>;
 
 export type UpdateItem = Pick<Item, 'id'> & Partial<CreateItem>;
+
+const itemBreadcrumbSchema = {
+	$id: 'itemBreadcrumbSchema',
+	type: 'object',
+	properties: {
+		id: {
+			type: 'number',
+			errorMessage: {
+				type: 'item.id.type',
+			},
+		},
+	},
+	required: ['id'],
+	errorMessage: {
+		required: {
+			id: 'item.id.required',
+		},
+	},
+} as const;
+
+const itemBreadcrumbResponseSchema = {
+	$id: 'itemBreadcrumbResponseSchema',
+	type: 'object',
+	properties: {
+		id: {
+			type: 'number',
+		},
+		name: {
+			type: 'string',
+		},
+		parent: {
+			type: ['object', 'null'],
+			properties: {
+				id: {
+					type: 'number',
+				},
+				name: {
+					type: 'string',
+				},
+				parent: { $ref: 'itemBreadcrumbResponseSchema' },
+			},
+		},
+	},
+} as const;
 
 const readItemsSchema = {
 	$id: 'readItemsSchema',
@@ -275,10 +321,15 @@ const itemSharingsResponseSchema = {
 export type itemSharingsInput = FromSchema<typeof itemSharingsSchema>;
 export type itemReadInput = FromSchema<typeof itemReadSchema>;
 export type ReadInput = FromSchema<typeof readItemsSchema>;
+export type itemBreadcrumbInput = FromSchema<typeof itemBreadcrumbSchema>;
 
 export const itemSchemas = [
+	itemBreadcrumbSchema,
+	itemBreadcrumbResponseSchema,
 	readItemsSchema,
 	itemsResponseSchema,
+	itemReadSchema,
 	itemResponseSchema,
+	itemSharingsSchema,
 	itemSharingsResponseSchema,
 ];

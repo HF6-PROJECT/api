@@ -3,6 +3,7 @@ import { ReadInput, EditInput, AddInput, DeleteInput } from './folder.schema';
 import FolderService from './folder.service';
 import AccessService from '../sharing/access.service';
 import { ItemEventType, triggerItemEvent } from '../item.event';
+import { UnauthorizedError, errorReply } from '../../../utils/error';
 
 export default class FolderController {
 	private folderService: FolderService;
@@ -23,17 +24,12 @@ export default class FolderController {
 			const folder = await this.folderService.getByItemId(request.params.id);
 
 			if (!(await this.accessService.hasAccessToItem(folder.id, request.user.sub))) {
-				return reply.unauthorized();
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			return reply.code(200).send(folder);
 		} catch (e) {
-			if (e instanceof Error) {
-				return reply.badRequest(request.i18n.t(e.message));
-			}
-
-			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -47,7 +43,7 @@ export default class FolderController {
 			const folder = await this.folderService.getByItemId(request.body.id);
 
 			if (!(await this.accessService.hasAccessToItem(folder.id, request.user.sub))) {
-				return reply.unauthorized();
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			if (
@@ -55,7 +51,7 @@ export default class FolderController {
 				request.body.parentId !== undefined &&
 				!(await this.accessService.hasAccessToItem(request.body.parentId, request.user.sub))
 			) {
-				return reply.unauthorized();
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			const updatedFolder = await this.folderService.updateFolder(request.body);
@@ -64,12 +60,7 @@ export default class FolderController {
 
 			return reply.code(200).send(updatedFolder);
 		} catch (e) {
-			if (e instanceof Error) {
-				return reply.badRequest(request.i18n.t(e.message));
-			}
-
-			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -85,7 +76,7 @@ export default class FolderController {
 				request.body.parentId !== undefined &&
 				!(await this.accessService.hasAccessToItem(request.body.parentId, request.user.sub))
 			) {
-				return reply.unauthorized();
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			const folder = await this.folderService.createFolder({
@@ -99,8 +90,7 @@ export default class FolderController {
 
 			return reply.code(200).send(folder);
 		} catch (e) {
-			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -114,7 +104,7 @@ export default class FolderController {
 			const folder = await this.folderService.getByItemId(request.params.id);
 
 			if (!(await this.accessService.hasAccessToItem(folder.id, request.user.sub))) {
-				return reply.unauthorized();
+				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			await this.folderService.deleteFolderByItemId(folder.id);
@@ -123,12 +113,7 @@ export default class FolderController {
 
 			return reply.code(204).send();
 		} catch (e) {
-			if (e instanceof Error) {
-				return reply.badRequest(request.i18n.t(e.message));
-			}
-
-			/* istanbul ignore next */
-			return reply.badRequest();
+			return errorReply(request, reply, e);
 		}
 	}
 }

@@ -3,6 +3,7 @@ import AuthService from './auth.service';
 import UserService from './user.service';
 import { CreateUserInput, LoginInput } from './auth.schema';
 import { User } from '@prisma/client';
+import { MissingError, UnauthorizedError, errorReply } from '../../utils/error';
 
 const CACHE_TTL = 1800;
 const CACHE_KEY_USER = 'user';
@@ -27,12 +28,7 @@ export default class AuthController {
 
 			return reply.code(201).send(user);
 		} catch (e) {
-			if (e instanceof Error) {
-				return reply.badRequest(request.i18n.t(e.message));
-			}
-
-			/* istanbul ignore next */
-			throw e;
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -46,7 +42,7 @@ export default class AuthController {
 			const user = await this.userService.getUserByEmail(request.body.email);
 
 			if (!this.authService.verifyPassword(user.password, request.body.password)) {
-				throw new Error(request.i18n.t('password.incorrect'));
+				throw new UnauthorizedError('user.emailOrPasswordIncorrect');
 			}
 
 			const { refreshToken, refreshTokenPayload, accessToken } =
@@ -65,7 +61,11 @@ export default class AuthController {
 					accessToken: accessToken,
 				});
 		} catch (e) {
-			return reply.unauthorized(request.i18n.t('user.emailOrPasswordIncorrect'));
+			if (e instanceof MissingError) {
+				return errorReply(request, reply, new UnauthorizedError('user.emailOrPasswordIncorrect'));
+			}
+
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -87,7 +87,7 @@ export default class AuthController {
 					accessToken: accessToken,
 				});
 		} catch (e) {
-			return reply.unauthorized();
+			return errorReply(request, reply, e);
 		}
 	}
 
@@ -116,7 +116,13 @@ export default class AuthController {
 			);
 			return reply.code(200).send(user);
 		} catch (e) {
-			return reply.unauthorized();
+			let error = e;
+
+			if (error instanceof MissingError) {
+				error = new UnauthorizedError('error.unauthorized');
+			}
+
+			return errorReply(request, reply, error);
 		}
 	}
 }

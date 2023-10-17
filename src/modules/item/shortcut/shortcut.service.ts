@@ -1,4 +1,5 @@
 import { prisma } from '../../../plugins/prisma';
+import { MissingError } from '../../../utils/error';
 import SharingService from '../sharing/sharing.service';
 import { Shortcut, AddShortcut, UpdateShortcut, ItemShortcut } from './shortcut.schema';
 
@@ -49,7 +50,7 @@ export default class ShortcutService {
 		});
 
 		if (!itemShortcut) {
-			throw new Error('item.shortcut.notFound');
+			throw new MissingError('item.shortcut.notFound');
 		}
 
 		return this.formatItemShortcut(itemShortcut);

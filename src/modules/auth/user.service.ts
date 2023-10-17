@@ -2,11 +2,12 @@ import { User } from '@prisma/client';
 import { hashSync } from 'bcrypt';
 import { prisma } from '../../plugins/prisma';
 import { CreateUserInput } from './auth.schema';
+import { AlreadyExistsError, MissingError } from '../../utils/error';
 
 export default class UserService {
 	public async createUser(input: CreateUserInput): Promise<User> {
 		if (await this.isEmailInUse(input.email)) {
-			throw new Error('email.inUse');
+			throw new AlreadyExistsError('email.inUse');
 		}
 
 		return await prisma.user.create({
@@ -34,7 +35,7 @@ export default class UserService {
 		});
 
 		if (!user) {
-			throw Error('user.notFound');
+			throw new MissingError('user.notFound');
 		}
 
 		return user;
@@ -46,7 +47,7 @@ export default class UserService {
 		});
 
 		if (!user) {
-			throw Error('user.notFound');
+			throw new MissingError('user.notFound');
 		}
 
 		return user;

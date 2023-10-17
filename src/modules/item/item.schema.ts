@@ -240,7 +240,7 @@ const itemFolderDocsBlobResponseSchema = {
 			type: 'string',
 		},
 		ownerId: {
-			type: 'string',
+			type: 'number',
 		},
 		parentId: {
 			type: ['number', 'null'],
@@ -258,26 +258,23 @@ const itemFolderDocsBlobResponseSchema = {
 		},
 		ItemBlob: {
 			type: ['object', 'null'],
-            properties: {
-                id: {
-                    type: 'number',
-                },
-                blobUrl: {
-                    type: 'string',
-                },
-            },
+			properties: {
+				id: {
+					type: 'number',
+				},
+				blobUrl: {
+					type: 'string',
+				},
+			},
 		},
 		ItemDocs: {
 			type: ['object', 'null'],
-			items: {
-				type: 'object',
-				properties: {
-					id: {
-						type: 'number',
-					},
-					text: {
-						type: 'string',
-					},
+			properties: {
+				id: {
+					type: 'number',
+				},
+				text: {
+					type: 'string',
 				},
 			},
 		},
@@ -297,4 +294,9 @@ export type itemSharingsInput = FromSchema<typeof itemSharingsSchema>;
 export type itemReadInput = FromSchema<typeof itemReadSchema>;
 export type ReadInput = FromSchema<typeof readItemsSchema>;
 
-export const itemSchemas = [readItemsSchema, itemsResponseSchema, itemSharingsResponseSchema, itemFolderDocsBlobResponseSchema];
+export const itemSchemas = [
+	readItemsSchema,
+	itemsResponseSchema,
+	itemSharingsResponseSchema,
+	itemFolderDocsBlobResponseSchema,
+];

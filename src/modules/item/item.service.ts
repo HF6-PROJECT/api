@@ -54,29 +54,6 @@ export default class ItemService {
 		return this.formatItems(items);
 	}
 
-	public async getByOwnerId(
-		ownerId: number,
-	): Promise<ItemWithProperties[]> {
-		const items = await prisma.item.findMany({
-			where: {
-				ownerId: ownerId,
-			},
-			include: {
-				ItemBlob: true,
-				ItemFolder: true,
-				ItemDocs: true,
-				ItemShortcut: true,
-				ItemStarred: {
-					where: {
-						userId: ownerId,
-					},
-				},
-			},
-		});
-
-		return this.formatItems(items);
-	}
-
 	public async getAllOwnedAndSharredItemsByParentIdAndUserIdRecursively(
 		userId: number,
 		parentId: number | null,
@@ -225,10 +202,6 @@ export default class ItemService {
 				ItemDocs: true,
 			},
 		});
-
-		if (!item) {
-			throw new Error('item.notFound');
-		}
 
 		return item;
 	}

@@ -81,7 +81,7 @@ export default class ItemController {
 				return reply.unauthorized();
 			}
 
-			const item = await this.itemService.getItemByIdWithFolderAndDocsAndBlob(id);
+			const item = await this.itemService.getItemByIdWithInclude(id, request.user.sub);
 
 			return reply.code(200).send(item);
 		} catch (e) {

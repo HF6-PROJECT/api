@@ -48,7 +48,7 @@ export default async (fastify: FastifyInstance) => {
 			schema: {
 				tags: ['Item'],
 				response: {
-					200: { $ref: 'itemFolderDocsBlobResponseSchema' },
+					200: { $ref: 'itemResponseSchema' },
 				},
 				security: [
 					{

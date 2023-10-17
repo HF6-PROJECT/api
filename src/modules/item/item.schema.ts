@@ -94,6 +94,52 @@ const itemsResponseSchema = {
 	},
 } as const;
 
+const itemResponseSchema = {
+	$id: 'itemResponseSchema',
+	type: 'object',
+	properties: {
+		id: {
+			type: 'number',
+		},
+		name: {
+			type: 'string',
+		},
+		color: {
+			type: ['string', 'null'],
+		},
+		text: {
+			type: ['string', 'null'],
+		},
+		blobUrl: {
+			type: ['string', 'null'],
+		},
+		linkedItemId: {
+			type: ['number', 'null'],
+		},
+		parentId: {
+			type: ['number', 'null'],
+		},
+		isStarred: {
+			type: 'boolean',
+		},
+		mimeType: {
+			type: 'string',
+		},
+		ownerId: {
+			type: 'number',
+		},
+		deletedAt: {
+			type: ['string', 'null'],
+		},
+		createdAt: {
+			type: 'string',
+		},
+		updatedAt: {
+			type: 'string',
+		},
+	},
+} as const;
+
 const itemReadSchema = {
 	$id: 'itemReadSchema',
 	type: 'object',
@@ -226,70 +272,6 @@ const itemSharingsResponseSchema = {
 	},
 } as const;
 
-const itemFolderDocsBlobResponseSchema = {
-	$id: 'itemFolderDocsBlobResponseSchema',
-	type: 'object',
-	properties: {
-		id: {
-			type: 'number',
-		},
-		name: {
-			type: 'string',
-		},
-		mimeType: {
-			type: 'string',
-		},
-		ownerId: {
-			type: 'number',
-		},
-		parentId: {
-			type: ['number', 'null'],
-		},
-		ItemFolder: {
-			type: ['object', 'null'],
-			properties: {
-				id: {
-					type: 'number',
-				},
-				color: {
-					type: 'string',
-				},
-			},
-		},
-		ItemBlob: {
-			type: ['object', 'null'],
-			properties: {
-				id: {
-					type: 'number',
-				},
-				blobUrl: {
-					type: 'string',
-				},
-			},
-		},
-		ItemDocs: {
-			type: ['object', 'null'],
-			properties: {
-				id: {
-					type: 'number',
-				},
-				text: {
-					type: 'string',
-				},
-			},
-		},
-		deletedAt: {
-			type: ['string', 'null'],
-		},
-		createdAt: {
-			type: 'string',
-		},
-		updatedAt: {
-			type: 'string',
-		},
-	},
-} as const;
-
 export type itemSharingsInput = FromSchema<typeof itemSharingsSchema>;
 export type itemReadInput = FromSchema<typeof itemReadSchema>;
 export type ReadInput = FromSchema<typeof readItemsSchema>;
@@ -297,6 +279,6 @@ export type ReadInput = FromSchema<typeof readItemsSchema>;
 export const itemSchemas = [
 	readItemsSchema,
 	itemsResponseSchema,
+	itemResponseSchema,
 	itemSharingsResponseSchema,
-	itemFolderDocsBlobResponseSchema,
 ];

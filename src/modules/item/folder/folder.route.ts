@@ -1,17 +1,8 @@
 import { FastifyInstance } from 'fastify';
-import FolderController from './folder.controller';
-import FolderService from './folder.service';
-import AccessService from '../sharing/access.service';
-import ItemService from '../item.service';
-import SharingService from '../sharing/sharing.service';
+import { FolderControllerFactory } from './folder.factory';
 
 export default async (fastify: FastifyInstance) => {
-	const itemService = new ItemService();
-	const folderService = new FolderService();
-	const folderController = new FolderController(
-		folderService,
-		new AccessService(itemService, new SharingService(itemService)),
-	);
+	const folderController = FolderControllerFactory.make();
 
 	fastify.get(
 		'/:id',

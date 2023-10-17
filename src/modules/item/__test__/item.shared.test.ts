@@ -6,7 +6,12 @@ import BlobService from '../blob/blob.service';
 import DocsService from '../docs/docs.service';
 import ShortcutService from '../shortcut/shortcut.service';
 import SharingService from '../sharing/sharing.service';
-import ItemService from '../item.service';
+import { AuthServiceFactory, UserServiceFactory } from '../../auth/auth.factory';
+import { FolderServiceFactory } from '../folder/folder.factory';
+import { BlobServiceFactory } from '../blob/blob.factory';
+import { DocsServiceFactory } from '../docs/docs.factory';
+import { ShortcutServiceFactory } from '../shortcut/shortcut.factory';
+import { SharingServiceFactory } from '../sharing/sharing.factory';
 
 describe('GET /api/item/shared', () => {
 	let userService: UserService;
@@ -21,13 +26,13 @@ describe('GET /api/item/shared', () => {
 	let otherUser: User;
 
 	beforeAll(async () => {
-		userService = new UserService();
-		folderService = new FolderService();
-		authService = new AuthService();
-		blobService = new BlobService();
-		docsService = new DocsService();
-		shortcutService = new ShortcutService();
-		sharingService = new SharingService(new ItemService());
+		userService = UserServiceFactory.make();
+		folderService = FolderServiceFactory.make();
+		authService = AuthServiceFactory.make();
+		blobService = BlobServiceFactory.make();
+		docsService = DocsServiceFactory.make();
+		shortcutService = ShortcutServiceFactory.make();
+		sharingService = SharingServiceFactory.make();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',
@@ -65,55 +70,27 @@ describe('GET /api/item/shared', () => {
 			parentId: folder1.id,
 			blobUrl: 'https://example.com/test1.txt',
 		});
-		await sharingService.createSharing(
-			{
-				itemId: blob.id,
-				userId: user.id,
-			},
-			otherUser.id,
-		);
 
-		const folder2 = await folderService.createFolder({
+		await folderService.createFolder({
 			name: 'Folder2',
 			color: '#987654',
 			ownerId: otherUser.id,
 			parentId: folder1.id,
 		});
-		await sharingService.createSharing(
-			{
-				itemId: folder2.id,
-				userId: user.id,
-			},
-			otherUser.id,
-		);
 
-		const docs = await docsService.createDocs({
+		await docsService.createDocs({
 			name: 'Docs1',
 			text: 'Docs1 text',
 			ownerId: otherUser.id,
 			parentId: folder1.id,
 		});
-		await sharingService.createSharing(
-			{
-				itemId: docs.id,
-				userId: user.id,
-			},
-			otherUser.id,
-		);
 
-		const shortcut = await shortcutService.createShortcut({
+		await shortcutService.createShortcut({
 			name: 'Shortcut',
 			ownerId: otherUser.id,
 			linkedItemId: blob.id,
 			parentId: folder1.id,
 		});
-		await sharingService.createSharing(
-			{
-				itemId: shortcut.id,
-				userId: user.id,
-			},
-			otherUser.id,
-		);
 
 		const response = await global.fastify.inject({
 			method: 'GET',
@@ -122,8 +99,6 @@ describe('GET /api/item/shared', () => {
 				authorization: 'Bearer ' + accessToken,
 			},
 		});
-
-		console.log(response.json());
 
 		expect(response.statusCode).toBe(200);
 		expect(response.json()).toEqual([
@@ -211,55 +186,27 @@ describe('GET /api/item/shared', () => {
 			parentId: folder1.id,
 			blobUrl: 'https://example.com/test1.txt',
 		});
-		await sharingService.createSharing(
-			{
-				itemId: blob.id,
-				userId: user.id,
-			},
-			otherUser.id,
-		);
 
-		const folder2 = await folderService.createFolder({
+		await folderService.createFolder({
 			name: 'Folder2',
 			color: '#987654',
 			ownerId: otherUser.id,
 			parentId: folder1.id,
 		});
-		await sharingService.createSharing(
-			{
-				itemId: folder2.id,
-				userId: user.id,
-			},
-			otherUser.id,
-		);
 
-		const docs = await docsService.createDocs({
+		await docsService.createDocs({
 			name: 'Docs1',
 			text: 'Docs1 text',
 			ownerId: otherUser.id,
 			parentId: folder1.id,
 		});
-		await sharingService.createSharing(
-			{
-				itemId: docs.id,
-				userId: user.id,
-			},
-			otherUser.id,
-		);
 
-		const shortcut = await shortcutService.createShortcut({
+		await shortcutService.createShortcut({
 			name: 'Shortcut',
 			ownerId: otherUser.id,
 			linkedItemId: blob.id,
 			parentId: folder1.id,
 		});
-		await sharingService.createSharing(
-			{
-				itemId: shortcut.id,
-				userId: user.id,
-			},
-			otherUser.id,
-		);
 
 		const response = await global.fastify.inject({
 			method: 'GET',

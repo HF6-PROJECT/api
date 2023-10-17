@@ -1,17 +1,8 @@
 import { FastifyInstance } from 'fastify';
-import DocsController from './docs.controller';
-import DocsService from './docs.service';
-import AccessService from '../sharing/access.service';
-import ItemService from '../item.service';
-import SharingService from '../sharing/sharing.service';
+import { DocsControllerFactory } from './docs.factory';
 
 export default async (fastify: FastifyInstance) => {
-	const itemService = new ItemService();
-	const docsService = new DocsService();
-	const docsController = new DocsController(
-		docsService,
-		new AccessService(itemService, new SharingService(itemService)),
-	);
+	const docsController = DocsControllerFactory.make();
 
 	fastify.get(
 		'/:id',

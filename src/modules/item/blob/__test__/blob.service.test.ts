@@ -4,6 +4,8 @@ import BlobService from '../../blob/blob.service';
 import { FastifyRequest } from 'fastify';
 import AuthService from '../../../auth/auth.service';
 import { HandleUploadBody } from '@vercel/blob/client';
+import { BlobServiceFactory } from '../blob.factory';
+import { AuthServiceFactory, UserServiceFactory } from '../../../auth/auth.factory';
 
 describe('BlobService', () => {
 	let blobService: BlobService;
@@ -13,9 +15,9 @@ describe('BlobService', () => {
 	let user: User;
 
 	beforeAll(async () => {
-		blobService = new BlobService();
-		userService = new UserService();
-		authService = new AuthService();
+		blobService = BlobServiceFactory.make();
+		userService = UserServiceFactory.make();
+		authService = AuthServiceFactory.make();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',

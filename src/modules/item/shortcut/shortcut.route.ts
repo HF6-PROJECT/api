@@ -1,17 +1,8 @@
 import { FastifyInstance } from 'fastify';
-import ShortcutController from './shortcut.controller';
-import ShortcutService from './shortcut.service';
-import AccessService from '../sharing/access.service';
-import ItemService from '../item.service';
-import SharingService from '../sharing/sharing.service';
+import { ShortcutControllerFactory } from './shortcut.factory';
 
 export default async (fastify: FastifyInstance) => {
-	const itemService = new ItemService();
-	const shortcutService = new ShortcutService();
-	const shortcutController = new ShortcutController(
-		shortcutService,
-		new AccessService(itemService, new SharingService(itemService)),
-	);
+	const shortcutController = ShortcutControllerFactory.make();
 
 	fastify.get(
 		'/:id',

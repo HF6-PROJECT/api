@@ -1,6 +1,6 @@
 import { prisma } from '../../../plugins/prisma';
 import ItemService from '../item.service';
-import { Sharing, CreateSharing, UpdateSharing } from './sharing.schema';
+import { Sharing, CreateSharing, UpdateSharing, DeleteSharing } from './sharing.schema';
 
 export default class SharingService {
 	private itemService: ItemService;
@@ -77,6 +77,44 @@ export default class SharingService {
 		}
 	}
 
+	public async deleteSharing(input: DeleteSharing, userId: number): Promise<void> {
+		try {
+			const itemSharing = await prisma.itemSharing.findUniqueOrThrow({
+				where: {
+					itemId_userId: {
+						itemId: input.itemId,
+						userId: input.userId,
+					},
+				},
+			});
+
+			const accessableItems =
+				await this.itemService.getAllOwnedAndSharredItemsByParentIdAndUserIdRecursively(
+					userId,
+					itemSharing.itemId,
+				);
+
+			await prisma.itemSharing.deleteMany({
+				where: {
+					OR: [
+						{
+							itemId: input.itemId,
+							userId: input.userId,
+						},
+						{
+							itemId: {
+								in: accessableItems.map((item) => item.id),
+							},
+							userId: itemSharing.userId,
+						},
+					],
+				},
+			});
+		} catch (e) {
+			// Nothing to do here
+		}
+	}
+
 	public async updateSharing(input: UpdateSharing): Promise<Sharing> {
 		const itemSharing = await prisma.itemSharing.update({
 			data: {
@@ -109,20 +147,47 @@ export default class SharingService {
 
 			await prisma.itemSharing.deleteMany({
 				where: {
-					itemId: {
-						in: accessableItems.map((item) => item.id),
-					},
-					userId: itemSharing.userId,
-				},
-			});
-
-			await prisma.itemSharing.delete({
-				where: {
-					id: id,
+					OR: [
+						{
+							itemId: {
+								in: accessableItems.map((item) => item.id),
+							},
+							userId: itemSharing.userId,
+						},
+						{
+							id: id,
+						},
+					],
 				},
 			});
 		} catch (e) {
 			// Nothing to do here
 		}
+	}
+
+	public async syncSharingsByItemId(fromItemId: number, toItemId: number) {
+		const fromItem = await prisma.item.findUniqueOrThrow({
+			where: {
+				id: fromItemId,
+			},
+			include: {
+				ItemSharing: true,
+			},
+		});
+
+		const userIds = [fromItem.ownerId];
+		fromItem.ItemSharing.forEach((sharing) => {
+			userIds.push(sharing.userId);
+		});
+
+		await prisma.itemSharing.createMany({
+			data: userIds.map((userId) => {
+				return {
+					itemId: toItemId,
+					userId: userId,
+				};
+			}),
+			skipDuplicates: true,
+		});
 	}
 }

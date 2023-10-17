@@ -1,16 +1,8 @@
 import { FastifyInstance } from 'fastify';
-import BlobController from './blob.controller';
-import BlobService from './blob.service';
-import SharingService from '../sharing/sharing.service';
-import ItemService from '../item.service';
-import AccessService from '../sharing/access.service';
+import { BlobControllerFactory } from './blob.factory';
 
 export default async (fastify: FastifyInstance) => {
-	const itemService = new ItemService();
-	const blobController = new BlobController(
-		new BlobService(),
-		new AccessService(itemService, new SharingService(itemService)),
-	);
+	const blobController = BlobControllerFactory.make();
 
 	fastify.get(
 		'/:id',

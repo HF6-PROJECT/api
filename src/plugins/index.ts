@@ -12,6 +12,7 @@ import jwt from './jwt';
 import i18n from './i18n';
 import errorHandler from './error.handler';
 import plainText from './plainText';
+import pusher from './pusher';
 
 export default fastifyPlugin(async (fastify: FastifyInstance) => {
 	await Promise.all([
@@ -29,6 +30,9 @@ export default fastifyPlugin(async (fastify: FastifyInstance) => {
 		fastify.register(cors),
 		fastify.config.NODE_ENV === 'local'
 			? /* istanbul ignore next */ fastify.register(swagger)
+			: /* istanbul ignore next */ null,
+		fastify.config.NODE_ENV !== 'test'
+			? /* istanbul ignore next */ fastify.register(pusher)
 			: /* istanbul ignore next */ null,
 	]);
 

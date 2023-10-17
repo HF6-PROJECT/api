@@ -2,6 +2,8 @@ import { User } from '@prisma/client';
 import UserService from '../../../auth/user.service';
 import AuthService from '../../../auth/auth.service';
 import FolderService from '../folder.service';
+import { AuthServiceFactory, UserServiceFactory } from '../../../auth/auth.factory';
+import { FolderServiceFactory } from '../folder.factory';
 
 describe('PUT /api/folder', () => {
 	let userService: UserService;
@@ -12,9 +14,9 @@ describe('PUT /api/folder', () => {
 	let otherUser: User;
 
 	beforeAll(async () => {
-		authService = new AuthService();
-		userService = new UserService();
-		folderService = new FolderService();
+		authService = AuthServiceFactory.make();
+		userService = UserServiceFactory.make();
+		folderService = FolderServiceFactory.make();
 
 		user = await userService.createUser({
 			name: 'Joe Biden the 1st',

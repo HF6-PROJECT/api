@@ -127,9 +127,6 @@ export default async (fastify: FastifyInstance) => {
 			schema: {
 				tags: ['Item'],
 				params: { $ref: 'itemBreadcrumbSchema' },
-				response: {
-					200: { $ref: 'itemBreadcrumbResponseSchema' },
-				},
 				security: [
 					{
 						bearerAuth: [],

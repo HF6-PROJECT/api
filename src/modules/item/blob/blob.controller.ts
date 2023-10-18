@@ -65,7 +65,39 @@ export default class BlobController {
 		try {
 			const jsonResponse = await this.blobService.handleUpload(
 				request,
-				['text/plain'],
+				[
+					// Text
+					'text/plain',
+					'text/csv',
+					'text/xml',
+					// Images
+					'image/png',
+					'image/jpeg',
+					'image/gif',
+					'image/svg+xml',
+					'image/webp',
+					// Videos
+					'video/mp4',
+					'video/webm',
+					'video/ogg',
+					// Audio
+					'audio/mpeg',
+					'audio/ogg',
+					'audio/wav',
+					'audio/webm',
+					// Documents
+					'application/pdf',
+					'application/msword',
+					'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+					'application/vnd.ms-excel',
+					'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+					'application/vnd.ms-powerpoint',
+					'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+					'application/zip',
+					'application/x-rar-compressed',
+					'application/x-7z-compressed',
+					'application/x-tar',
+				],
 				/* istanbul ignore next */ // Sadly this is not testable, beacuse the function is normally called by the blob service, with generated data
 				async ({ blob, tokenPayload }) => {
 					try {

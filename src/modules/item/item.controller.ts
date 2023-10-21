@@ -42,7 +42,9 @@ export default class ItemController {
 		reply: FastifyReply,
 	) {
 		try {
-			if (!(await this.accessService.hasAccessToItem(request.params.parentId, request.user.sub))) {
+			if (
+				!(await this.accessService.hasAccessToItemId(request.params.parentId, request.user.sub))
+			) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 
@@ -77,7 +79,7 @@ export default class ItemController {
 		try {
 			const id = Number.parseInt(request.params.id);
 
-			if (!(await this.accessService.hasAccessToItem(id, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItemId(id, request.user.sub))) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 
@@ -98,7 +100,7 @@ export default class ItemController {
 		try {
 			const id = Number.parseInt(request.params.id);
 
-			if (!(await this.accessService.hasAccessToItem(id, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItemId(id, request.user.sub))) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 
@@ -117,7 +119,7 @@ export default class ItemController {
 		reply: FastifyReply,
 	) {
 		try {
-			if (!(await this.accessService.hasAccessToItem(request.params.id, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItemId(request.params.id, request.user.sub))) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 

@@ -1,5 +1,6 @@
 import SharingService from './sharing.service';
 import ItemService from '../item.service';
+import { Item } from '../item.schema';
 
 export default class AccessService {
 	private itemService: ItemService;
@@ -10,15 +11,19 @@ export default class AccessService {
 		this.sharingService = sharingService;
 	}
 
-	public async hasAccessToItem(itemId: number, userId: number): Promise<boolean> {
+	public async hasAccessToItemId(itemId: number, userId: number): Promise<boolean> {
 		const item = await this.itemService.getById(itemId);
 
+        return await this.hasAccessToItem(item, userId);
+	}
+
+	public async hasAccessToItem(item: Item, userId: number): Promise<boolean> {
 		if (item.ownerId === userId) {
 			return true;
 		}
 
 		try {
-			await this.sharingService.getByItemIdAndUserId(itemId, userId);
+			await this.sharingService.getByItemIdAndUserId(item.id, userId);
 
 			return true;
 		} catch (e) {

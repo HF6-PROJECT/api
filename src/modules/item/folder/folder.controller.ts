@@ -23,7 +23,7 @@ export default class FolderController {
 		try {
 			const folder = await this.folderService.getByItemId(request.params.id);
 
-			if (!(await this.accessService.hasAccessToItem(folder.id, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItemId(folder.id, request.user.sub))) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 
@@ -42,14 +42,14 @@ export default class FolderController {
 		try {
 			const folder = await this.folderService.getByItemId(request.body.id);
 
-			if (!(await this.accessService.hasAccessToItem(folder.id, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItemId(folder.id, request.user.sub))) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 
 			if (
 				request.body.parentId !== null &&
 				request.body.parentId !== undefined &&
-				!(await this.accessService.hasAccessToItem(request.body.parentId, request.user.sub))
+				!(await this.accessService.hasAccessToItemId(request.body.parentId, request.user.sub))
 			) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
@@ -74,7 +74,7 @@ export default class FolderController {
 			if (
 				request.body.parentId !== null &&
 				request.body.parentId !== undefined &&
-				!(await this.accessService.hasAccessToItem(request.body.parentId, request.user.sub))
+				!(await this.accessService.hasAccessToItemId(request.body.parentId, request.user.sub))
 			) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
@@ -103,7 +103,7 @@ export default class FolderController {
 		try {
 			const folder = await this.folderService.getByItemId(request.params.id);
 
-			if (!(await this.accessService.hasAccessToItem(folder.id, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItemId(folder.id, request.user.sub))) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 

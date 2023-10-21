@@ -23,7 +23,7 @@ export default class DocsController {
 		try {
 			const docs = await this.docsService.getByItemId(request.params.id);
 
-			if (!(await this.accessService.hasAccessToItem(docs.id, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItemId(docs.id, request.user.sub))) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 
@@ -42,7 +42,7 @@ export default class DocsController {
 		try {
 			const docs = await this.docsService.getByItemId(request.body.id);
 
-			if (!(await this.accessService.hasAccessToItem(docs.id, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItemId(docs.id, request.user.sub))) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 
@@ -66,7 +66,7 @@ export default class DocsController {
 			if (
 				request.body.parentId !== null &&
 				request.body.parentId !== undefined &&
-				!(await this.accessService.hasAccessToItem(request.body.parentId, request.user.sub))
+				!(await this.accessService.hasAccessToItemId(request.body.parentId, request.user.sub))
 			) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
@@ -95,7 +95,7 @@ export default class DocsController {
 		try {
 			const docs = await this.docsService.getByItemId(request.params.id);
 
-			if (!(await this.accessService.hasAccessToItem(docs.id, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItemId(docs.id, request.user.sub))) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 

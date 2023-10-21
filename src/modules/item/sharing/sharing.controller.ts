@@ -29,7 +29,7 @@ export default class SharingController {
 		try {
 			const sharing = await this.sharingService.getById(request.params.id);
 
-			if (!(await this.accessService.hasAccessToItem(sharing.itemId, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItemId(sharing.itemId, request.user.sub))) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 
@@ -48,7 +48,7 @@ export default class SharingController {
 		try {
 			const sharing = await this.sharingService.getById(request.body.id);
 
-			if (!(await this.accessService.hasAccessToItem(sharing.itemId, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItemId(sharing.itemId, request.user.sub))) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 
@@ -67,7 +67,7 @@ export default class SharingController {
 		reply: FastifyReply,
 	) {
 		try {
-			if (!(await this.accessService.hasAccessToItem(request.body.itemId, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItemId(request.body.itemId, request.user.sub))) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 
@@ -93,7 +93,7 @@ export default class SharingController {
 		try {
 			const sharing = await this.sharingService.getById(request.params.id);
 
-			if (!(await this.accessService.hasAccessToItem(sharing.itemId, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItemId(sharing.itemId, request.user.sub))) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 

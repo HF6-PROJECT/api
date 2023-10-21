@@ -20,7 +20,7 @@ export default class StarredController {
 		reply: FastifyReply,
 	) {
 		try {
-			if (!(await this.accessService.hasAccessToItem(request.body.itemId, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItemId(request.body.itemId, request.user.sub))) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 

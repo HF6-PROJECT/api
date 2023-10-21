@@ -43,7 +43,7 @@ describe('ItemService', () => {
 				mimeType: 'text/plain',
 			});
 
-			const hasAccessToItem = await accessService.hasAccessToItem(createdItem.id, user.id);
+			const hasAccessToItem = await accessService.hasAccessToItemId(createdItem.id, user.id);
 
 			expect(hasAccessToItem).toBeTruthy();
 		});
@@ -63,7 +63,7 @@ describe('ItemService', () => {
 				otherUser.id,
 			);
 
-			const hasAccessToItem = await accessService.hasAccessToItem(createdItem.id, user.id);
+			const hasAccessToItem = await accessService.hasAccessToItemId(createdItem.id, user.id);
 
 			expect(hasAccessToItem).toBeTruthy();
 		});
@@ -76,13 +76,13 @@ describe('ItemService', () => {
 				mimeType: 'text/plain',
 			});
 
-			const hasAccessToItem = await accessService.hasAccessToItem(createdItem.id, user.id);
+			const hasAccessToItem = await accessService.hasAccessToItemId(createdItem.id, user.id);
 
 			expect(hasAccessToItem).toBeFalsy();
 		});
 
 		it("should throw error, when item doesn't exist", async () => {
-			await expect(accessService.hasAccessToItem(1234, user.id)).rejects.toThrow();
+			await expect(accessService.hasAccessToItemId(1234, user.id)).rejects.toThrow();
 		});
 	});
 });

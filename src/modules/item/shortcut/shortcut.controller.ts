@@ -23,7 +23,7 @@ export default class ShortcutController {
 		try {
 			const shortcut = await this.shortcutService.getByItemId(request.params.id);
 
-			if (!(await this.accessService.hasAccessToItemId(shortcut.id, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItem(shortcut, request.user.sub))) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 
@@ -42,7 +42,7 @@ export default class ShortcutController {
 		try {
 			const shortcut = await this.shortcutService.getByItemId(request.body.id);
 
-			if (!(await this.accessService.hasAccessToItemId(shortcut.id, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItem(shortcut, request.user.sub))) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 
@@ -103,7 +103,7 @@ export default class ShortcutController {
 		try {
 			const shortcut = await this.shortcutService.getByItemId(request.params.id);
 
-			if (!(await this.accessService.hasAccessToItemId(shortcut.id, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItem(shortcut, request.user.sub))) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 

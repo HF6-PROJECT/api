@@ -14,7 +14,7 @@ export default class AccessService {
 	public async hasAccessToItemId(itemId: number, userId: number): Promise<boolean> {
 		const item = await this.itemService.getById(itemId);
 
-        return await this.hasAccessToItem(item, userId);
+		return await this.hasAccessToItem(item, userId);
 	}
 
 	public async hasAccessToItem(item: Item, userId: number): Promise<boolean> {

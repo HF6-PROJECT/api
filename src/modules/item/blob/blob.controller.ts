@@ -23,7 +23,7 @@ export default class BlobController {
 		try {
 			const blob = await this.blobService.getByItemId(request.params.id);
 
-			if (!(await this.accessService.hasAccessToItemId(blob.id, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItem(blob, request.user.sub))) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 
@@ -42,7 +42,7 @@ export default class BlobController {
 		try {
 			const blob = await this.blobService.getByItemId(request.body.id);
 
-			if (!(await this.accessService.hasAccessToItemId(blob.id, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItem(blob, request.user.sub))) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 
@@ -176,7 +176,7 @@ export default class BlobController {
 		try {
 			const blob = await this.blobService.getByItemId(request.params.id);
 
-			if (!(await this.accessService.hasAccessToItemId(blob.id, request.user.sub))) {
+			if (!(await this.accessService.hasAccessToItem(blob, request.user.sub))) {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 

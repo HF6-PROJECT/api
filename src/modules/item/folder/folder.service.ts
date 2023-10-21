@@ -1,5 +1,7 @@
 import { prisma } from '../../../plugins/prisma';
+import { redis } from '../../../plugins/redis';
 import { MissingError } from '../../../utils/error';
+import { CACHE_ITEMS } from '../item.controller';
 import SharingService from '../sharing/sharing.service';
 import { Folder, AddFolder, UpdateFolder, ItemFolder } from './folder.schema';
 
@@ -32,7 +34,11 @@ export default class FolderService {
 			await this.sharingService.syncSharingsByItemId(input.parentId, itemFolder.item.id);
 		}
 
-		return this.formatItemFolder(itemFolder);
+		const folder = this.formatItemFolder(itemFolder);
+
+		this.invalidateCachesForFolder(folder);
+
+		return folder;
 	}
 
 	public async getByItemId(itemId: number): Promise<Folder> {
@@ -71,15 +77,30 @@ export default class FolderService {
 			},
 		});
 
-		return this.formatItemFolder(itemFolder);
+		const folder = this.formatItemFolder(itemFolder);
+
+		this.invalidateCachesForFolder(folder);
+
+		return folder;
 	}
 
 	public async deleteFolderByItemId(itemId: number): Promise<void> {
-		await prisma.item.delete({
-			where: {
-				id: itemId,
-			},
-		});
+        let folder: Folder;
+
+		try {
+			folder = await this.getByItemId(itemId);
+		} catch (e) {
+			return;
+		}
+
+		await Promise.all([
+			prisma.item.delete({
+				where: {
+					id: itemId,
+				},
+			}),
+			this.invalidateCachesForFolder(folder),
+		]);
 	}
 
 	private formatItemFolder(itemFolder: ItemFolder): Folder {
@@ -87,5 +108,18 @@ export default class FolderService {
 			color: itemFolder.color,
 			...itemFolder.item,
 		};
+	}
+
+	private async invalidateCachesForFolder(folder: Folder): Promise<void> {
+		// Cache - Item
+		await redis.invalidateCaches(`${CACHE_ITEMS}:${folder.id}:*`);
+
+		if (folder.parentId) {
+			// Cache - Parent
+			await redis.invalidateCaches(`${CACHE_ITEMS}:${folder.parentId}:*`);
+		} else {
+			// Cache - Root
+			await redis.invalidateCaches(`${CACHE_ITEMS}:root:${folder.ownerId}`);
+		}
 	}
 }

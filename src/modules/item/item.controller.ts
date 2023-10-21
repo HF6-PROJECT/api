@@ -1,8 +1,17 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import ItemService from './item.service';
-import { ReadInput, itemSharingsInput, itemReadInput, itemBreadcrumbInput } from './item.schema';
+import {
+	ReadInput,
+	itemSharingsInput,
+	itemReadInput,
+	itemBreadcrumbInput,
+	ItemWithProperties,
+} from './item.schema';
 import AccessService from './sharing/access.service';
 import { UnauthorizedError, errorReply } from '../../utils/error';
+
+export const CACHE_ITEMS = 'items:';
+const CACHE_TTL = 10000;
 
 export default class ItemController {
 	private itemService: ItemService;
@@ -26,7 +35,15 @@ export default class ItemController {
 
 	public async itemRootHandler(request: FastifyRequest, reply: FastifyReply) {
 		try {
-			const items = await this.itemService.getByOwnerIdAndParentId(request.user.sub, null);
+			const items = await request.redis.rememberJSON<ItemWithProperties[]>(
+				`${CACHE_ITEMS}:root:${request.user.sub}`,
+				CACHE_TTL,
+				async () => {
+					request.log.warn('GET ROOT ITEMS');
+
+					return await this.itemService.getByOwnerIdAndParentId(request.user.sub, null);
+				},
+			);
 
 			return reply.code(200).send(items);
 		} catch (e) {
@@ -48,9 +65,17 @@ export default class ItemController {
 				throw new UnauthorizedError('error.unauthorized');
 			}
 
-			const items = await this.itemService.getAllOwnedAndSharredItemsByParentIdAndUserId(
-				request.user.sub,
-				request.params.parentId,
+			const items = await request.redis.rememberJSON<ItemWithProperties[]>(
+				`${CACHE_ITEMS}:${request.params.parentId}:${request.user.sub}`,
+				CACHE_TTL,
+				async () => {
+					request.log.warn('GET ITEMS IN ' + request.params.parentId);
+
+					return await this.itemService.getAllOwnedAndSharredItemsByParentIdAndUserId(
+						request.user.sub,
+						request.params.parentId,
+					);
+				},
 			);
 
 			return reply.code(200).send(items);

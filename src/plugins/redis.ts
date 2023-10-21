@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
-import Redis from 'ioredis';
+import Redis, { Callback, RedisKey } from 'ioredis';
 import { v4 } from 'uuid';
 
 declare module 'fastify' {
@@ -70,6 +70,23 @@ export default fastifyPlugin(
 		redis.invalidateCaches = async (...keys) => {
 			await Promise.all(
 				keys.map(async (key) => {
+                    // If the key is a pattern, delete all keys matching the pattern
+                    if (key.includes('*')) {
+                        const stream = redis.scanStream({
+                            match: key,
+                        });
+
+                        stream.on('data', async (keys) => {
+                            await Promise.all(
+                                keys.map(async (key: RedisKey) => {
+                                    await redis.del(key);
+                                }),
+                            );
+                        });
+
+                        return;
+                    }
+
 					await redis.del(key);
 				}),
 			);

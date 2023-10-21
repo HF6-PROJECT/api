@@ -43,7 +43,7 @@ describe('ItemService', () => {
 				mimeType: 'text/plain',
 			});
 
-			const hasAccessToItem = await accessService.hasAccessToItemId(createdItem.id, user.id);
+			const hasAccessToItem = await accessService.hasAccessToItem(createdItem, user.id);
 
 			expect(hasAccessToItem).toBeTruthy();
 		});
@@ -63,7 +63,7 @@ describe('ItemService', () => {
 				otherUser.id,
 			);
 
-			const hasAccessToItem = await accessService.hasAccessToItemId(createdItem.id, user.id);
+			const hasAccessToItem = await accessService.hasAccessToItem(createdItem, user.id);
 
 			expect(hasAccessToItem).toBeTruthy();
 		});
@@ -76,9 +76,90 @@ describe('ItemService', () => {
 				mimeType: 'text/plain',
 			});
 
-			const hasAccessToItem = await accessService.hasAccessToItemId(createdItem.id, user.id);
+			const hasAccessToItem = await accessService.hasAccessToItem(createdItem, user.id);
 
 			expect(hasAccessToItem).toBeFalsy();
+		});
+
+		it("shouldn't care if item exists", async () => {
+			const hasAccessToItem = await accessService.hasAccessToItem(
+				{
+					id: 123456,
+					name: 'Test',
+					mimeType: 'text/plain',
+					ownerId: 43,
+					parentId: null,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+					deletedAt: null,
+				},
+				43,
+			);
+
+			const hasNotAccessToItem = await accessService.hasAccessToItem(
+				{
+					id: 123456,
+					name: 'Test',
+					mimeType: 'text/plain',
+					ownerId: 54364356,
+					parentId: null,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+					deletedAt: null,
+				},
+				43,
+			);
+
+			expect(hasAccessToItem).toBeTruthy();
+			expect(hasNotAccessToItem).toBeFalsy();
+		});
+	});
+
+	describe('hasAccessToItemId()', () => {
+		it('should return true, when owner', async () => {
+			const createdItem = await itemService.createItem({
+				name: 'test.txt',
+				ownerId: user.id,
+				parentId: null,
+				mimeType: 'text/plain',
+			});
+
+			const hasAccessToItemId = await accessService.hasAccessToItemId(createdItem.id, user.id);
+
+			expect(hasAccessToItemId).toBeTruthy();
+		});
+
+		it('should return true, when not owned by you, but shared with you', async () => {
+			const createdItem = await itemService.createItem({
+				name: 'test.txt',
+				ownerId: otherUser.id,
+				parentId: null,
+				mimeType: 'text/plain',
+			});
+			await sharingService.createSharing(
+				{
+					itemId: createdItem.id,
+					userId: user.id,
+				},
+				otherUser.id,
+			);
+
+			const hasAccessToItemId = await accessService.hasAccessToItemId(createdItem.id, user.id);
+
+			expect(hasAccessToItemId).toBeTruthy();
+		});
+
+		it('should return false, when not owned or shared with you', async () => {
+			const createdItem = await itemService.createItem({
+				name: 'test.txt',
+				ownerId: otherUser.id,
+				parentId: null,
+				mimeType: 'text/plain',
+			});
+
+			const hasAccessToItemId = await accessService.hasAccessToItemId(createdItem.id, user.id);
+
+			expect(hasAccessToItemId).toBeFalsy();
 		});
 
 		it("should throw error, when item doesn't exist", async () => {

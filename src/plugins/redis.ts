@@ -45,7 +45,7 @@ export default fastifyPlugin(
 			},
 		);
 
-		redis.remember = async (key, ttl, callback) => {
+		redis.remember = async (key, ttl_seconds, callback) => {
 			let value = await redis.get(key);
 
 			if (value !== null) {
@@ -54,14 +54,14 @@ export default fastifyPlugin(
 
 			value = await callback();
 
-			await redis.setex(key, ttl, value);
+			await redis.setex(key, ttl_seconds, value);
 
 			return value;
 		};
 
-		redis.rememberJSON = async (key, ttl, callback) => {
+		redis.rememberJSON = async (key, ttl_seconds, callback) => {
 			return JSON.parse(
-				await redis.remember(key, ttl, async () => {
+				await redis.remember(key, ttl_seconds, async () => {
 					return JSON.stringify(await callback());
 				}),
 			);

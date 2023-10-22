@@ -10,7 +10,7 @@ import {
 import AccessService from './sharing/access.service';
 import { UnauthorizedError, errorReply } from '../../utils/error';
 
-export const CACHE_ITEMS = 'items:';
+export const CACHE_ITEMS = 'items';
 const CACHE_TTL = 10000;
 
 export default class ItemController {
@@ -39,8 +39,6 @@ export default class ItemController {
 				`${CACHE_ITEMS}:root:${request.user.sub}`,
 				CACHE_TTL,
 				async () => {
-					request.log.warn('GET ROOT ITEMS');
-
 					return await this.itemService.getByOwnerIdAndParentId(request.user.sub, null);
 				},
 			);
@@ -69,8 +67,6 @@ export default class ItemController {
 				`${CACHE_ITEMS}:${request.params.parentId}:${request.user.sub}`,
 				CACHE_TTL,
 				async () => {
-					request.log.warn('GET ITEMS IN ' + request.params.parentId);
-
 					return await this.itemService.getAllOwnedAndSharredItemsByParentIdAndUserId(
 						request.user.sub,
 						request.params.parentId,

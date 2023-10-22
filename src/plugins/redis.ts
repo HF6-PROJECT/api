@@ -27,7 +27,7 @@ export default fastifyPlugin(
 		redis = new Redis(fastify.config.REDIS_URL, {
 			keyPrefix:
 				fastify.config.NODE_ENV === 'test'
-					? /* istanbul ignore next */ v4()
+					? /* istanbul ignore next */ `${v4()}:`
 					: /* istanbul ignore next */ undefined,
 			lazyConnect: true,
 		}).on(
@@ -70,22 +70,24 @@ export default fastifyPlugin(
 		redis.invalidateCaches = async (...keys) => {
 			await Promise.all(
 				keys.map(async (key) => {
-                    // If the key is a pattern, delete all keys matching the pattern
-                    if (key.includes('*')) {
-                        const stream = redis.scanStream({
-                            match: key,
-                        });
+					// If the key is a pattern, delete all keys matching the pattern
+					if (key.includes('*')) {
+						// Get all keys matching pattern
+						keys = await redis.keys(
+							`${redis.options.keyPrefix ? redis.options.keyPrefix : ''}${key}`,
+						);
 
-                        stream.on('data', async (keys) => {
-                            await Promise.all(
-                                keys.map(async (key: RedisKey) => {
-                                    await redis.del(key);
-                                }),
-                            );
-                        });
+						await Promise.all(
+							keys.map(async (key) => {
+								if (redis.options.keyPrefix) {
+									await redis.del(key.replace(redis.options.keyPrefix, ''));
+									return;
+								}
 
-                        return;
-                    }
+								await redis.del(key);
+							}),
+						);
+					}
 
 					await redis.del(key);
 				}),

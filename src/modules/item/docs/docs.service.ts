@@ -1,5 +1,6 @@
 import { prisma } from '../../../plugins/prisma';
 import { MissingError } from '../../../utils/error';
+import ItemService from '../item.service';
 import SharingService from '../sharing/sharing.service';
 import { Docs, AddDocs, UpdateDocs, ItemDocs } from './docs.schema';
 
@@ -32,7 +33,11 @@ export default class DocsService {
 			await this.sharingService.syncSharingsByItemId(input.parentId, itemDocs.item.id);
 		}
 
-		return this.formatitemDocs(itemDocs);
+		const docs = this.formatitemDocs(itemDocs);
+
+		await ItemService.invalidateCachesForItem(docs);
+
+		return docs;
 	}
 
 	public async getByItemId(itemId: number): Promise<Docs> {
@@ -71,15 +76,30 @@ export default class DocsService {
 			},
 		});
 
-		return this.formatitemDocs(itemDocs);
+		const docs = this.formatitemDocs(itemDocs);
+
+		await ItemService.invalidateCachesForItem(docs);
+
+		return docs;
 	}
 
 	public async deleteDocsByItemId(itemId: number): Promise<void> {
-		await prisma.item.delete({
-			where: {
-				id: itemId,
-			},
-		});
+		let docs: Docs;
+
+		try {
+			docs = await this.getByItemId(itemId);
+		} catch (e) {
+			return;
+		}
+
+		await Promise.all([
+			prisma.item.delete({
+				where: {
+					id: itemId,
+				},
+			}),
+			ItemService.invalidateCachesForItem(docs),
+		]);
 	}
 
 	private formatitemDocs(itemDocs: ItemDocs): Docs {

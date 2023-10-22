@@ -1,7 +1,6 @@
 import { prisma } from '../../../plugins/prisma';
-import { redis } from '../../../plugins/redis';
 import { MissingError } from '../../../utils/error';
-import { CACHE_ITEMS } from '../item.controller';
+import ItemService from '../item.service';
 import SharingService from '../sharing/sharing.service';
 import { Folder, AddFolder, UpdateFolder, ItemFolder } from './folder.schema';
 
@@ -36,7 +35,7 @@ export default class FolderService {
 
 		const folder = this.formatItemFolder(itemFolder);
 
-		this.invalidateCachesForFolder(folder);
+		await ItemService.invalidateCachesForItem(folder);
 
 		return folder;
 	}
@@ -79,13 +78,13 @@ export default class FolderService {
 
 		const folder = this.formatItemFolder(itemFolder);
 
-		this.invalidateCachesForFolder(folder);
+		await ItemService.invalidateCachesForItem(folder);
 
 		return folder;
 	}
 
 	public async deleteFolderByItemId(itemId: number): Promise<void> {
-        let folder: Folder;
+		let folder: Folder;
 
 		try {
 			folder = await this.getByItemId(itemId);
@@ -99,7 +98,7 @@ export default class FolderService {
 					id: itemId,
 				},
 			}),
-			this.invalidateCachesForFolder(folder),
+			ItemService.invalidateCachesForItem(folder),
 		]);
 	}
 
@@ -108,18 +107,5 @@ export default class FolderService {
 			color: itemFolder.color,
 			...itemFolder.item,
 		};
-	}
-
-	private async invalidateCachesForFolder(folder: Folder): Promise<void> {
-		// Cache - Item
-		await redis.invalidateCaches(`${CACHE_ITEMS}:${folder.id}:*`);
-
-		if (folder.parentId) {
-			// Cache - Parent
-			await redis.invalidateCaches(`${CACHE_ITEMS}:${folder.parentId}:*`);
-		} else {
-			// Cache - Root
-			await redis.invalidateCaches(`${CACHE_ITEMS}:root:${folder.ownerId}`);
-		}
 	}
 }

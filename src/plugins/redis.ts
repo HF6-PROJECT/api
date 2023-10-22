@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
-import Redis, { Callback, RedisKey } from 'ioredis';
+import Redis from 'ioredis';
 import { v4 } from 'uuid';
 
 declare module 'fastify' {

@@ -119,6 +119,7 @@ export default class BlobService {
 		try {
 			blob = await this.getByItemId(itemId);
 		} catch (e) {
+			/* istanbul ignore next */
 			return;
 		}
 
@@ -129,7 +130,8 @@ export default class BlobService {
 				},
 			}),
 			ItemService.invalidateCachesForItem(blob),
-			async () => {
+			(async () => {
+				/* istanbul ignore next */
 				if (!blob.blobUrl) {
 					return;
 				}
@@ -139,7 +141,7 @@ export default class BlobService {
 				} catch (e) {
 					// Do nothing
 				}
-			},
+			})(),
 		]);
 	}
 

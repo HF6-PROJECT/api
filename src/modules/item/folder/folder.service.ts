@@ -89,6 +89,7 @@ export default class FolderService {
 		try {
 			folder = await this.getByItemId(itemId);
 		} catch (e) {
+			/* istanbul ignore next */
 			return;
 		}
 

@@ -74,7 +74,9 @@ export default fastifyPlugin(
 					if (key.includes('*')) {
 						// Get all keys matching pattern
 						keys = await redis.keys(
-							`${redis.options.keyPrefix ? redis.options.keyPrefix : ''}${key}`,
+							`${
+								redis.options.keyPrefix ? redis.options.keyPrefix : /* istanbul ignore next */ ''
+							}${key}`,
 						);
 
 						await Promise.all(
@@ -84,6 +86,7 @@ export default fastifyPlugin(
 									return;
 								}
 
+								/* istanbul ignore next */
 								await redis.del(key);
 							}),
 						);

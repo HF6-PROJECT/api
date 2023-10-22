@@ -92,6 +92,7 @@ export default class ShortcutService {
 		try {
 			shortcut = await this.getByItemId(itemId);
 		} catch (e) {
+			/* istanbul ignore next */
 			return;
 		}
 

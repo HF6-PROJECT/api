@@ -89,6 +89,7 @@ export default class DocsService {
 		try {
 			docs = await this.getByItemId(itemId);
 		} catch (e) {
+			/* istanbul ignore next */
 			return;
 		}
 

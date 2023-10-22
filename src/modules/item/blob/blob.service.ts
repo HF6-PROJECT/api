@@ -6,6 +6,7 @@ import { prisma } from '../../../plugins/prisma';
 import { Blob, CreateBlob, UpdateBlob, ItemBlob } from './blob.schema';
 import SharingService from '../sharing/sharing.service';
 import { MissingError, UnauthorizedError } from '../../../utils/error';
+import ItemService from '../item.service';
 
 type OnUploadCompletedCallback = (body: {
 	blob: PutBlobResult;
@@ -80,7 +81,11 @@ export default class BlobService {
 			await this.sharingService.syncSharingsByItemId(input.parentId, itemBlob.item.id);
 		}
 
-		return this.formatItemBlob(itemBlob);
+		const blob = this.formatItemBlob(itemBlob);
+
+		await ItemService.invalidateCachesForItem(blob);
+
+		return blob;
 	}
 
 	public async updateBlob(input: UpdateBlob): Promise<Blob> {
@@ -101,29 +106,41 @@ export default class BlobService {
 			},
 		});
 
-		return this.formatItemBlob(itemBlob);
+		const blob = this.formatItemBlob(itemBlob);
+
+		await ItemService.invalidateCachesForItem(blob);
+
+		return blob;
 	}
 
 	public async deleteBlobByItemId(itemId: number): Promise<void> {
-		const itemBlob = await prisma.item.delete({
-			where: {
-				id: itemId,
-			},
-			include: {
-				ItemBlob: true,
-			},
-		});
+		let blob: Blob;
 
-		/* istanbul ignore next */
-		if (!itemBlob.ItemBlob) {
+		try {
+			blob = await this.getByItemId(itemId);
+		} catch (e) {
 			return;
 		}
 
-		try {
-			await this.deleteBlobByUrl(itemBlob.ItemBlob.blobUrl);
-		} catch (e) {
-			// Do nothing
-		}
+		await Promise.all([
+			prisma.item.delete({
+				where: {
+					id: itemId,
+				},
+			}),
+			ItemService.invalidateCachesForItem(blob),
+			async () => {
+				if (!blob.blobUrl) {
+					return;
+				}
+
+				try {
+					await this.deleteBlobByUrl(blob.blobUrl);
+				} catch (e) {
+					// Do nothing
+				}
+			},
+		]);
 	}
 
 	public async deleteBlobByUrl(url: string | string[]): Promise<void> {

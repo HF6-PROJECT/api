@@ -58,6 +58,11 @@ export default class SharingService {
 			skipDuplicates: true,
 		});
 
+		await Promise.all([
+			ItemService.invalidateCachesForUser(input.userId),
+			ItemService.invalidateCachesForUser(userId),
+		]);
+
 		try {
 			await this.getByItemIdAndUserId(input.itemId, input.userId);
 
@@ -111,6 +116,11 @@ export default class SharingService {
 					],
 				},
 			});
+
+			await Promise.all([
+				ItemService.invalidateCachesForUser(input.userId),
+				ItemService.invalidateCachesForUser(userId),
+			]);
 		} catch (e) {
 			// Nothing to do here
 		}
@@ -128,6 +138,8 @@ export default class SharingService {
 				},
 			},
 		});
+
+		await ItemService.invalidateCachesForUser(input.userId);
 
 		return itemSharing;
 	}
@@ -161,6 +173,8 @@ export default class SharingService {
 					],
 				},
 			});
+
+			await ItemService.invalidateCachesForUser(userId);
 		} catch (e) {
 			// Nothing to do here
 		}
@@ -180,6 +194,12 @@ export default class SharingService {
 		fromItem.ItemSharing.forEach((sharing) => {
 			userIds.push(sharing.userId);
 		});
+
+		await Promise.all(
+			userIds.map(async (userId) => {
+				await ItemService.invalidateCachesForUser(userId);
+			}),
+		);
 
 		await prisma.itemSharing.createMany({
 			data: userIds.map((userId) => {

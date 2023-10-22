@@ -1,5 +1,7 @@
 import { prisma } from '../../plugins/prisma';
+import { redis } from '../../plugins/redis';
 import { MissingError } from '../../utils/error';
+import { CACHE_ITEMS } from './item.controller';
 import {
 	CreateItem,
 	Item,
@@ -279,5 +281,24 @@ export default class ItemService {
 		return items.map((element) => {
 			return this.formatItem(element);
 		});
+	}
+
+	public static async invalidateCachesForItem(item: Item): Promise<void> {
+		await Promise.all([
+			// Cache - Item
+			redis.invalidateCaches(`${CACHE_ITEMS}:${item.id}:*`),
+			// Cache - Parent
+			item.parentId !== null
+				? redis.invalidateCaches(`${CACHE_ITEMS}:${item.parentId}:*`)
+				: // Cache - Root
+				  redis.invalidateCaches(`${CACHE_ITEMS}:root:${item.ownerId}`),
+		]);
+	}
+
+	public static async invalidateCachesForUser(userId: number): Promise<void> {
+		await Promise.all([
+			// Cache - User
+			redis.invalidateCaches(`${CACHE_ITEMS}:*:${userId}`),
+		]);
 	}
 }

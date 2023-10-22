@@ -1,5 +1,6 @@
 import { prisma } from '../../../plugins/prisma';
 import { MissingError } from '../../../utils/error';
+import ItemService from '../item.service';
 import SharingService from '../sharing/sharing.service';
 import { Shortcut, AddShortcut, UpdateShortcut, ItemShortcut } from './shortcut.schema';
 
@@ -36,7 +37,11 @@ export default class ShortcutService {
 			await this.sharingService.syncSharingsByItemId(input.parentId, itemShortcut.shortcutItem.id);
 		}
 
-		return this.formatItemShortcut(itemShortcut);
+		const shortcut = this.formatItemShortcut(itemShortcut);
+
+		await ItemService.invalidateCachesForItem(shortcut);
+
+		return shortcut;
 	}
 
 	public async getByItemId(itemId: number): Promise<Shortcut> {
@@ -74,15 +79,30 @@ export default class ShortcutService {
 			},
 		});
 
-		return this.formatItemShortcut(itemShortcut);
+		const shortcut = this.formatItemShortcut(itemShortcut);
+
+		await ItemService.invalidateCachesForItem(shortcut);
+
+		return shortcut;
 	}
 
 	public async deleteShortcutByItemId(itemId: number): Promise<void> {
-		await prisma.item.delete({
-			where: {
-				id: itemId,
-			},
-		});
+		let shortcut: Shortcut;
+
+		try {
+			shortcut = await this.getByItemId(itemId);
+		} catch (e) {
+			return;
+		}
+
+		await Promise.all([
+			prisma.item.delete({
+				where: {
+					id: itemId,
+				},
+			}),
+			ItemService.invalidateCachesForItem(shortcut),
+		]);
 	}
 
 	private formatItemShortcut(itemShortcut: ItemShortcut): Shortcut {

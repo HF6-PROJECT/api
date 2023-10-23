@@ -11,7 +11,7 @@ import AccessService from './sharing/access.service';
 import { UnauthorizedError, errorReply } from '../../utils/error';
 
 export const CACHE_ITEMS = 'items';
-const CACHE_TTL = 10000;
+const CACHE_TTL = 86400;
 
 export default class ItemController {
 	private itemService: ItemService;
